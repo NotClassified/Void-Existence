@@ -1,0 +1,176 @@
+// GENERATED AUTOMATICALLY FROM 'Assets/Controllers/PlayerInput.inputactions'
+
+using System;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Experimental.Input;
+
+
+namespace PlayerInput
+{
+    [Serializable]
+    public class PlayerInput : InputActionAssetReference
+    {
+        public PlayerInput()
+        {
+        }
+        public PlayerInput(InputActionAsset asset)
+            : base(asset)
+        {
+        }
+        private bool m_Initialized;
+        private void Initialize()
+        {
+            // Character
+            m_Character = asset.GetActionMap("Character");
+            m_Character_CameraMovement = m_Character.GetAction("Camera Movement");
+            if (m_CharacterCameraMovementActionStarted != null)
+                m_Character_CameraMovement.started += m_CharacterCameraMovementActionStarted.Invoke;
+            if (m_CharacterCameraMovementActionPerformed != null)
+                m_Character_CameraMovement.performed += m_CharacterCameraMovementActionPerformed.Invoke;
+            if (m_CharacterCameraMovementActionCancelled != null)
+                m_Character_CameraMovement.cancelled += m_CharacterCameraMovementActionCancelled.Invoke;
+            m_Character_Foward = m_Character.GetAction("Foward");
+            if (m_CharacterFowardActionStarted != null)
+                m_Character_Foward.started += m_CharacterFowardActionStarted.Invoke;
+            if (m_CharacterFowardActionPerformed != null)
+                m_Character_Foward.performed += m_CharacterFowardActionPerformed.Invoke;
+            if (m_CharacterFowardActionCancelled != null)
+                m_Character_Foward.cancelled += m_CharacterFowardActionCancelled.Invoke;
+            m_Character_Run = m_Character.GetAction("Run");
+            if (m_CharacterRunActionStarted != null)
+                m_Character_Run.started += m_CharacterRunActionStarted.Invoke;
+            if (m_CharacterRunActionPerformed != null)
+                m_Character_Run.performed += m_CharacterRunActionPerformed.Invoke;
+            if (m_CharacterRunActionCancelled != null)
+                m_Character_Run.cancelled += m_CharacterRunActionCancelled.Invoke;
+            m_Initialized = true;
+        }
+        private void Uninitialize()
+        {
+            if (m_CharacterActionsCallbackInterface != null)
+            {
+                Character.SetCallbacks(null);
+            }
+            m_Character = null;
+            m_Character_CameraMovement = null;
+            if (m_CharacterCameraMovementActionStarted != null)
+                m_Character_CameraMovement.started -= m_CharacterCameraMovementActionStarted.Invoke;
+            if (m_CharacterCameraMovementActionPerformed != null)
+                m_Character_CameraMovement.performed -= m_CharacterCameraMovementActionPerformed.Invoke;
+            if (m_CharacterCameraMovementActionCancelled != null)
+                m_Character_CameraMovement.cancelled -= m_CharacterCameraMovementActionCancelled.Invoke;
+            m_Character_Foward = null;
+            if (m_CharacterFowardActionStarted != null)
+                m_Character_Foward.started -= m_CharacterFowardActionStarted.Invoke;
+            if (m_CharacterFowardActionPerformed != null)
+                m_Character_Foward.performed -= m_CharacterFowardActionPerformed.Invoke;
+            if (m_CharacterFowardActionCancelled != null)
+                m_Character_Foward.cancelled -= m_CharacterFowardActionCancelled.Invoke;
+            m_Character_Run = null;
+            if (m_CharacterRunActionStarted != null)
+                m_Character_Run.started -= m_CharacterRunActionStarted.Invoke;
+            if (m_CharacterRunActionPerformed != null)
+                m_Character_Run.performed -= m_CharacterRunActionPerformed.Invoke;
+            if (m_CharacterRunActionCancelled != null)
+                m_Character_Run.cancelled -= m_CharacterRunActionCancelled.Invoke;
+            m_Initialized = false;
+        }
+        public void SetAsset(InputActionAsset newAsset)
+        {
+            if (newAsset == asset) return;
+            var CharacterCallbacks = m_CharacterActionsCallbackInterface;
+            if (m_Initialized) Uninitialize();
+            asset = newAsset;
+            Character.SetCallbacks(CharacterCallbacks);
+        }
+        public override void MakePrivateCopyOfActions()
+        {
+            SetAsset(ScriptableObject.Instantiate(asset));
+        }
+        // Character
+        private InputActionMap m_Character;
+        private ICharacterActions m_CharacterActionsCallbackInterface;
+        private InputAction m_Character_CameraMovement;
+        [SerializeField] private ActionEvent m_CharacterCameraMovementActionStarted;
+        [SerializeField] private ActionEvent m_CharacterCameraMovementActionPerformed;
+        [SerializeField] private ActionEvent m_CharacterCameraMovementActionCancelled;
+        private InputAction m_Character_Foward;
+        [SerializeField] private ActionEvent m_CharacterFowardActionStarted;
+        [SerializeField] private ActionEvent m_CharacterFowardActionPerformed;
+        [SerializeField] private ActionEvent m_CharacterFowardActionCancelled;
+        private InputAction m_Character_Run;
+        [SerializeField] private ActionEvent m_CharacterRunActionStarted;
+        [SerializeField] private ActionEvent m_CharacterRunActionPerformed;
+        [SerializeField] private ActionEvent m_CharacterRunActionCancelled;
+        public struct CharacterActions
+        {
+            private PlayerInput m_Wrapper;
+            public CharacterActions(PlayerInput wrapper) { m_Wrapper = wrapper; }
+            public InputAction @CameraMovement { get { return m_Wrapper.m_Character_CameraMovement; } }
+            public ActionEvent CameraMovementStarted { get { return m_Wrapper.m_CharacterCameraMovementActionStarted; } }
+            public ActionEvent CameraMovementPerformed { get { return m_Wrapper.m_CharacterCameraMovementActionPerformed; } }
+            public ActionEvent CameraMovementCancelled { get { return m_Wrapper.m_CharacterCameraMovementActionCancelled; } }
+            public InputAction @Foward { get { return m_Wrapper.m_Character_Foward; } }
+            public ActionEvent FowardStarted { get { return m_Wrapper.m_CharacterFowardActionStarted; } }
+            public ActionEvent FowardPerformed { get { return m_Wrapper.m_CharacterFowardActionPerformed; } }
+            public ActionEvent FowardCancelled { get { return m_Wrapper.m_CharacterFowardActionCancelled; } }
+            public InputAction @Run { get { return m_Wrapper.m_Character_Run; } }
+            public ActionEvent RunStarted { get { return m_Wrapper.m_CharacterRunActionStarted; } }
+            public ActionEvent RunPerformed { get { return m_Wrapper.m_CharacterRunActionPerformed; } }
+            public ActionEvent RunCancelled { get { return m_Wrapper.m_CharacterRunActionCancelled; } }
+            public InputActionMap Get() { return m_Wrapper.m_Character; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled { get { return Get().enabled; } }
+            public InputActionMap Clone() { return Get().Clone(); }
+            public static implicit operator InputActionMap(CharacterActions set) { return set.Get(); }
+            public void SetCallbacks(ICharacterActions instance)
+            {
+                if (m_Wrapper.m_CharacterActionsCallbackInterface != null)
+                {
+                    CameraMovement.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnCameraMovement;
+                    CameraMovement.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnCameraMovement;
+                    CameraMovement.cancelled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnCameraMovement;
+                    Foward.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnFoward;
+                    Foward.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnFoward;
+                    Foward.cancelled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnFoward;
+                    Run.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnRun;
+                    Run.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnRun;
+                    Run.cancelled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnRun;
+                }
+                m_Wrapper.m_CharacterActionsCallbackInterface = instance;
+                if (instance != null)
+                {
+                    CameraMovement.started += instance.OnCameraMovement;
+                    CameraMovement.performed += instance.OnCameraMovement;
+                    CameraMovement.cancelled += instance.OnCameraMovement;
+                    Foward.started += instance.OnFoward;
+                    Foward.performed += instance.OnFoward;
+                    Foward.cancelled += instance.OnFoward;
+                    Run.started += instance.OnRun;
+                    Run.performed += instance.OnRun;
+                    Run.cancelled += instance.OnRun;
+                }
+            }
+        }
+        public CharacterActions @Character
+        {
+            get
+            {
+                if (!m_Initialized) Initialize();
+                return new CharacterActions(this);
+            }
+        }
+        [Serializable]
+        public class ActionEvent : UnityEvent<InputAction.CallbackContext>
+        {
+        }
+    }
+    public interface ICharacterActions
+    {
+        void OnCameraMovement(InputAction.CallbackContext context);
+        void OnFoward(InputAction.CallbackContext context);
+        void OnRun(InputAction.CallbackContext context);
+    }
+}

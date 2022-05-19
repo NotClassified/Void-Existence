@@ -1,0 +1,147 @@
+// GENERATED AUTOMATICALLY FROM 'Assets/Controllers/PlayerCon.inputactions'
+
+using System;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Experimental.Input;
+
+
+namespace PlayerCon
+{
+    [Serializable]
+    public class PlayerCon : InputActionAssetReference
+    {
+        public PlayerCon()
+        {
+        }
+        public PlayerCon(InputActionAsset asset)
+            : base(asset)
+        {
+        }
+        private bool m_Initialized;
+        private void Initialize()
+        {
+            // Player
+            m_Player = asset.GetActionMap("Player");
+            m_Player_Forward = m_Player.GetAction("Forward");
+            if (m_PlayerForwardActionStarted != null)
+                m_Player_Forward.started += m_PlayerForwardActionStarted.Invoke;
+            if (m_PlayerForwardActionPerformed != null)
+                m_Player_Forward.performed += m_PlayerForwardActionPerformed.Invoke;
+            if (m_PlayerForwardActionCancelled != null)
+                m_Player_Forward.cancelled += m_PlayerForwardActionCancelled.Invoke;
+            m_Player_Run = m_Player.GetAction("Run");
+            if (m_PlayerRunActionStarted != null)
+                m_Player_Run.started += m_PlayerRunActionStarted.Invoke;
+            if (m_PlayerRunActionPerformed != null)
+                m_Player_Run.performed += m_PlayerRunActionPerformed.Invoke;
+            if (m_PlayerRunActionCancelled != null)
+                m_Player_Run.cancelled += m_PlayerRunActionCancelled.Invoke;
+            m_Initialized = true;
+        }
+        private void Uninitialize()
+        {
+            if (m_PlayerActionsCallbackInterface != null)
+            {
+                Player.SetCallbacks(null);
+            }
+            m_Player = null;
+            m_Player_Forward = null;
+            if (m_PlayerForwardActionStarted != null)
+                m_Player_Forward.started -= m_PlayerForwardActionStarted.Invoke;
+            if (m_PlayerForwardActionPerformed != null)
+                m_Player_Forward.performed -= m_PlayerForwardActionPerformed.Invoke;
+            if (m_PlayerForwardActionCancelled != null)
+                m_Player_Forward.cancelled -= m_PlayerForwardActionCancelled.Invoke;
+            m_Player_Run = null;
+            if (m_PlayerRunActionStarted != null)
+                m_Player_Run.started -= m_PlayerRunActionStarted.Invoke;
+            if (m_PlayerRunActionPerformed != null)
+                m_Player_Run.performed -= m_PlayerRunActionPerformed.Invoke;
+            if (m_PlayerRunActionCancelled != null)
+                m_Player_Run.cancelled -= m_PlayerRunActionCancelled.Invoke;
+            m_Initialized = false;
+        }
+        public void SetAsset(InputActionAsset newAsset)
+        {
+            if (newAsset == asset) return;
+            var PlayerCallbacks = m_PlayerActionsCallbackInterface;
+            if (m_Initialized) Uninitialize();
+            asset = newAsset;
+            Player.SetCallbacks(PlayerCallbacks);
+        }
+        public override void MakePrivateCopyOfActions()
+        {
+            SetAsset(ScriptableObject.Instantiate(asset));
+        }
+        // Player
+        private InputActionMap m_Player;
+        private IPlayerActions m_PlayerActionsCallbackInterface;
+        private InputAction m_Player_Forward;
+        [SerializeField] private ActionEvent m_PlayerForwardActionStarted;
+        [SerializeField] private ActionEvent m_PlayerForwardActionPerformed;
+        [SerializeField] private ActionEvent m_PlayerForwardActionCancelled;
+        private InputAction m_Player_Run;
+        [SerializeField] private ActionEvent m_PlayerRunActionStarted;
+        [SerializeField] private ActionEvent m_PlayerRunActionPerformed;
+        [SerializeField] private ActionEvent m_PlayerRunActionCancelled;
+        public struct PlayerActions
+        {
+            private PlayerCon m_Wrapper;
+            public PlayerActions(PlayerCon wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Forward { get { return m_Wrapper.m_Player_Forward; } }
+            public ActionEvent ForwardStarted { get { return m_Wrapper.m_PlayerForwardActionStarted; } }
+            public ActionEvent ForwardPerformed { get { return m_Wrapper.m_PlayerForwardActionPerformed; } }
+            public ActionEvent ForwardCancelled { get { return m_Wrapper.m_PlayerForwardActionCancelled; } }
+            public InputAction @Run { get { return m_Wrapper.m_Player_Run; } }
+            public ActionEvent RunStarted { get { return m_Wrapper.m_PlayerRunActionStarted; } }
+            public ActionEvent RunPerformed { get { return m_Wrapper.m_PlayerRunActionPerformed; } }
+            public ActionEvent RunCancelled { get { return m_Wrapper.m_PlayerRunActionCancelled; } }
+            public InputActionMap Get() { return m_Wrapper.m_Player; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled { get { return Get().enabled; } }
+            public InputActionMap Clone() { return Get().Clone(); }
+            public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
+            public void SetCallbacks(IPlayerActions instance)
+            {
+                if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
+                {
+                    Forward.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForward;
+                    Forward.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForward;
+                    Forward.cancelled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForward;
+                    Run.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRun;
+                    Run.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRun;
+                    Run.cancelled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRun;
+                }
+                m_Wrapper.m_PlayerActionsCallbackInterface = instance;
+                if (instance != null)
+                {
+                    Forward.started += instance.OnForward;
+                    Forward.performed += instance.OnForward;
+                    Forward.cancelled += instance.OnForward;
+                    Run.started += instance.OnRun;
+                    Run.performed += instance.OnRun;
+                    Run.cancelled += instance.OnRun;
+                }
+            }
+        }
+        public PlayerActions @Player
+        {
+            get
+            {
+                if (!m_Initialized) Initialize();
+                return new PlayerActions(this);
+            }
+        }
+        [Serializable]
+        public class ActionEvent : UnityEvent<InputAction.CallbackContext>
+        {
+        }
+    }
+    public interface IPlayerActions
+    {
+        void OnForward(InputAction.CallbackContext context);
+        void OnRun(InputAction.CallbackContext context);
+    }
+}

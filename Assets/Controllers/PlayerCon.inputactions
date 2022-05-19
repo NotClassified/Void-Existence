@@ -1,0 +1,159 @@
+{
+    "name": "PlayerCon",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "f773bafe-d7cc-4dc3-9be8-58e120b07b11",
+            "actions": [
+                {
+                    "name": "Forward",
+                    "id": "bfa9a69e-884d-49d7-acb0-5d4c8815ecbf",
+                    "expectedControlLayout": "Axis",
+                    "continuous": false,
+                    "passThrough": false,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "Camera",
+                    "id": "8395d501-b7ee-468e-965a-67d1382e7893",
+                    "expectedControlLayout": "Vector2",
+                    "continuous": false,
+                    "passThrough": false,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "JumpR",
+                    "id": "5a3595ae-3d9e-4a5b-9ba0-4acff1258479",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": false,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "JumpL",
+                    "id": "07e398ac-b6a6-4768-b496-07c2811316ad",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": false,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "JumpGap",
+                    "id": "eb9e662e-4ec0-44a2-bd4c-f5925c731277",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": false,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "Start",
+                    "id": "2ff216fc-335c-485c-90d0-1671baf23f99",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": false,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Forward",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Camera",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "JumpR",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "JumpL",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "JumpGap",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Start",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "New control scheme",
+            "basedOn": "",
+            "bindingGroup": "New control scheme",
+            "devices": [
+                {
+                    "devicePath": "<XInputControllerWindows>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
