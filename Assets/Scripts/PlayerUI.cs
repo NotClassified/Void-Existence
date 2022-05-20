@@ -86,7 +86,7 @@ public class PlayerUI : MonoBehaviour
             speed_sTarget = 12;
         else
             speed_sTarget = pm.velocityZ;
-        //make the value gradually change to target:
+        //MAKE THE VALUE GRADUALLY CHANGE TO TARGET:
         speed_sDelta = speed_sTarget - speed_sValue; //difference between target value and actual value (slider's value)
         speed_sDelta *= Time.deltaTime * speed_sVelocity; //make actual value gradually change
         speed_sValue += speed_sDelta; //increase actual value closer to target value

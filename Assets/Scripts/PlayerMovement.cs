@@ -192,7 +192,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (pt.isGrounded || pt.isLanding)
         {
-            //reset transition vars:
+            //RESET TRANSITION VARS:
             inAirTransiPose = 0;
             inAirLayerWeight = 0; 
         }

@@ -96,7 +96,7 @@ public class EnemyTrick : MonoBehaviour
     IEnumerator WCRepos(Transform pos_)
     {
         Vector3 initial = transform.position; //starting position
-        //retarget reposition depending on which side this enemy is on:
+        //RETARGET REPOSITION DEPENDING ON WHICH SIDE THIS ENEMY IS ON:
         Vector3 pos = new Vector3();
         if (enemyNum == 1)
         {
@@ -209,7 +209,7 @@ public class EnemyTrick : MonoBehaviour
             anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
 
             string num = hits[2].transform.name.Substring(4); //get the correct wall number
-            //reposition player for wall climb animation depending on which side this enemy is on:
+            //REPOSITION PLAYER FOR WALL CLIMB ANIMATION DEPENDING ON WHICH SIDE THIS ENEMY IS ON:
             if (enemyNum == 1)
                 transform.position = hits[2].transform.GetChild(0).position + new Vector3(-2, 0, 0);
             else

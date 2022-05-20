@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Animations.Rigging;
 using System;
 
 public class GameManager : MonoBehaviour
@@ -112,6 +113,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        print("needs works: 167");
         Time.timeScale = timeScale / 100;
         //if (mode == 0)
         //{
@@ -147,7 +149,7 @@ public class GameManager : MonoBehaviour
             csTarget = countGoal;
         else
             csTarget = count;
-        //make the value gradually change to target:
+        //MAKE THE VALUE GRADUALLY CHANGE TO TARGET:
         csDelta = csTarget - csValue; //difference between target value and actual value (slider's value)
         csDelta *= Time.deltaTime * csVelocity; //make actual value gradually change
         csValue += csDelta; //increase actual value closer to target value
@@ -158,13 +160,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             ResetGame();
 
-        if (enemy1 != null)
+        if (enemy2 != null && !gameover && enemy2.transform.position.z + 2 < player.transform.position.z) //checking if enemy caught up to player
         {
-            if (!gameover && enemy1.transform.position.z + 1 < player.transform.position.z)
-            {
-                gameover = true;
-                player.GetComponent<PlayerMovement>().ResetPlayer();
-            }
+            gameover = true;
+            //player.GetComponent<PlayerMovement>().ResetPlayer();
+            //enemy2.transform.GetChild(0).GetChild(1).GetComponent<MultiAimConstraint>().data.sourceObjects[0] = 
         }
     }
 
@@ -175,7 +175,7 @@ public class GameManager : MonoBehaviour
             Destroy(player);
         gCam.SetActive(false); //toggle off goal camera
 
-        //toggle UI visibility:
+        //TOGGLE UI VISIBILITY:
         foreach (Transform gChild in gCanvas)
             gChild.gameObject.SetActive(false);
         foreach (Transform cChild in cCanvas)
@@ -185,7 +185,7 @@ public class GameManager : MonoBehaviour
         if (numTutorial != 2)
             tutExtra.SetActive(false);
 
-        //spawning players and making level:
+        //SPAWNING PLAYERS AND MAKING LEVEL:
         player = Instantiate(playerPref);
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
         //Vector3 spawnRot = new Vector3(playerSpawn.rotation.x, playerSpawn.rotation.y, playerSpawn.rotation.z);
@@ -208,23 +208,23 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        //Set UI for next goal:
+        //SET UI FOR NEXT GOAL:
         StartCoroutine(WaitForFirstTutorial(numTut)); //comment this line for faster testing
         gText.text = gMessagesStart[numTut].Replace("/newline/", "\n") + countGoal.ToString() + gMessagesEnd[numTut]; //goal
-        //Set UI for next counter:
+        //SET UI FOR NEXT COUNTER:
         cTextHeader.text = cHeaders[numTut]; //action for counter
-        //Set UI for next tutorial:
+        //SET UI FOR NEXT TUTORIAL:
         tutKey.sprite = keys[numTut]; //key input
         tutText.text = tutMessages[numTut]; //action for key
 
-        //toggle UI visibility:
+        //TOGGLE UI VISIBILITY:
         foreach (Transform gChild in gCanvas)
             gChild.gameObject.SetActive(false);
         foreach (Transform cChild in cCanvas)
             cChild.gameObject.SetActive(false);
         foreach (Transform tutChild in tutCanvas)
             tutChild.gameObject.SetActive(false);
-        //reset counter:
+        //RESET COUNTER:
         csValue = 0f;
         count = 0;
 
@@ -240,7 +240,7 @@ public class GameManager : MonoBehaviour
                 Destroy(wallMarkerChild.gameObject);
         }
 
-        //for faster testing: //Also comment out line 212
+        //FOR FASTER TESTING: //Also comment out line 212
         //foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
         //    gChild.gameObject.SetActive(true);
         //gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
@@ -331,7 +331,7 @@ public class GameManager : MonoBehaviour
         {
             if (enemyNum == 2 && actionsEnemy.Length > actionIndex2) //if actionindex is being given to left enemy
             {
-                //make enemy action markers for level:
+                //MAKE ENEMY ACTION MARKERS FOR LEVEL:
                 //GameObject marker_ = Instantiate(eaMarker, enemy2.transform.position, eaMarker.transform.rotation); //create
                 //marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex2.ToString(); //change text to index of action
                 //marker_.transform.SetParent(eaParent); //make child of a parent
@@ -358,7 +358,7 @@ public class GameManager : MonoBehaviour
         {
             while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
                 yield return null;
-            //reset positions and index of all players:
+            //RESET POSITIONS AND INDEX OF ALL PLAYERS:
             player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
             enemy1.GetComponent<EnemyMovement>().ResetPlayer();
@@ -375,7 +375,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             while (et1_.AnimCheck(0, "Exit") || et2_.AnimCheck(0, "Exit") || pt_.AnimCheck(0, "Exit")) //wait until all players reset
                 yield return null;
-            //reset speed for all players:
+            //RESET SPEED FOR ALL PLAYERS:
             enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
             enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
             player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;

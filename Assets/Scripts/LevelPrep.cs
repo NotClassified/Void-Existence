@@ -13,7 +13,7 @@ public class LevelPrep : MonoBehaviour
 
     void Start()
     {
-        //load and find references:
+        //LOAD AND FIND REFERENCES:
         wallMarker = FindObjectOfType<GameManager>().prefWallMarker;
         parWallMarkers = transform.parent.Find("Wall Markers");
 

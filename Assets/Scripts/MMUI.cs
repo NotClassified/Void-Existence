@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MMUI : MonoBehaviour
 {
@@ -10,10 +11,13 @@ public class MMUI : MonoBehaviour
 
     [SerializeField]
     GameObject[] levelButtons;
+    #region TESTING
+    public TextMeshProUGUI gpcText; //game progress count text
+    #endregion
 
     private void Start()
     {
-        //initailize the mmChildren array to the children of this transform
+        //INITAILIZE THE MMCHILDREN ARRAY TO THE CHILDREN OF THIS TRANSFORM:
         mmChildren = new GameObject[transform.childCount];
         for(int i = 0; i < transform.childCount; i++)
         {
@@ -23,12 +27,17 @@ public class MMUI : MonoBehaviour
         mmChildren[1].SetActive(true);  //MM1
         mmChildren[2].SetActive(false);  //MM2
 
-        foreach (GameObject button in levelButtons) //lock all levels before unlocking
-            button.GetComponent<Button>().interactable = false;
+        gpcText.text = GameProgress.levelCompleted.ToString(); //get progression number
+        //LOCKING AND UNLOCKING LEVELS:
         for (int i = 0; i < levelButtons.Length && i < GameProgress.levelCompleted + 1; i++) //unlock levels completed plus 1 extra level
-            levelButtons[i].GetComponent<Button>().interactable = true;
-        for (int i = GameProgress.levelCompleted + 1; i < levelButtons.Length; i++) //change UI of locked levels
         {
+            levelButtons[i].GetComponent<Button>().interactable = true;
+            levelButtons[i].transform.Find("#").gameObject.SetActive(true);
+            levelButtons[i].transform.Find("Lock").gameObject.SetActive(false);
+        }
+        for (int i = GameProgress.levelCompleted + 1; i < levelButtons.Length; i++) //lock remaining levels
+        {
+            levelButtons[i].GetComponent<Button>().interactable = false;
             levelButtons[i].transform.Find("#").gameObject.SetActive(false);
             levelButtons[i].transform.Find("Lock").gameObject.SetActive(true);
         }
@@ -65,4 +74,15 @@ public class MMUI : MonoBehaviour
 
         //}
     }
+
+    #region TESTING
+    public void GameProgressCountChange(int i)
+    {
+        if (!(GameProgress.levelCompleted == -1 && i < 0))
+        {
+            GameProgress.levelCompleted += i;
+            Start();
+        }
+    } 
+    #endregion
 }
