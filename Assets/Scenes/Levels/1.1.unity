@@ -1809,6 +1809,9 @@ MonoBehaviour:
   actionsEnemy: 010001000101010100010001
   actionIndex1: 0
   actionIndex2: 0
+  punchEndPosition: {fileID: 0}
+  punchOffset: {x: 0, y: 0, z: 0}
+  punchDuration: 2
   prefWallMarker: {fileID: 0}
   delaySpawnEnemy: 0.8
   environment: {fileID: 2074599043}
