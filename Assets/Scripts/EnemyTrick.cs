@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class EnemyTrick : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class EnemyTrick : MonoBehaviour
     private GameManager gm;
     [SerializeField]
     private EnemyMovement em;
+    [SerializeField]
+    MultiAimConstraint aimContraint;
     public int enemyNum;
     #endregion
     #region ANIMATION BOOLEANS
@@ -18,6 +21,7 @@ public class EnemyTrick : MonoBehaviour
     public bool isJumping;
     public bool isClimbing;
     public bool isLanding = false;
+    public bool isPunching;
     bool[] actionPrevent;
     #endregion
     #region RAYCAST
@@ -56,6 +60,17 @@ public class EnemyTrick : MonoBehaviour
     [SerializeField]
     float reposDuration;
     #endregion
+    #region PUNCH
+    [SerializeField]
+    Transform punchEndPosition;
+    [SerializeField]
+    Vector3 punchOffset;
+    [SerializeField]
+    float punchDuration;
+    float punchLayerWeight;
+    [SerializeField]
+    float punchWeightSpeed;
+    #endregion
     #region HASHES
     private int hashFall;
     private int hashJumpDown;
@@ -63,6 +78,7 @@ public class EnemyTrick : MonoBehaviour
     private int hashClimbFail;
     private int hashClimbSpeed;
     private int hashLand;
+    private int hashPunch;
     #endregion
 
     public bool startMethodCalled = false;
@@ -80,6 +96,7 @@ public class EnemyTrick : MonoBehaviour
         hashClimbFail = Animator.StringToHash("Climb Fail");
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
+        hashPunch = Animator.StringToHash("Punch");
 
         startMethodCalled = true;
     }
@@ -124,6 +141,7 @@ public class EnemyTrick : MonoBehaviour
         isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims
         isLanding = AnimCheck(0, "Land1") || AnimCheck(0, "Land2"); //check if landing
         defaultMove = !(isJumping || isClimbing || isLanding);
+        isPunching = AnimCheck(2, "Punch");
 
 
         raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3];
@@ -135,7 +153,7 @@ public class EnemyTrick : MonoBehaviour
         //Debug.DrawLine(raypos[0], raypos[0] + Vector3.down * distances[4], Color.red);
         //Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f);
 
-        #region LANDING AND GROUND CHECK
+        #region LANDING, FALLING, & GROUNDCHECK
         distances[4] = (-em.fallvelocity.y) / dDominator; //distance for landing
         distances[5] = distances[4] + ldInputGap; //distance for landing input by player
 
@@ -168,9 +186,10 @@ public class EnemyTrick : MonoBehaviour
         anim.SetBool("IsGrounded", isGrounded); //correlate animation vars 
         #endregion
 
+        #region WALL CLIMBING & JUMPING
         if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if enemy is in front of a wall
         {
-            if(!actionPrevent[1] && gm.GetEnemyAction(enemyNum))
+            if (!actionPrevent[1] && gm.GetEnemyAction(enemyNum))
             {
                 anim.SetBool(hashClimbFail, false); //player succeeded wall climb
                 float wallClimbSpeed = (em.velocityZ - 6) / 10 + 1;
@@ -188,20 +207,6 @@ public class EnemyTrick : MonoBehaviour
         else
             actionPrevent[1] = false;
 
-        if (defaultMove && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
-            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively)
-        {
-            if (!actionPrevent[2] && gm.GetEnemyAction(enemyNum))
-            {
-                em.velocityZ = 12; //boost player forward
-                em.StartCoroutine(em.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
-                anim.SetBool(hashJumpDown, true);
-            }
-            actionPrevent[2] = true;
-        }
-        else
-            actionPrevent[2] = false;
-
         if ((defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask))) //check if player is too close to wall
         {
             anim.SetBool(hashClimbFail, true); //player failed wall climb
@@ -218,6 +223,53 @@ public class EnemyTrick : MonoBehaviour
             wcClipEnd = Time.time + 4f / wallClimbSpeed; //find when animation clip will end
             this.CallDelay(ToggleCC_OFF, 1f); //disable collider
             anim.SetBool(hashWallClimb, true);
+        } 
+
+        if (defaultMove && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
+            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively)
+        {
+            if (!actionPrevent[2] && gm.GetEnemyAction(enemyNum))
+            {
+                em.velocityZ = 12; //boost player forward
+                em.StartCoroutine(em.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
+                anim.SetBool(hashJumpDown, true);
+            }
+            actionPrevent[2] = true;
         }
+        else
+            actionPrevent[2] = false;
+        #endregion
+
+        #region PUNCHING
+        if (isPunching)
+            punchLayerWeight += Time.deltaTime * punchWeightSpeed; //transition to layer 2 (punch animation)
+
+        if (isPunching && !(punchLayerWeight > 1)) //check if out of bounds
+            anim.SetLayerWeight(2, punchLayerWeight); //correlate vars
+        else if (!isPunching && punchLayerWeight != 0)
+        {
+            punchLayerWeight = 0;
+            anim.SetLayerWeight(2, punchLayerWeight);
+            aimContraint.weight = 0;
+        } 
+        #endregion
+    }
+
+    public IEnumerator EnemyPunch()
+    {
+        aimContraint.weight = 1;
+        anim.SetBool(hashPunch, true);
+
+        Vector3 initialPos = transform.position;
+        float time = 0f;
+        while (time < punchDuration)
+        {
+            time += Time.deltaTime;
+            punchEndPosition.position = gm.player.transform.position;
+            transform.position = Vector3.Lerp(initialPos, punchEndPosition.position + punchOffset, time / punchDuration);
+            yield return null;
+        }
+        transform.position = punchEndPosition.position + punchOffset;
+        anim.SetBool(hashPunch, false);
     }
 }

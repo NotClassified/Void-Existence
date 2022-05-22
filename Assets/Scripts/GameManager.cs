@@ -7,16 +7,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Animations.Rigging;
 using System;
 
 public class GameManager : MonoBehaviour
 {
     public float timeScale = 100;
     #region PLAYERS
-    private GameObject player;
-    private GameObject enemy1;
-    private GameObject enemy2;
+    public GameObject player;
+    public GameObject enemy1;
+    public GameObject enemy2;
     public float initialSpeedPlayer;
     public float initialSpeedEnemy;
     [SerializeField]
@@ -29,12 +28,6 @@ public class GameManager : MonoBehaviour
     int actionIndex1;
     [SerializeField]
     int actionIndex2;
-    [SerializeField]
-    Transform punchEndPosition;
-    [SerializeField]
-    Vector3 punchOffset;
-    [SerializeField]
-    float punchDuration;
     #endregion
     #region ENVIRONMENT
     public GameObject prefWallMarker;
@@ -119,7 +112,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        print("needs works: 167");
         Time.timeScale = timeScale / 100;
         //if (mode == 0)
         //{
@@ -146,7 +138,6 @@ public class GameManager : MonoBehaviour
         else
             StartLevel();
 
-        punchEndPosition = enemy2.transform.Find("Punch End Position");
     }
     private void Update()
     {
@@ -172,29 +163,12 @@ public class GameManager : MonoBehaviour
         {
             gameover = true;
             //player.GetComponent<PlayerMovement>().ResetPlayer();
-            enemy2.transform.GetChild(0).GetChild(1).GetComponent<MultiAimConstraint>().weight = 1;
         }
-        punchEndPosition.position = player.transform.position + punchOffset;
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine("EnemyPunch");
+            StartCoroutine(enemy2.GetComponent<EnemyTrick>().EnemyPunch());
+            StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
         }
-    }
-
-    IEnumerator EnemyPunch()
-    {
-        print("start");
-        Vector3 initialPos = enemy2.transform.position;
-        float time = 0f;
-        while(time < punchDuration)
-        {
-            print(time / punchDuration);
-            time += Time.deltaTime;
-            enemy2.transform.position = Vector3.Lerp(initialPos, punchEndPosition.position, time / punchDuration);
-            yield return null;
-        }
-        enemy2.transform.position = punchEndPosition.position;
-        print("end");
     }
 
     #region TUTORIAL METHODS

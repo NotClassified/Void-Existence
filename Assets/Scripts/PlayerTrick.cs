@@ -70,6 +70,7 @@ public class PlayerTrick : MonoBehaviour
     private int hashClimbFail;
     private int hashClimbSpeed;
     private int hashLand;
+    private int hashPunched;
     #endregion
 
     public bool startMethodCalled = false;
@@ -85,6 +86,7 @@ public class PlayerTrick : MonoBehaviour
         hashClimbFail = Animator.StringToHash("Climb Fail");
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
+        hashPunched = Animator.StringToHash("Punched");
 
         startMethodCalled = true;
     }
@@ -276,8 +278,8 @@ public class PlayerTrick : MonoBehaviour
         anim.SetBool("IsGrounded", isGrounded); //correlate animation vars 
         #endregion
 
-
-        if (defaultMove && !pUI.GetFeedbackText().Equals("Perfect Climb!") && 
+        #region WALL CLIMB FAIL & AUTO JUMP
+        if (defaultMove && !pUI.GetFeedbackText().Equals("Perfect Climb!") &&
             Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
         {
             if (wcAlways && !autoWallClimb)
@@ -304,7 +306,7 @@ public class PlayerTrick : MonoBehaviour
             }
         }
 
-        if(jAlways && !autoJumped && defaultMove && pm.velocityZ > 5.9f &&
+        if (jAlways && !autoJumped && defaultMove && pm.velocityZ > 5.9f &&
             !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
             !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
@@ -317,7 +319,21 @@ public class PlayerTrick : MonoBehaviour
         //if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[10], wallMask))
         //{
         //    anim.SetBool(hashWallClimb, WallClimbCheck());
-        //}
+        //} 
+        #endregion
+
+    }
+
+    public IEnumerator PunchedByEnemy()
+    {
+        ToggleCC_OFF();
+        yield return new WaitForSeconds(.36f);
+        anim.SetBool(hashPunched, true);
+        EnemyTrick et_ = gm.enemy2.GetComponent<EnemyTrick>();
+        while (et_.isPunching == true)
+            yield return null;
+        anim.SetBool(hashPunched, false);
+
     }
 
     void DelayForAutoJump() => anim.SetBool("jumpDown", JumpDownCheck());

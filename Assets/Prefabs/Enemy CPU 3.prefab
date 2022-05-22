@@ -923,7 +923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0
+  m_Weight: 1
   m_Effectors: []
 --- !u!114 &953481844585275355
 MonoBehaviour:
@@ -1634,12 +1634,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   em: {fileID: 1574042207186186520}
+  aimContraint: {fileID: 953481844585275355}
   enemyNum: 0
   defaultMove: 1
   inAir: 0
   isJumping: 0
   isClimbing: 0
   isLanding: 0
+  isPunching: 0
   distances:
   - 0.1
   - 1
@@ -1669,6 +1671,10 @@ MonoBehaviour:
   jDecayBoost: 1.05
   wcClipEnd: 0
   reposDuration: 0.2
+  punchEndPosition: {fileID: 8003601167849451256}
+  punchOffset: {x: 0.39, y: 0, z: 0.73}
+  punchDuration: 0.36
+  punchWeightSpeed: 5
   startMethodCalled: 0
 --- !u!143 &8441202267673954534
 CharacterController:
