@@ -1673,7 +1673,8 @@ MonoBehaviour:
   reposDuration: 0.2
   punchEndPosition: {fileID: 8003601167849451256}
   punchOffset: {x: 0.39, y: 0, z: 0.73}
-  punchDuration: 0.36
+  punchDuration: 0.2
+  punchAimWeightDuration: 0.1667
   punchWeightSpeed: 5
   startMethodCalled: 0
 --- !u!143 &8441202267673954534

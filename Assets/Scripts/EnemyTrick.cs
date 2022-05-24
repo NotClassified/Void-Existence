@@ -67,6 +67,8 @@ public class EnemyTrick : MonoBehaviour
     Vector3 punchOffset;
     [SerializeField]
     float punchDuration;
+    [SerializeField]
+    float punchAimWeightDuration;
     float punchLayerWeight;
     [SerializeField]
     float punchWeightSpeed;
@@ -246,30 +248,49 @@ public class EnemyTrick : MonoBehaviour
 
         if (isPunching && !(punchLayerWeight > 1)) //check if out of bounds
             anim.SetLayerWeight(2, punchLayerWeight); //correlate vars
-        else if (!isPunching && punchLayerWeight != 0)
-        {
-            punchLayerWeight = 0;
-            anim.SetLayerWeight(2, punchLayerWeight);
-            aimContraint.weight = 0;
-        } 
+        //else if (!isPunching && punchLayerWeight != 0)
+        //{
+        //    punchLayerWeight = 0;
+        //    anim.SetLayerWeight(2, punchLayerWeight);
+        //    aimContraint.weight = 0;
+        //} 
         #endregion
     }
 
     public IEnumerator EnemyPunch()
     {
-        aimContraint.weight = 1;
         anim.SetBool(hashPunch, true);
+        float time = 0f;
+        Transform posPlayer = gm.player.transform;
+        while(time < punchAimWeightDuration)
+        {
+            time += Time.deltaTime;
+            punchEndPosition.position = posPlayer.position;
+            aimContraint.weight = Mathf.Lerp(0, 1, time / punchAimWeightDuration);
+            yield return null;
+        }
+        aimContraint.weight = 1;
 
         Vector3 initialPos = transform.position;
-        float time = 0f;
+        time = 0;
         while (time < punchDuration)
         {
             time += Time.deltaTime;
-            punchEndPosition.position = gm.player.transform.position;
+            punchEndPosition.position = posPlayer.position;
             transform.position = Vector3.Lerp(initialPos, punchEndPosition.position + punchOffset, time / punchDuration);
             yield return null;
         }
         transform.position = punchEndPosition.position + punchOffset;
+
+        time = 0;
+        while(time < punchAimWeightDuration)
+        {
+            time += Time.deltaTime;
+            aimContraint.weight = Mathf.Lerp(1, 0, time / punchAimWeightDuration);
+            yield return null;
+        }
+        aimContraint.weight = 0;
+
         anim.SetBool(hashPunch, false);
     }
 }

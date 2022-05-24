@@ -19,6 +19,7 @@ public class PlayerTrick : MonoBehaviour
     public bool isJumping;
     public bool isClimbing;
     public bool isLanding = false;
+    public bool isPunched;
     #endregion
     #region RAYCAST
     RaycastHit[] hits;
@@ -71,6 +72,13 @@ public class PlayerTrick : MonoBehaviour
     private int hashClimbSpeed;
     private int hashLand;
     private int hashPunched;
+    #endregion
+    #region PUNCHED
+    [SerializeField]
+    float punchedReaction;
+    [SerializeField]
+    float punchedWeightSpeed;
+    float punchedLayerWeight;
     #endregion
 
     public bool startMethodCalled = false;
@@ -203,6 +211,7 @@ public class PlayerTrick : MonoBehaviour
         isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims
         isLanding = AnimCheck(0, "Land1") || AnimCheck(0, "Land2"); //check if landing
         defaultMove = !(isJumping || isClimbing || isLanding || AnimCheck(0, "Exit")); //false if player is any of these states
+        isPunched = AnimCheck(3, "Punched"); //check if being punched by enemy
 
 
         raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3];
@@ -322,12 +331,20 @@ public class PlayerTrick : MonoBehaviour
         //} 
         #endregion
 
+
+        #region PUNCHING
+        if (isPunched)
+            punchedLayerWeight += Time.deltaTime * punchedWeightSpeed; //transition to layer 3 (punched by enemy animation)
+
+        if (isPunched && !(punchedLayerWeight > 1)) //check if out of bounds
+            anim.SetLayerWeight(3, punchedLayerWeight); //correlate vars
+        #endregion
     }
 
     public IEnumerator PunchedByEnemy()
     {
         ToggleCC_OFF();
-        yield return new WaitForSeconds(.36f);
+        yield return new WaitForSeconds(punchedReaction);
         anim.SetBool(hashPunched, true);
         EnemyTrick et_ = gm.enemy2.GetComponent<EnemyTrick>();
         while (et_.isPunching == true)
