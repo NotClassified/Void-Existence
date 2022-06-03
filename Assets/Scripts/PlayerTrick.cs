@@ -210,8 +210,13 @@ public class PlayerTrick : MonoBehaviour
         isJumping = !AnimCheck(1, "Empty"); //check jumping anims
         isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims
         isLanding = AnimCheck(0, "Land1") || AnimCheck(0, "Land2"); //check if landing
-        defaultMove = !(isJumping || isClimbing || isLanding || AnimCheck(0, "Exit")); //false if player is any of these states
         isPunched = AnimCheck(3, "Punched"); //check if being punched by enemy
+        defaultMove = !(isJumping || isClimbing || isLanding || AnimCheck(0, "Exit")); //false if player is any of these states
+
+        if (AnimCheck(0, "Exit"))
+            anim.SetBool("Exit", true);
+        else if (anim.GetBool("Exit"))
+            anim.SetBool("Exit", false);
 
 
         raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3];
@@ -342,7 +347,7 @@ public class PlayerTrick : MonoBehaviour
         {
             //correlate vars:
             punchedLayerWeight = 0;
-            anim.SetLayerWeight(2, punchedLayerWeight);
+            anim.SetLayerWeight(3, punchedLayerWeight);
         }
         #endregion
 

@@ -267,7 +267,7 @@ public class PlayerMovement : MonoBehaviour
         animator.Play("Exit", 0);
         StopCoroutine(gm.LastCountWaitForLand()); //if player doesn't jump far enough don't let player finish tutorial
 
-        animator.SetLayerWeight(3, 0); //reset punched layer
+        //animator.SetLayerWeight(3, 0); //reset punched layer
 
         pt.attemptedClimb = false; //let player be able to climb again
         pt.attemptedLand = false; //let player be able to land again

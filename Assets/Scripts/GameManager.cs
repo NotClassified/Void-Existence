@@ -162,11 +162,12 @@ public class GameManager : MonoBehaviour
         if (enemy2 != null && !gameover && enemy2.transform.position.z + 2 < player.transform.position.z) //checking if enemy caught up to player
         {
             gameover = true;
-            //player.GetComponent<PlayerMovement>().ResetPlayer();
+            enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
+            StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine(enemy2.GetComponent<EnemyTrick>().EnemyPunch());
+            enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
             StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
         }
     }
