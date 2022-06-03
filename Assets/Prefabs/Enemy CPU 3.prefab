@@ -1586,6 +1586,7 @@ MonoBehaviour:
   isJumping: 0
   isClimbing: 0
   isLanding: 0
+  isPunched: 0
   distances:
   - 0.1
   - 1
@@ -1620,6 +1621,8 @@ MonoBehaviour:
   attemptedClimb: 0
   wcAlways: 0
   reposDuration: 0.2
+  punchedReaction: 0
+  punchedWeightSpeed: 0
   startMethodCalled: 0
 --- !u!114 &5221502641683217113
 MonoBehaviour:
@@ -1672,7 +1675,7 @@ MonoBehaviour:
   wcClipEnd: 0
   reposDuration: 0.2
   punchEndPosition: {fileID: 8003601167849451256}
-  punchOffset: {x: 0.39, y: 0, z: 0.73}
+  punchOffset: {x: 0.48, y: 0, z: 0.27}
   punchDuration: 0.2
   punchAimWeightDuration: 0.1667
   punchWeightSpeed: 5

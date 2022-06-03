@@ -384,6 +384,7 @@ public class GameManager : MonoBehaviour
             player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
 
             gameover = false;
+            Time.timeScale = timeScale / 100;
             //UsefulShortcuts.ClearConsole();
         }
     }

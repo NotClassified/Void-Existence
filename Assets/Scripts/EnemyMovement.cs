@@ -188,5 +188,8 @@ public class EnemyMovement : MonoBehaviour
         }
         animator.Play("Exit", 0);
         fallvelocity.y = 0f;
+
+        StopCoroutine(et.EnemyPunch());
+        animator.SetLayerWeight(2, 0);
     }
 }

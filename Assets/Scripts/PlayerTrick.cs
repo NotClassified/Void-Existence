@@ -338,20 +338,35 @@ public class PlayerTrick : MonoBehaviour
 
         if (isPunched && !(punchedLayerWeight > 1)) //check if out of bounds
             anim.SetLayerWeight(3, punchedLayerWeight); //correlate vars
+        else if (!isPunched) //not in punched animation
+        {
+            //correlate vars:
+            punchedLayerWeight = 0;
+            anim.SetLayerWeight(2, punchedLayerWeight);
+        }
         #endregion
+
     }
 
     public IEnumerator PunchedByEnemy()
     {
-        ToggleCC_OFF();
-        yield return new WaitForSeconds(punchedReaction);
-        anim.SetBool(hashPunched, true);
-        EnemyTrick et_ = gm.enemy2.GetComponent<EnemyTrick>();
-        while (et_.isPunching == true)
-            yield return null;
-        anim.SetBool(hashPunched, false);
+        ToggleCC_OFF(); //prevent enemy collision
+        anim.SetBool(hashPunched, true); //start punched anaimation
+        yield return new WaitForEndOfFrame();
+        anim.SetBool(hashPunched, false); //prevent loop
 
     }
+    //public IEnumerator PunchedByEnemy()
+    //{
+    //    ToggleCC_OFF();
+    //    yield return new WaitForSeconds(punchedReaction);
+    //    anim.SetBool(hashPunched, true);
+    //    EnemyTrick et_ = gm.enemy2.GetComponent<EnemyTrick>();
+    //    while (et_.isPunching == true)
+    //        yield return null;
+    //    anim.SetBool(hashPunched, false);
+
+    //}
 
     void DelayForAutoJump() => anim.SetBool("jumpDown", JumpDownCheck());
 }

@@ -142,8 +142,8 @@ public class EnemyTrick : MonoBehaviour
         isJumping = !AnimCheck(1, "Empty"); //check jumping anims
         isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims
         isLanding = AnimCheck(0, "Land1") || AnimCheck(0, "Land2"); //check if landing
-        defaultMove = !(isJumping || isClimbing || isLanding);
         isPunching = AnimCheck(2, "Punch");
+        defaultMove = !(isJumping || isClimbing || isLanding || isPunching);
 
 
         raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3];
@@ -160,7 +160,7 @@ public class EnemyTrick : MonoBehaviour
         distances[5] = distances[4] + ldInputGap; //distance for landing input by player
 
         raypos[0] = transform.position + Vector3.up * distances[0] + -transform.right * distances[2]; //raycast position for checking if player is grounded
-        if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[0], groundMask)) //check if player is in air (not grounded)
+        if ((defaultMove || isJumping) && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[0], groundMask)) //check if player is in air (not grounded)
         {
             isGrounded = false;
 
@@ -245,9 +245,17 @@ public class EnemyTrick : MonoBehaviour
         #region PUNCHING
         if (isPunching)
             punchLayerWeight += Time.deltaTime * punchWeightSpeed; //transition to layer 2 (punch animation)
+        else
+            aimContraint.weight = 0;
 
         if (isPunching && !(punchLayerWeight > 1)) //check if out of bounds
             anim.SetLayerWeight(2, punchLayerWeight); //correlate vars
+        else if (!isPunching) //not in punch animation
+        {
+            //correlate vars:
+            punchLayerWeight = 0;
+            anim.SetLayerWeight(2, punchLayerWeight); 
+        }
         //else if (!isPunching && punchLayerWeight != 0)
         //{
         //    punchLayerWeight = 0;
@@ -282,8 +290,11 @@ public class EnemyTrick : MonoBehaviour
         }
         transform.position = punchEndPosition.position + punchOffset;
 
+
+        //Time.timeScale = 0.01f;
+
         time = 0;
-        while(time < punchAimWeightDuration)
+        while (time < punchAimWeightDuration)
         {
             time += Time.deltaTime;
             aimContraint.weight = Mathf.Lerp(1, 0, time / punchAimWeightDuration);
