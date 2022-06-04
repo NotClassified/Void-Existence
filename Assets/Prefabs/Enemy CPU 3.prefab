@@ -923,7 +923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Effectors: []
 --- !u!114 &953481844585275355
 MonoBehaviour:
@@ -937,14 +937,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Data:
     m_ConstrainedObject: {fileID: 7670127871357108089}
     m_SourceObjects:
       m_Length: 1
       m_Item0:
-        transform: {fileID: 8003601167849451256}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
       m_Item1:
         transform: {fileID: 0}
         weight: 0.3
@@ -1637,7 +1637,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   em: {fileID: 1574042207186186520}
-  aimContraint: {fileID: 953481844585275355}
   enemyNum: 0
   defaultMove: 1
   inAir: 0

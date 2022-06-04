@@ -11,8 +11,8 @@ public class EnemyTrick : MonoBehaviour
     private GameManager gm;
     [SerializeField]
     private EnemyMovement em;
-    [SerializeField]
-    MultiAimConstraint aimContraint;
+    //[SerializeField]
+    //MultiAimConstraint aimContraint;
     public int enemyNum;
     #endregion
     #region ANIMATION BOOLEANS
@@ -73,6 +73,7 @@ public class EnemyTrick : MonoBehaviour
     float punchLayerWeight;
     [SerializeField]
     float punchWeightSpeed;
+    private bool rotationLockOnPlayer;
     #endregion
     #region HASHES
     private int hashFall;
@@ -100,6 +101,8 @@ public class EnemyTrick : MonoBehaviour
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
         hashPunch = Animator.StringToHash("Punch");
+
+        //aimContraint.data.sourceObjects.SetTransform(0, null);
 
         startMethodCalled = true;
     }
@@ -201,7 +204,6 @@ public class EnemyTrick : MonoBehaviour
         {
             if (!actionPrevent[1] && gm.GetEnemyAction(enemyNum))
             {
-                print("01");
                 anim.SetBool(hashClimbFail, false); //player succeeded wall climb
                 float wallClimbSpeed = (em.velocityZ - 6) / 10 + 1;
                 anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
@@ -254,9 +256,11 @@ public class EnemyTrick : MonoBehaviour
         #region PUNCHING
         if (isPunching)
             punchLayerWeight += Time.deltaTime * punchWeightSpeed; //transition to layer 2 (punch animation)
-
         if (isPunching && !(punchLayerWeight > 1)) //check if out of bounds
             anim.SetLayerWeight(2, punchLayerWeight); //correlate vars
+
+        if (rotationLockOnPlayer)
+            transform.rotation = Quaternion.LookRotation(punchEndPosition.position - transform.position, transform.up);
         //else if (!isPunching) //not in punch animation
         //{
         //    //correlate vars:
@@ -279,18 +283,34 @@ public class EnemyTrick : MonoBehaviour
         anim.SetBool(hashPunch, true);
         yield return new WaitForEndOfFrame();
         anim.SetBool(hashPunch, false);
+
+        //aimContraint.data.sourceObjects.SetTransform(0, punchEndPosition);
+
+        //while (time < punchAimWeightDuration)
+        //{
+        //    time += Time.deltaTime;
+        //    punchEndPosition.position = posPlayer.position;
+        //    aimContraint.weight = Mathf.Lerp(0, 1, time / punchAimWeightDuration);
+        //    yield return null;
+        //}
+        //aimContraint.weight = 1;
+
         float time = 0f;
+        Vector3 initialPos = transform.position;
+        Quaternion initialRotation = transform.rotation;
+        Quaternion endRotation;
         Transform posPlayer = gm.player.transform;
         while (time < punchAimWeightDuration)
         {
             time += Time.deltaTime;
             punchEndPosition.position = posPlayer.position;
-            aimContraint.weight = Mathf.Lerp(0, 1, time / punchAimWeightDuration);
+            endRotation = Quaternion.LookRotation(punchEndPosition.position - initialPos, transform.up);
+            transform.rotation = Quaternion.Lerp(initialRotation, endRotation, time / punchAimWeightDuration);
             yield return null;
         }
-        aimContraint.weight = 1;
+        rotationLockOnPlayer = true;
 
-        Vector3 initialPos = transform.position;
+        /*Vector3 */initialPos = transform.position;
         time = 0;
         while (time < punchDuration)
         {
@@ -303,15 +323,26 @@ public class EnemyTrick : MonoBehaviour
 
         //Time.timeScale = 0.01f; //for seeing if offset is correct
 
-        time = 0;
+        rotationLockOnPlayer = false;
+        time = 0f;
+        Quaternion presentRotation = transform.rotation;
         while (time < punchAimWeightDuration)
         {
             time += Time.deltaTime;
-            aimContraint.weight = Mathf.Lerp(1, 0, time / punchAimWeightDuration);
+            transform.rotation = Quaternion.Lerp(presentRotation, initialRotation, time / punchAimWeightDuration);
             yield return null;
         }
-        aimContraint.weight = 0;
 
+        //time = 0;
+        //while (time < punchAimWeightDuration)
+        //{
+        //    time += Time.deltaTime;
+        //    aimContraint.weight = Mathf.Lerp(1, 0, time / punchAimWeightDuration);
+        //    yield return null;
+        //}
+        //aimContraint.weight = 0;
+
+        //aimContraint.data.sourceObjects.SetTransform(0, null);
     }
 
     public void StartEnemyPunchRoutine() => enemyPunchRoutine = StartCoroutine(EnemyPunch());
@@ -321,7 +352,7 @@ public class EnemyTrick : MonoBehaviour
         if (enemyPunchRoutine != null)
         {
             StopCoroutine(enemyPunchRoutine);
-            aimContraint.weight = 0;
+            //aimContraint.weight = 0;
             punchLayerWeight = 0;
             anim.SetLayerWeight(2, punchLayerWeight);
         }
