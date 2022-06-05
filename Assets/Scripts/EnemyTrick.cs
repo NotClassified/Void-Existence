@@ -14,9 +14,7 @@ public class EnemyTrick : MonoBehaviour
     [SerializeField]
     MultiAimConstraint aimContraint;
     [SerializeField]
-    GameObject rigPunch;
-    [SerializeField]
-    Transform rootBone;
+    RigBuilder rigPunch;
     public int enemyNum;
     #endregion
     #region ANIMATION BOOLEANS
@@ -105,8 +103,6 @@ public class EnemyTrick : MonoBehaviour
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
         hashPunch = Animator.StringToHash("Punch");
-
-        //aimContraint.data.sourceObjects.SetTransform(0, null);
 
         startMethodCalled = true;
     }
@@ -284,11 +280,7 @@ public class EnemyTrick : MonoBehaviour
     #region PUNCHING METHODS
     public IEnumerator EnemyPunch()
     {
-        //aimContraint = rigPunch.AddComponent<MultiAimConstraint>();
-        //aimContraint.runInEditMode = true;
-        //aimContraint.data.sourceObjects.Add(new WeightedTransform(punchEndPosition, 1));
-        aimContraint.data.constrainedObject = rootBone;
-
+        rigPunch.enabled = true;
         anim.SetBool(hashPunch, true);
         yield return new WaitForEndOfFrame();
         anim.SetBool(hashPunch, false);
@@ -351,7 +343,7 @@ public class EnemyTrick : MonoBehaviour
             yield return null;
         }
         aimContraint.weight = 0;
-        aimContraint.data.constrainedObject = null;
+        rigPunch.enabled = false;
     }
 
     public void StartEnemyPunchRoutine() => enemyPunchRoutine = StartCoroutine(EnemyPunch());

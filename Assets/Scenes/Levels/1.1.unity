@@ -1799,7 +1799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d02c40280d9e82841aa72e051ff6b588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeScale: 30
+  timeScale: 100
   player: {fileID: 0}
   enemy1: {fileID: 0}
   enemy2: {fileID: 0}
