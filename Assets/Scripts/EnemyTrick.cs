@@ -11,8 +11,12 @@ public class EnemyTrick : MonoBehaviour
     private GameManager gm;
     [SerializeField]
     private EnemyMovement em;
-    //[SerializeField]
-    //MultiAimConstraint aimContraint;
+    [SerializeField]
+    MultiAimConstraint aimContraint;
+    [SerializeField]
+    GameObject rigPunch;
+    [SerializeField]
+    Transform rootBone;
     public int enemyNum;
     #endregion
     #region ANIMATION BOOLEANS
@@ -280,37 +284,43 @@ public class EnemyTrick : MonoBehaviour
     #region PUNCHING METHODS
     public IEnumerator EnemyPunch()
     {
+        //aimContraint = rigPunch.AddComponent<MultiAimConstraint>();
+        //aimContraint.runInEditMode = true;
+        //aimContraint.data.sourceObjects.Add(new WeightedTransform(punchEndPosition, 1));
+        aimContraint.data.constrainedObject = rootBone;
+
         anim.SetBool(hashPunch, true);
         yield return new WaitForEndOfFrame();
         anim.SetBool(hashPunch, false);
 
-        //aimContraint.data.sourceObjects.SetTransform(0, punchEndPosition);
-
-        //while (time < punchAimWeightDuration)
-        //{
-        //    time += Time.deltaTime;
-        //    punchEndPosition.position = posPlayer.position;
-        //    aimContraint.weight = Mathf.Lerp(0, 1, time / punchAimWeightDuration);
-        //    yield return null;
-        //}
-        //aimContraint.weight = 1;
 
         float time = 0f;
-        Vector3 initialPos = transform.position;
-        Quaternion initialRotation = transform.rotation;
-        Quaternion endRotation;
         Transform posPlayer = gm.player.transform;
         while (time < punchAimWeightDuration)
         {
             time += Time.deltaTime;
             punchEndPosition.position = posPlayer.position;
-            endRotation = Quaternion.LookRotation(punchEndPosition.position - initialPos, transform.up);
-            transform.rotation = Quaternion.Lerp(initialRotation, endRotation, time / punchAimWeightDuration);
+            aimContraint.weight = Mathf.Lerp(0, 1, time / punchAimWeightDuration);
             yield return null;
         }
-        rotationLockOnPlayer = true;
+        aimContraint.weight = 1;
 
-        /*Vector3 */initialPos = transform.position;
+        //float time = 0f;
+        //Vector3 initialPos = transform.position;
+        //Quaternion initialRotation = transform.rotation;
+        //Quaternion endRotation;
+        //Transform posPlayer = gm.player.transform;
+        //while (time < punchAimWeightDuration)
+        //{
+        //    time += Time.deltaTime;
+        //    punchEndPosition.position = posPlayer.position;
+        //    endRotation = Quaternion.LookRotation(punchEndPosition.position - initialPos, transform.up);
+        //    transform.rotation = Quaternion.Lerp(initialRotation, endRotation, time / punchAimWeightDuration);
+        //    yield return null;
+        //}
+        //rotationLockOnPlayer = true;
+
+        Vector3 initialPos = transform.position;
         time = 0;
         while (time < punchDuration)
         {
@@ -323,26 +333,25 @@ public class EnemyTrick : MonoBehaviour
 
         //Time.timeScale = 0.01f; //for seeing if offset is correct
 
-        rotationLockOnPlayer = false;
-        time = 0f;
-        Quaternion presentRotation = transform.rotation;
-        while (time < punchAimWeightDuration)
-        {
-            time += Time.deltaTime;
-            transform.rotation = Quaternion.Lerp(presentRotation, initialRotation, time / punchAimWeightDuration);
-            yield return null;
-        }
-
-        //time = 0;
+        //rotationLockOnPlayer = false;
+        //time = 0f;
+        //Quaternion presentRotation = transform.rotation;
         //while (time < punchAimWeightDuration)
         //{
         //    time += Time.deltaTime;
-        //    aimContraint.weight = Mathf.Lerp(1, 0, time / punchAimWeightDuration);
+        //    transform.rotation = Quaternion.Lerp(presentRotation, initialRotation, time / punchAimWeightDuration);
         //    yield return null;
         //}
-        //aimContraint.weight = 0;
 
-        //aimContraint.data.sourceObjects.SetTransform(0, null);
+        time = 0;
+        while (time < punchAimWeightDuration)
+        {
+            time += Time.deltaTime;
+            aimContraint.weight = Mathf.Lerp(1, 0, time / punchAimWeightDuration);
+            yield return null;
+        }
+        aimContraint.weight = 0;
+        aimContraint.data.constrainedObject = null;
     }
 
     public void StartEnemyPunchRoutine() => enemyPunchRoutine = StartCoroutine(EnemyPunch());
