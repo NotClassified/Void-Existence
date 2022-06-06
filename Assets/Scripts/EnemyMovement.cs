@@ -101,7 +101,6 @@ public class EnemyMovement : MonoBehaviour
         #region WALL CLIMB
         if (et.isClimbing && Time.time > et.wcClipEnd && animator.GetBool(hashWallClimb)) //checking if climbing animation has ended
         {
-            print("00");
             transform.position = rootBone.transform.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
             et.ToggleCC_ON(); //enable collider

@@ -159,12 +159,12 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             ResetGame();
 
-        if (enemy2 != null && !gameover && enemy2.transform.position.z + 2 < player.transform.position.z) //checking if enemy caught up to player
-        {
-            gameover = true;
-            enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
-            StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
-        }
+        //if (enemy2 != null && !gameover && enemy2.transform.position.z + 2 < player.transform.position.z) //checking if enemy caught up to player
+        //{
+        //    gameover = true;
+        //    enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
+        //    StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
+        //}
         if (Input.GetKeyDown(KeyCode.Space))
         {
             enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
@@ -389,6 +389,12 @@ public class GameManager : MonoBehaviour
             //UsefulShortcuts.ClearConsole();
         }
     }
+
+    public void GameOver()
+    {
+        gameover = true;
+    }
+    public bool IsGameOver() => gameover;
 
     private void ResetGame() => SceneManager.LoadScene(0);
 }
