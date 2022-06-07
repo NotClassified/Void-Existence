@@ -219,7 +219,7 @@ public class EnemyTrick : MonoBehaviour
         else
             actionPrevent[1] = false;
 
-        if ((defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask))) //check if enemy is too close to wall
+        if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if enemy is too close to wall
         {
             anim.SetBool(hashClimbFail, true); //player failed wall climb
             float wallClimbSpeed = (em.velocityZ - 6) / 10 + 1;
@@ -235,10 +235,11 @@ public class EnemyTrick : MonoBehaviour
             wcClipEnd = Time.time + 4f / wallClimbSpeed; //find when animation clip will end
             this.CallDelay(ToggleCC_OFF, 1f); //disable collider
             anim.SetBool(hashWallClimb, true);
-        } 
+        }
 
+        //check if enemy is by an edge to jump off of and not in front of a wall (by raycasts respectively)
         if (defaultMove && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
-            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if enemy is by an edge to jump off of and not in front of a wall (by raycasts respectively)
+            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
             if (!actionPrevent[2] && gm.GetEnemyAction(enemyNum))
             {
@@ -256,8 +257,7 @@ public class EnemyTrick : MonoBehaviour
         if(!isPunching && transform.position.z + 2 < gm.player.transform.position.z && !gm.IsGameOver()) //checking if enemy caught up to player
         {
             gm.GameOver();
-            StartCoroutine(EnemyPunch());
-            StartCoroutine(gm.player.GetComponent<PlayerTrick>().PunchedByEnemy());
+            StartCoroutine(WaitForPlayerPunch(gm.player));
         }
         if (isPunching)
         {
@@ -272,6 +272,28 @@ public class EnemyTrick : MonoBehaviour
         #endregion
     }
 
+    IEnumerator WaitForPlayerPunch(GameObject player_)
+    {
+        //wait until enemy isn't close to wall and isn't by edge and in default animation state
+        while (!defaultMove || !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) ||
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+            yield return null;
+
+        if (transform.position.z < player_.transform.position.z) //if enemy is too ahead of player
+        {
+            anim.SetBool("Stop", true); //stop enemy to wait for player
+            while (transform.position.z < player_.transform.position.z)
+                yield return null;
+            StartCoroutine(EnemyPunch());
+            StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
+        }
+        else //punch player
+        {
+            StartCoroutine(EnemyPunch());
+            StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
+        }
+
+    }
 
     #region PUNCHING METHODS
     public IEnumerator EnemyPunch()
@@ -320,19 +342,19 @@ public class EnemyTrick : MonoBehaviour
         aimContraint.weight = 0;
 
         rigPunch.enabled = false; //prevent the aim constraint from affecting other aimations
-
     }
 
     public void StartEnemyPunchRoutine() => enemyPunchRoutine = StartCoroutine(EnemyPunch());
 
     public void StopEnemyPunchRoutine()
     {
+        aimContraint.weight = 0;
+        punchLayerWeight = 0;
+
+        anim.SetLayerWeight(2, punchLayerWeight);
         if (enemyPunchRoutine != null)
         {
             StopCoroutine(enemyPunchRoutine);
-            aimContraint.weight = 0;
-            punchLayerWeight = 0;
-            anim.SetLayerWeight(2, punchLayerWeight);
         }
     }
 
