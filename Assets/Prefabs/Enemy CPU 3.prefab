@@ -1657,6 +1657,7 @@ MonoBehaviour:
   - 3
   - 1.88
   - 5
+  - 6.5
   groundMask:
     serializedVersion: 2
     m_Bits: 64

@@ -165,11 +165,11 @@ public class GameManager : MonoBehaviour
         //    enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
         //    StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
         //}
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
-            StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
+        //    StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
+        //}
     }
 
     #region TUTORIAL METHODS

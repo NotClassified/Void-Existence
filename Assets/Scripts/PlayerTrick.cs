@@ -224,9 +224,9 @@ public class PlayerTrick : MonoBehaviour
         //Debug.DrawLine(raypos[2], raypos[2] + Vector3.back * distances[7], Color.cyan);
         //Debug.DrawLine(raypos[2] + Vector3.up * .1f, raypos[2] + Vector3.back * distances[8] + Vector3.up * .1f, Color.red);
         Vector3 visualOffset = new Vector3(0, 0, -.1f);
-        Debug.DrawLine(raypos[0] + visualOffset, raypos[0] + Vector3.down * distances[5] + visualOffset, Color.cyan);
-        Debug.DrawLine(raypos[0], raypos[0] + Vector3.down * distances[4], Color.red);
-        Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f);
+        //Debug.DrawLine(raypos[0] + visualOffset, raypos[0] + Vector3.down * distances[5] + visualOffset, Color.cyan);
+        //Debug.DrawLine(raypos[0], raypos[0] + Vector3.down * distances[4], Color.red);
+        //Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f);
 
         #region LANDING, FALLING, AND GROUNDCHECK
 
@@ -338,17 +338,23 @@ public class PlayerTrick : MonoBehaviour
 
 
         #region PUNCHING
+
         if (isPunched)
+        {
             punchedLayerWeight += Time.deltaTime * punchedWeightSpeed; //transition to layer 3 (punched by enemy animation)
 
-        if (isPunched && !(punchedLayerWeight > 1)) //check if out of bounds
-            anim.SetLayerWeight(3, punchedLayerWeight); //correlate vars
-        else if (!isPunched) //not in punched animation
+            if (!(punchedLayerWeight > 1)) //check if out of bounds
+                anim.SetLayerWeight(3, punchedLayerWeight); //correlate vars
+            else //if over 1, then equal 1
+                anim.SetLayerWeight(3, 1); //correlate vars
+        }
+        else //not in punched animation
         {
-            //correlate vars:
+            //CORRELATE VARS:
             punchedLayerWeight = 0;
             anim.SetLayerWeight(3, punchedLayerWeight);
         }
+
         #endregion
 
     }
