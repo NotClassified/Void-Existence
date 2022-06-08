@@ -202,9 +202,9 @@ public class EnemyTrick : MonoBehaviour
         #endregion
 
         #region WALL CLIMBING & JUMPING
-        if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if enemy is in front of a wall
+        if (defaultMove && !isPunching && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if enemy is in front of a wall
         {
-            if (!actionPrevent[1] && gm.GetEnemyAction(enemyNum))
+            if (!actionPrevent[1] && gm.GetEnemyAction(enemyNum)) //check if enemy should wall climb
             {
                 anim.SetBool(hashClimbFail, false); //player succeeded wall climb
                 float wallClimbSpeed = (em.velocityZ - 6) / 10 + 1;
@@ -217,12 +217,12 @@ public class EnemyTrick : MonoBehaviour
                 anim.SetBool(hashWallClimb, true);
             }
             else
-                actionPrevent[1] = true;
+                actionPrevent[1] = true; //prevent wall climb
         }
         else
-            actionPrevent[1] = false;
+            actionPrevent[1] = false; //after wall climb or until enemy can't wall climb (default value)
 
-        if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if enemy is too close to wall
+        if (defaultMove && !isPunching && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if enemy is too close to wall
         {
             anim.SetBool(hashClimbFail, true); //player failed wall climb
             float wallClimbSpeed = (em.velocityZ - 6) / 10 + 1;
@@ -241,25 +241,24 @@ public class EnemyTrick : MonoBehaviour
         }
 
         //check if enemy is by an edge to jump off of and not in front of a wall (by raycasts respectively)
-        if (defaultMove && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
+        if (defaultMove && !isPunching && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
             !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
-            if (!actionPrevent[2] && gm.GetEnemyAction(enemyNum))
+            if (!actionPrevent[2] && gm.GetEnemyAction(enemyNum)) //check if enemy should jump
             {
                 em.velocityZ = 12; //boost player forward
                 em.StartCoroutine(em.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
                 anim.SetBool(hashJumpDown, true);
             }
-            actionPrevent[2] = true;
+            actionPrevent[2] = true; //prevent jump
         }
         else
-            actionPrevent[2] = false;
+            actionPrevent[2] = false; //after jump or until enemy can't jump (default value)
         #endregion
 
         #region PUNCHING
-        if(!isPunching && transform.position.z + 2 < gm.player.transform.position.z && !gm.IsGameOver()) //checking if enemy caught up to player
+        if (!isPunching && transform.position.z + 2 < gm.player.transform.position.z && !gm.IsGameOver()) //checking if enemy caught up to player
         {
-            print("gg");
             gm.GameOver();
             enemyWaitForPlayerPunchRoutine = StartCoroutine(WaitForPlayerPunch(gm.player));
         }
@@ -288,26 +287,26 @@ public class EnemyTrick : MonoBehaviour
         while (!defaultMove || !Physics.Raycast(raypos[3], Vector3.down, out hits[1], distances[1], groundMask) ||
             Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
-            print("waiting for spot");
+            //print("waiting for spot");
             yield return null;
         }
-        print("ready to punch");
-
-        if (transform.position.z < player_.transform.position.z) //if enemy is too ahead of player
+        //print("ready to punch");
+        //if enemy is too ahead of player or if player isn't in default animation state
+        if (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
         {
-            print("stop");
+            //print("stop");
             anim.SetBool("Stop", true); //stop enemy to wait for player
             yield return new WaitForEndOfFrame();
             anim.SetBool("Stop", false); //prevent loop
 
-            while (transform.position.z < player_.transform.position.z)
+            while (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
                 yield return null;
             enemyPunchRoutine = StartCoroutine(EnemyPunch());
             StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
         }
         else //punch player
         {
-            print("no stop");
+            //print("no stop");
             enemyPunchRoutine = StartCoroutine(EnemyPunch());
             StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
         }

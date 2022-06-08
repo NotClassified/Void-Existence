@@ -18,6 +18,7 @@ public class PlayerTrick : MonoBehaviour
     public bool inAir;
     public bool isJumping;
     public bool isClimbing;
+    public bool isClimbingFail;
     public bool isLanding = false;
     public bool isPunched;
     #endregion
@@ -113,16 +114,18 @@ public class PlayerTrick : MonoBehaviour
         if (gm.numTutorial == 0) //check if playing landing tutorial
             return false; //don't jump during landing tutorial
 
+        //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively)
         if (!attemptedJump && (defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f &&
             !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
-            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively)
+            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
             pm.StartCoroutine(pm.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
             if (gm.numTutorial == 2) //if player is in tutorial for jumping, increase counter
                 gm.IncreaseCounter();
             return true;
         }
-        else if(defaultMove && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) //check if player is not in front of a wall
+        //check if player is not in front of a wall
+        else if (defaultMove && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) 
         {
             attemptedJump = true; //prevent repressing key
             if (pm.velocityZ < 6f) //check if player is below speed limit for jumping
@@ -142,17 +145,22 @@ public class PlayerTrick : MonoBehaviour
     #region WALL CLIMBING METHODS
     public bool WallClimbCheck()
     {
-        if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if player is in front of a wall and hasn't tried to climb yet
+        //check if player hasn't tried to climb yet and is in front of a wall
+        if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
+            pUI.TextFeedback("Perfect Climb!", 3);
             anim.SetBool(hashClimbFail, false); //player succeeded wall climb
+
             float wallClimbSpeed = (pm.velocityZ - 6) / 10 + 1;
             anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
+
             string num = hits[2].transform.name.Substring(4); //get the correct wall number
             StartCoroutine(WCRepos(hits[2].transform.GetChild(0))); //gradually reposition player for wall climb animation
             wcClipEnd = Time.time + 2.666667f / wallClimbSpeed; //find when animation clip will end
+
             this.CallDelay(ToggleCC_ON, 1f); //disable collider
             pm.velocityZ = 9; //set forward speed of player
-            pUI.TextFeedback("Perfect Climb!", 3);
+
             if (gm.numTutorial == 1) //if player is in tutorial for wall climbing, increase counter
                 gm.IncreaseCounter();
             return true; //play animation
@@ -293,30 +301,18 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
         #region WALL CLIMB FAIL & AUTO JUMP
-        if (defaultMove && !pUI.GetFeedbackText().Equals("Perfect Climb!") &&
-            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
+        if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
         {
             if (wcAlways && !autoWallClimb)
             {
                 anim.SetBool(hashWallClimb, WallClimbCheck());
                 autoWallClimb = true;
             }
-            else
+            else if(!isClimbingFail)
             {
-                anim.SetBool(hashClimbFail, true); //player failed wall climb
-                float wallClimbSpeed = 1.3f;
-                anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
-                string num = hits[2].transform.name.Substring(4); //get the correct wall number
-                transform.position = hits[2].transform.GetChild(0).position; //reposition player for wall climb animation
-                wcClipEnd = Time.time + 4f / wallClimbSpeed; //find when animation clip will end
-                this.CallDelay(ToggleCC_OFF, 1f); //disable collider
-                anim.SetBool(hashWallClimb, true);
-                if (pm.velocityZ < 6f) //check if player is below speed limit for climbing
-                    pUI.TextFeedback("Not Enough Speed To Climb", 4);
-                else if (!attemptedClimb) //check if player didn't do anything or pressed key too late
-                {
-                    pUI.TextFeedback("Too Late To Climb", 4);
-                }
+                print("1");
+                //StartCoroutine(WallClimbDebug());
+                StartCoroutine(WallClimbFail());
             }
         }
 
@@ -367,17 +363,48 @@ public class PlayerTrick : MonoBehaviour
         anim.SetBool(hashPunched, false); //prevent loop
 
     }
-    //public IEnumerator PunchedByEnemy()
-    //{
-    //    ToggleCC_OFF();
-    //    yield return new WaitForSeconds(punchedReaction);
-    //    anim.SetBool(hashPunched, true);
-    //    EnemyTrick et_ = gm.enemy2.GetComponent<EnemyTrick>();
-    //    while (et_.isPunching == true)
-    //        yield return null;
-    //    anim.SetBool(hashPunched, false);
-
-    //}
 
     void DelayForAutoJump() => anim.SetBool("jumpDown", JumpDownCheck());
+
+    IEnumerator WallClimbDebug()
+    {
+        float time_ = Time.time;
+        while(!pUI.GetFeedbackText().Equals("Perfect Climb!"))
+        {
+            print("waiting for bug");
+            yield return null;
+        }
+        print("TIME: " + (Time.time - time_));
+    }
+
+    IEnumerator WallClimbFail()
+    {
+        isClimbingFail = true;
+
+        GameManager.time = Time.time;
+        yield return new WaitForSeconds(.025f);
+        print("WCF TIME:" + (Time.time - GameManager.time));
+
+        if (!pUI.GetFeedbackText().Equals("Perfect Climb!"))
+        {
+            anim.SetBool(hashClimbFail, true); //player failed wall climb
+            float wallClimbSpeed = 1.3f;
+            anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
+            string num = hits[2].transform.name.Substring(4); //get the correct wall number
+            transform.position = hits[2].transform.GetChild(0).position; //reposition player for wall climb animation
+            wcClipEnd = Time.time + 4f / wallClimbSpeed; //find when animation clip will end
+            this.CallDelay(ToggleCC_OFF, 1f); //disable collider
+            anim.SetBool(hashWallClimb, true);
+            if (pm.velocityZ < 6f) //check if player is below speed limit for climbing
+                pUI.TextFeedback("Not Enough Speed To Climb", 4);
+            else if (!attemptedClimb) //check if player didn't do anything or pressed key too late
+            {
+                pUI.TextFeedback("Too Late To Climb", 4);
+            }
+        }
+        else
+            print("BUG FIXED");
+
+        isClimbingFail = false;
+    }
 }

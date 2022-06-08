@@ -159,7 +159,7 @@ public class PlayerMovement : MonoBehaviour
             //this.CallDelay(pt.ToggleCC, .2f);
             pt.ToggleCC_ON(); //enable collider
         }
-        if (upInput && !pt.isClimbing && velocityZ > 5.9f) //checking input for wall climb
+        if (upInput/* && !pt.isClimbing*/ && velocityZ > 5.9f) //checking input for wall climb
         {
             animator.SetBool(hashWallClimb, pt.WallClimbCheck());
         }

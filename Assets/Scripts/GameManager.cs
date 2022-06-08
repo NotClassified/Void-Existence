@@ -12,6 +12,7 @@ using System;
 public class GameManager : MonoBehaviour
 {
     public float timeScale = 100;
+    public static float time;
     #region PLAYERS
     public GameObject player;
     public GameObject enemy1;
