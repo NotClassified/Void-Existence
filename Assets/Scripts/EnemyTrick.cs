@@ -259,7 +259,7 @@ public class EnemyTrick : MonoBehaviour
         #region PUNCHING
         if (!isPunching && transform.position.z + 2 < gm.player.transform.position.z && !gm.IsGameOver()) //checking if enemy caught up to player
         {
-            gm.GameOver();
+            StartCoroutine(gm.GameOver());
             enemyWaitForPlayerPunchRoutine = StartCoroutine(WaitForPlayerPunch(gm.player));
         }
         if (isPunching)

@@ -168,7 +168,7 @@ public class PlayerTrick : MonoBehaviour
                 gm.IncreaseCounter();
             return true; //play animation
         }
-        else if (defaultMove && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if player is too far from wall
+        else if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) //check if player is too far from wall
         {
             pUI.TextFeedback("Too Early To Climb", 4);
             attemptedClimb = true; //prevent repressing key
@@ -389,9 +389,10 @@ public class PlayerTrick : MonoBehaviour
     {
         //GameManager.time = Time.time;
         //print(transform.position.z);
-        yield return new WaitForSeconds(.1f);
+        //yield return new WaitForSeconds(.1f);
         //print(transform.position.z);
         //print("WCF TIME:" + (Time.time - GameManager.time));
+        yield return null;
 
         if (!pUI.GetFeedbackText().Equals("Perfect Climb!"))
         {

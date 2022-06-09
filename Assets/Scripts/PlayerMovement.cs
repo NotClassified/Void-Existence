@@ -98,7 +98,10 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         if (Input.GetKeyDown(KeyCode.Q))
-            ResetPlayer(true);
+        {
+            gm.ReloadLevel();
+            //ResetPlayer(true);
+        }
         if (Input.GetKey(KeyCode.F))
             velocityZ = 0;
         if (Input.GetKeyDown(KeyCode.T))
@@ -175,8 +178,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (fallvelocity.y < -16) //check if player has fallen off map
         {
-            ResetPlayer(true);
-            gm.DecreaseCounter();
+            if(gm.tutCanvas == null)
+            {
+                ResetPlayer(true);
+                gm.DecreaseCounter();
+            }
+            else
+                gm.ReloadLevel();
         }
 
         animator.SetBool(hashIsGrounded, pt.isGrounded);
@@ -273,7 +281,7 @@ public class PlayerMovement : MonoBehaviour
         fallvelocity.y = 0f;
 
         if (callGameManagerSpawnMethod)
-            gm.StartSpawnRoutine(false); //reset player postition to starting point
+            gm.Spawn(false); //reset player postition to starting point
         animator.Play("Exit", 0);
     }
 }

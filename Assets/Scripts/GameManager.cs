@@ -11,13 +11,8 @@ using System;
 
 public class GameManager : MonoBehaviour
 {
-    #region GAME VARS
-    Coroutine SpawnRoutine;
     public float timeScale = 100;
     public static float time;
-    bool gameover = false;
-    public int mode = 0; //0-singleplayer 1-singleplayer+enemy 2-multiplayer 
-    #endregion
     #region PLAYERS
     public GameObject player;
     public GameObject enemy1;
@@ -95,7 +90,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     float tutTransDelay;
     [SerializeField]
-    Transform tutCanvas;
+    public Transform tutCanvas;
     [SerializeField]
     GameObject tutExtra;
     [SerializeField]
@@ -113,6 +108,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Transform eaParent;
     #endregion
+
+    bool gameover = false;
+    public int mode = 0; //0-singleplayer 1-singleplayer+enemy 2-multiplayer
 
     void Start()
     {
@@ -311,7 +309,7 @@ public class GameManager : MonoBehaviour
         enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
         enemy2 = Instantiate(enemyPref);
         enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
-        StartSpawnRoutine(false);
+        StartCoroutine(Spawn(false));
 
     }
 
@@ -340,7 +338,7 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    IEnumerator Spawn(bool waitForPunch)
+    public IEnumerator Spawn(bool waitForPunch)
     {
         if(tutCanvas != null)
         {
@@ -353,19 +351,19 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (waitForPunch == true)
-            {
-                while (!playerPunchedByEnemy)
-                    yield return null;
-                playerPunchedByEnemy = false;
+            //if (waitForPunch == true)
+            //{
+            //    while (!playerPunchedByEnemy)
+            //        yield return null;
+            //    playerPunchedByEnemy = false;
 
-                PlayerUI pUI_ = player.GetComponent<PlayerUI>();
-                pUI_.TextFeedback("Game Over", 5);
-                yield return new WaitForSeconds(2f);
+            //    PlayerUI pUI_ = player.GetComponent<PlayerUI>();
+            //    pUI_.TextFeedback("Game Over", 5);
+            //    yield return new WaitForSeconds(2f);
 
-                player.GetComponent<PlayerMovement>().ResetPlayer(false);
-                pUI_.ClearImportantTextFeedback();
-            }
+            //    player.GetComponent<PlayerMovement>().ResetPlayer(false);
+            //    pUI_.ClearImportantTextFeedback();
+            //}
 
             while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
                 yield return null;
@@ -394,41 +392,22 @@ public class GameManager : MonoBehaviour
             gameover = false;
             Time.timeScale = timeScale / 100;
             //UsefulShortcuts.ClearConsole();
-            SpawnRoutine = null;
-            print(SpawnRoutine);
         }
     }
 
-    public void StartSpawnRoutine(bool waitForPunch)
-    {
-        if (SpawnRoutine != null)
-        {
-            print("1");
-            StopCoroutine(SpawnRoutine);
-
-            playerPunchedByEnemy = false;
-
-            PlayerUI pUI_ = player.GetComponent<PlayerUI>();
-            if (pUI_.GetFeedbackText().Equals("Game Over"))
-            {
-                player.GetComponent<PlayerMovement>().ResetPlayer(false);
-                pUI_.ClearImportantTextFeedback();
-            }
-
-            SpawnRoutine = StartCoroutine(Spawn(false));
-        }
-        else
-            SpawnRoutine = StartCoroutine(Spawn(waitForPunch));
-    }
-    public void StopSpawnRoutine(bool waitForPunch) => StopCoroutine(SpawnRoutine);
-
-    public void GameOver()
+    public IEnumerator GameOver()
     {
         gameover = true;
-        StartSpawnRoutine(true);
+        while (!playerPunchedByEnemy)
+            yield return null;
+
+        PlayerUI pUI_ = player.GetComponent<PlayerUI>();
+        pUI_.TextFeedback("Game Over", 5);
+        yield return new WaitForSeconds(2f);
+        ReloadLevel();
     }
     public bool IsGameOver() => gameover;
-
+    public void ReloadLevel() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     private void ResetGame() => SceneManager.LoadScene(0);
 }
 
