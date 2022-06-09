@@ -314,14 +314,13 @@ public class PlayerTrick : MonoBehaviour
             else if(!isClimbingFail)
             {
                 isClimbingFail = true;
-                print("1");
 
                 if (!attemptedClimb) //check if player didn't do anything or pressed key too late
                     pUI.TextFeedback("Too Late To Climb", 4);
                 attemptedClimb = true;
 
                 //StartCoroutine(WallClimbDebug());
-                StartCoroutine(WallClimbFail());
+                wallClimbFailRoutine = StartCoroutine(WallClimbFail());
             }
         }
 
@@ -411,5 +410,11 @@ public class PlayerTrick : MonoBehaviour
             print("BUG FIXED");
 
         isClimbingFail = false;
+    }
+
+    public void StopWallClimbFailRoutine()
+    {
+        if(wallClimbFailRoutine != null)
+            StopCoroutine(wallClimbFailRoutine);
     }
 }

@@ -263,6 +263,7 @@ public class PlayerMovement : MonoBehaviour
             pt.ToggleCC_ON(); //enable collider
         }
         StopCoroutine(gm.LastCountWaitForLand()); //if player doesn't jump far enough don't let player finish tutorial
+        pt.StopWallClimbFailRoutine();
 
         //animator.SetLayerWeight(3, 0); //reset punched layer
 
@@ -272,7 +273,7 @@ public class PlayerMovement : MonoBehaviour
         fallvelocity.y = 0f;
 
         if (callGameManagerSpawnMethod)
-            StartCoroutine(gm.Spawn(false)); //reset player postition to starting point
+            gm.StartSpawnRoutine(false); //reset player postition to starting point
         animator.Play("Exit", 0);
     }
 }
