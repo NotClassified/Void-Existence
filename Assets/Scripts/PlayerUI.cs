@@ -134,7 +134,7 @@ public class PlayerUI : MonoBehaviour
 
     public void TextFeedback (string message, int color) //text for giving feedback to the player
     {
-        if(fText.color == mColors[0].color) //if text is important, don't change
+        if(fText.color == mColors[0].color || GetFeedbackText().Equals("Game Over")) //if text is important, don't change text
             return;
 
         if (message != null)
@@ -150,6 +150,11 @@ public class PlayerUI : MonoBehaviour
             fText.color = mColors[color].color;
     }
     public string GetFeedbackText() => fText.text;
+    public void ClearImportantTextFeedback()
+    {
+        fText.text = "";
+        TextFeedback("", -1);
+    }
 
     IEnumerator SpeedSliderColorChange(Color startColor, Color endColor)
     {

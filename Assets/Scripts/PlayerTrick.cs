@@ -59,6 +59,7 @@ public class PlayerTrick : MonoBehaviour
     bool attemptedJump = false;
     #endregion
     #region WALL CLIMB //wc-wall climb
+    Coroutine wallClimbFailRoutine;
     public float wcClipEnd;
     public bool attemptedClimb = false;
     public bool wcAlways;
@@ -148,8 +149,10 @@ public class PlayerTrick : MonoBehaviour
         //check if player hasn't tried to climb yet and is in front of a wall
         if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
+            //PLAYER SUCCEEDED WALL CLIMB, PLAY ANIMATION:
             pUI.TextFeedback("Perfect Climb!", 3);
-            anim.SetBool(hashClimbFail, false); //player succeeded wall climb
+            anim.SetBool(hashClimbFail, false);
+            anim.SetBool(hashWallClimb, true);
 
             float wallClimbSpeed = (pm.velocityZ - 6) / 10 + 1;
             anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
@@ -165,7 +168,7 @@ public class PlayerTrick : MonoBehaviour
                 gm.IncreaseCounter();
             return true; //play animation
         }
-        else if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) //check if player is too far from wall
+        else if (defaultMove && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if player is too far from wall
         {
             pUI.TextFeedback("Too Early To Climb", 4);
             attemptedClimb = true; //prevent repressing key
@@ -310,7 +313,13 @@ public class PlayerTrick : MonoBehaviour
             }
             else if(!isClimbingFail)
             {
+                isClimbingFail = true;
                 print("1");
+
+                if (!attemptedClimb) //check if player didn't do anything or pressed key too late
+                    pUI.TextFeedback("Too Late To Climb", 4);
+                attemptedClimb = true;
+
                 //StartCoroutine(WallClimbDebug());
                 StartCoroutine(WallClimbFail());
             }
@@ -366,24 +375,24 @@ public class PlayerTrick : MonoBehaviour
 
     void DelayForAutoJump() => anim.SetBool("jumpDown", JumpDownCheck());
 
-    IEnumerator WallClimbDebug()
-    {
-        float time_ = Time.time;
-        while(!pUI.GetFeedbackText().Equals("Perfect Climb!"))
-        {
-            print("waiting for bug");
-            yield return null;
-        }
-        print("TIME: " + (Time.time - time_));
-    }
+    //IEnumerator WallClimbDebug()
+    //{
+    //    float time_ = Time.time;
+    //    while(!pUI.GetFeedbackText().Equals("Perfect Climb!"))
+    //    {
+    //        print("waiting for bug");
+    //        yield return null;
+    //    }
+    //    print("TIME: " + (Time.time - time_));
+    //}
 
     IEnumerator WallClimbFail()
     {
-        isClimbingFail = true;
-
-        GameManager.time = Time.time;
-        yield return new WaitForSeconds(.025f);
-        print("WCF TIME:" + (Time.time - GameManager.time));
+        //GameManager.time = Time.time;
+        //print(transform.position.z);
+        yield return new WaitForSeconds(.1f);
+        //print(transform.position.z);
+        //print("WCF TIME:" + (Time.time - GameManager.time));
 
         if (!pUI.GetFeedbackText().Equals("Perfect Climb!"))
         {
@@ -397,10 +406,6 @@ public class PlayerTrick : MonoBehaviour
             anim.SetBool(hashWallClimb, true);
             if (pm.velocityZ < 6f) //check if player is below speed limit for climbing
                 pUI.TextFeedback("Not Enough Speed To Climb", 4);
-            else if (!attemptedClimb) //check if player didn't do anything or pressed key too late
-            {
-                pUI.TextFeedback("Too Late To Climb", 4);
-            }
         }
         else
             print("BUG FIXED");

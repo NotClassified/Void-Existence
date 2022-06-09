@@ -98,15 +98,15 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         if (Input.GetKeyDown(KeyCode.Q))
-            ResetPlayer();
+            ResetPlayer(true);
         if (Input.GetKey(KeyCode.F))
             velocityZ = 0;
         if (Input.GetKeyDown(KeyCode.T))
         {
             if (Time.timeScale == 0)
-                Time.timeScale = gm.timeScale / 100;
+                Time.timeScale = gm.timeScale / 100; //reset time
             else
-                Time.timeScale = 0;
+                Time.timeScale = .1f; //change time
         }
         //Cursor.lockState = CursorLockMode.Locked;
         #region MOVEMENT INPUT CONTROLS
@@ -159,10 +159,8 @@ public class PlayerMovement : MonoBehaviour
             //this.CallDelay(pt.ToggleCC, .2f);
             pt.ToggleCC_ON(); //enable collider
         }
-        if (upInput/* && !pt.isClimbing*/ && velocityZ > 5.9f) //checking input for wall climb
-        {
-            animator.SetBool(hashWallClimb, pt.WallClimbCheck());
-        }
+        if (upInput && !pt.isClimbing && velocityZ > 5.9f) //checking input for wall climb
+            pt.WallClimbCheck();
         #endregion
         #region FALLING
         if (pt.isGrounded && fallvelocity.y < 0)
@@ -177,7 +175,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (fallvelocity.y < -16) //check if player has fallen off map
         {
-            ResetPlayer();
+            ResetPlayer(true);
             gm.DecreaseCounter();
         }
 
@@ -256,7 +254,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void ResetPlayer()
+    public void ResetPlayer(bool callGameManagerSpawnMethod)
     {
         if (pt.isClimbing)
         {
@@ -264,7 +262,6 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool(hashWallClimb, false); //end wall climb animation
             pt.ToggleCC_ON(); //enable collider
         }
-        animator.Play("Exit", 0);
         StopCoroutine(gm.LastCountWaitForLand()); //if player doesn't jump far enough don't let player finish tutorial
 
         //animator.SetLayerWeight(3, 0); //reset punched layer
@@ -273,6 +270,9 @@ public class PlayerMovement : MonoBehaviour
         pt.attemptedLand = false; //let player be able to land again
         pUI.TextFeedback("", -1); //empty the climb feedback text
         fallvelocity.y = 0f;
-        StartCoroutine(gm.Spawn()); //reset player postition to starting point
+
+        if (callGameManagerSpawnMethod)
+            StartCoroutine(gm.Spawn(false)); //reset player postition to starting point
+        animator.Play("Exit", 0);
     }
 }

@@ -345,6 +345,7 @@ public class EnemyTrick : MonoBehaviour
         transform.position = punchEndPosition.position + punchOffset;
 
         /* ENEMY HAS PUNCHED PLAYER */
+        gm.playerPunchedByEnemy = true;
 
         //Time.timeScale = 0.01f; //for seeing if offset is correct
 

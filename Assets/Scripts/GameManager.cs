@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public GameObject enemy2;
     public float initialSpeedPlayer;
     public float initialSpeedEnemy;
+    public bool playerPunchedByEnemy;
     [SerializeField]
     GameObject playerPref;
     [SerializeField]
@@ -160,17 +161,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             ResetGame();
 
-        //if (enemy2 != null && !gameover && enemy2.transform.position.z + 2 < player.transform.position.z) //checking if enemy caught up to player
-        //{
-        //    gameover = true;
-        //    enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
-        //    StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
-        //}
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    enemy2.GetComponent<EnemyTrick>().StartEnemyPunchRoutine();
-        //    StartCoroutine(player.GetComponent<PlayerTrick>().PunchedByEnemy());
-        //}
     }
 
     #region TUTORIAL METHODS
@@ -319,7 +309,7 @@ public class GameManager : MonoBehaviour
         enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
         enemy2 = Instantiate(enemyPref);
         enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
-        StartCoroutine(Spawn());
+        StartCoroutine(Spawn(false));
 
     }
 
@@ -348,7 +338,7 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    public IEnumerator Spawn()
+    public IEnumerator Spawn(bool waitForPunch)
     {
         if(tutCanvas != null)
         {
@@ -361,6 +351,20 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            if (waitForPunch == true)
+            {
+                while (!playerPunchedByEnemy)
+                    yield return null;
+                playerPunchedByEnemy = false;
+
+                PlayerUI pUI_ = player.GetComponent<PlayerUI>();
+                pUI_.TextFeedback("Game Over", 5);
+                yield return new WaitForSeconds(2f);
+
+                player.GetComponent<PlayerMovement>().ResetPlayer(false);
+                pUI_.ClearImportantTextFeedback();
+            }
+
             while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
                 yield return null;
             //RESET POSITIONS AND INDEX OF ALL PLAYERS:
@@ -394,6 +398,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         gameover = true;
+        StartCoroutine(Spawn(true));
     }
     public bool IsGameOver() => gameover;
 
