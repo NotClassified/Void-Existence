@@ -73,6 +73,7 @@ public class PlayerTrick : MonoBehaviour
     private int hashClimbFail;
     private int hashClimbSpeed;
     private int hashLand;
+    private int hashJumpDown;
     private int hashPunched;
     #endregion
     #region PUNCHED
@@ -96,6 +97,7 @@ public class PlayerTrick : MonoBehaviour
         hashClimbFail = Animator.StringToHash("Climb Fail");
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
+        hashJumpDown = Animator.StringToHash("jumpDown");
         hashPunched = Animator.StringToHash("Punched");
 
         startMethodCalled = true;
@@ -123,6 +125,7 @@ public class PlayerTrick : MonoBehaviour
             pm.StartCoroutine(pm.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
             if (gm.numTutorial == 2) //if player is in tutorial for jumping, increase counter
                 gm.IncreaseCounter();
+            anim.SetBool(hashJumpDown, true);
             return true;
         }
         //check if player is not in front of a wall
@@ -140,6 +143,11 @@ public class PlayerTrick : MonoBehaviour
                 this.CallDelay(ClearJumpingFeedback, jResetDelay); //if too early then give second chance for jumping
             }
         }
+        else if (isLanding)
+        {
+            pUI.TextFeedback("Too Early To Jump", 4);
+            //this.CallDelay(ClearJumpingFeedback, jResetDelay); //if too early then give second chance for jumping
+        }
         return false;
     }
 
@@ -147,7 +155,7 @@ public class PlayerTrick : MonoBehaviour
     public bool WallClimbCheck()
     {
         //check if player hasn't tried to climb yet and is in front of a wall
-        if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+        if (defaultMove && !attemptedClimb && !pUI.GetFeedbackText().Equals("Too Late To Climb") && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
             //PLAYER SUCCEEDED WALL CLIMB, PLAY ANIMATION:
             pUI.TextFeedback("Perfect Climb!", 3);
@@ -191,16 +199,23 @@ public class PlayerTrick : MonoBehaviour
     #endregion
 
     #region TEXT FEEDBACK
-    void ClearTextFeedback() => pUI.TextFeedback("", -1); //empty feedback text
+    void ClearTextFeedback()
+    {
+        if (!pUI.GetFeedbackText().Equals("Too Early To Jump"))
+            pUI.TextFeedback("", -1); //empty feedback text
+    }
     void ClearLandingTextFeedback()
     {
         if (!isLanding)
         {
+            //if (pUI.GetFeedbackText().Equals("Too Early To Jump"))
+            //    return;
+
             pUI.TextFeedback("", -1); //empty feedback text
             attemptedLand = false; //let player attempt landing again if still in air
+            return;
         }
-        else
-            gm.DecreaseCounter();
+        gm.DecreaseCounter();
     }
     void ClearJumpingFeedback()
     {

@@ -342,6 +342,7 @@ public class GameManager : MonoBehaviour
     {
         if(tutCanvas != null)
         {
+            print("yee");
             player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation); //reset position
             PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
             yield return new WaitForEndOfFrame();
@@ -407,7 +408,11 @@ public class GameManager : MonoBehaviour
         ReloadLevel();
     }
     public bool IsGameOver() => gameover;
-    public void ReloadLevel() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    public void ReloadLevel()
+    {
+        if(!player.GetComponent<PlayerUI>().GetFeedbackText().Equals("Level Finished!"))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
     private void ResetGame() => SceneManager.LoadScene(0);
 }
 

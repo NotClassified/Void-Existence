@@ -109,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
             if (Time.timeScale == 0)
                 Time.timeScale = gm.timeScale / 100; //reset time
             else
-                Time.timeScale = .1f; //change time
+                Time.timeScale = 0; //change time
         }
         //Cursor.lockState = CursorLockMode.Locked;
         #region MOVEMENT INPUT CONTROLS
@@ -148,7 +148,7 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool(hashJumpDown, false);
         if (upInput) //checking input for jump down
         {
-            animator.SetBool(hashJumpDown, pt.JumpDownCheck());
+            pt.JumpDownCheck();
         }
         //jumpInput = false; //prevent loop of the side jump animation 
         #endregion
@@ -178,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (fallvelocity.y < -16) //check if player has fallen off map
         {
-            if(gm.tutCanvas == null)
+            if(gm.tutCanvas != null)
             {
                 ResetPlayer(true);
                 gm.DecreaseCounter();
@@ -264,14 +264,15 @@ public class PlayerMovement : MonoBehaviour
 
     public void ResetPlayer(bool callGameManagerSpawnMethod)
     {
-        if (pt.isClimbing)
-        {
-            transform.position = rootBone.transform.position; //sync player's position to character (root bone)
-            animator.SetBool(hashWallClimb, false); //end wall climb animation
-            pt.ToggleCC_ON(); //enable collider
-        }
+        //if (pt.isClimbing)
+        //{
+        //    transform.position = rootBone.transform.position; //sync player's position to character (root bone)
+        //    animator.SetBool(hashWallClimb, false); //end wall climb animation
+        //    pt.ToggleCC_ON(); //enable collider
+        //}
         StopCoroutine(gm.LastCountWaitForLand()); //if player doesn't jump far enough don't let player finish tutorial
-        pt.StopWallClimbFailRoutine();
+        //pt.StopWallClimbFailRoutine();
+        animator.Play("Exit", 0);
 
         //animator.SetLayerWeight(3, 0); //reset punched layer
 
@@ -281,7 +282,6 @@ public class PlayerMovement : MonoBehaviour
         fallvelocity.y = 0f;
 
         if (callGameManagerSpawnMethod)
-            gm.Spawn(false); //reset player postition to starting point
-        animator.Play("Exit", 0);
+            StartCoroutine(gm.Spawn(false)); //reset player postition to starting point
     }
 }
