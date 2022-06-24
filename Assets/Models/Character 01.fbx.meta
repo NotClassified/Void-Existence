@@ -105,6 +105,9 @@ ModelImporter:
   - first:
       74: -793140322382868234
     second: Punched
+  - first:
+      74: -1548845968054567016
+    second: Dodge Pose
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -1624,7 +1627,7 @@ ModelImporter:
       name: Punched
       takeName: Character|Punched
       internalID: 0
-      firstFrame: 2.5
+      firstFrame: 12.5
       lastFrame: 28
       wrapMode: 0
       orientationOffsetY: 0
@@ -1637,6 +1640,131 @@ ModelImporter:
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Character
+        weight: 1
+      - path: Character/Root
+        weight: 1
+      - path: Character/Root/Hips
+        weight: 1
+      - path: Character/Root/Hips/Spine
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Neck/Head/Head_end
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L/Hand.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L/Hand.L/Finger01.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L/Hand.L/Finger01.L/Finger02.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L/Hand.L/Finger01.L/Finger02.L/Finger02.L_end
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L/Hand.L/Thumb01.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L/Hand.L/Thumb01.L/Thumb02.L
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.L/Upper Arm.L/Lower Arm.L/Hand.L/Thumb01.L/Thumb02.L/Thumb02.L_end
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R/Hand.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R/Hand.R/Finger01.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R/Hand.R/Finger01.R/Finger02.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R/Hand.R/Finger01.R/Finger02.R/Finger02.R_end
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R/Hand.R/Thumb01.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R/Hand.R/Thumb01.R/Thumb02.R
+        weight: 1
+      - path: Character/Root/Hips/Spine/Chest/Shoulder.R/Upper Arm.R/Lower Arm.R/Hand.R/Thumb01.R/Thumb02.R/Thumb02.R_end
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.L
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.L/Lower Leg.L
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.L/Lower Leg.L/Foot.L
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.L/Lower Leg.L/Foot.L/Toes.L
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.L/Lower Leg.L/Foot.L/Toes.L/Toes.L_end
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.R
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.R/Lower Leg.R
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.R/Lower Leg.R/Foot.R
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.R/Lower Leg.R/Foot.R/Toes.R
+        weight: 1
+      - path: Character/Root/Hips/Upper Leg.R/Lower Leg.R/Foot.R/Toes.R/Toes.R_end
+        weight: 1
+      - path: Character/Root/Leg IK.L
+        weight: 1
+      - path: Character/Root/Leg IK.L/Leg IK.L_end
+        weight: 1
+      - path: Character/Root/Pole Target.L
+        weight: 1
+      - path: Character/Root/Pole Target.L/Pole Target.L_end
+        weight: 1
+      - path: Character/Root/Leg IK.R
+        weight: 1
+      - path: Character/Root/Leg IK.R/Leg IK.R_end
+        weight: 1
+      - path: Character/Root/Pole Target.R
+        weight: 1
+      - path: Character/Root/Pole Target.R/Pole Target.R_end
+        weight: 1
+      - path: Cube
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Dodge Pose
+      takeName: Character|Dodge Pose
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0

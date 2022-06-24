@@ -347,7 +347,7 @@ public class EnemyTrick : MonoBehaviour
         /* ENEMY HAS PUNCHED PLAYER */
         gm.playerPunchedByEnemy = true;
 
-        //Time.timeScale = 0.01f; //for seeing if offset is correct
+        //Time.timeScale = 0.05f; //for seeing if offset is correct
 
         //TRANSITION ENEMY ROTATION BACK TO FACING FORWARD
         time = 0;

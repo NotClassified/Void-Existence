@@ -76,12 +76,15 @@ public class PlayerTrick : MonoBehaviour
     private int hashJumpDown;
     private int hashPunched;
     #endregion
-    #region PUNCHED
+    #region PUNCHED & DODGE
     [SerializeField]
     float punchedReaction;
     [SerializeField]
     float punchedWeightSpeed;
     float punchedLayerWeight;
+    bool dodgeMashPrevent = false;
+    bool dodgeNow = false;
+    Coroutine dodgeMashPreventRoutine;
     #endregion
 
     public bool startMethodCalled = false;
@@ -356,7 +359,7 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
 
-        #region PUNCHING
+        #region PUNCHING & DODGING
 
         if (isPunched)
         {
@@ -374,16 +377,56 @@ public class PlayerTrick : MonoBehaviour
             anim.SetLayerWeight(3, punchedLayerWeight);
         }
 
+        if (Input.GetKeyDown(KeyCode.D) && !dodgeNow)
+        {
+            dodgeMashPrevent = true;
+            if (dodgeMashPreventRoutine != null)
+                StopCoroutine(dodgeMashPreventRoutine);
+            dodgeMashPreventRoutine = StartCoroutine(ResetDodgeMashPrevent());
+        }
+
         #endregion
 
+    }
+
+    IEnumerator ResetDodgeMashPrevent()
+    {
+        yield return new WaitForSeconds(.5f);
+        if(!dodgeNow)
+            dodgeMashPrevent = false;
     }
 
     public IEnumerator PunchedByEnemy()
     {
         ToggleCC_OFF(); //prevent enemy collision
-        anim.SetBool(hashPunched, true); //start punched anaimation
-        yield return new WaitForEndOfFrame();
-        anim.SetBool(hashPunched, false); //prevent loop
+        dodgeNow = true;
+
+        float timeToDodge = .33f;
+        bool dodged = false;
+        while (timeToDodge > 0)
+        {
+            timeToDodge -= Time.deltaTime;
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                if (dodgeMashPrevent)
+                {
+                    //tell player not to spam
+                }
+                else
+                {
+                    dodged = true;
+                    //tell player that they dodged and stop game over
+                }
+            }
+            yield return null;
+        }
+
+        if (!dodged)
+        {
+            anim.SetBool(hashPunched, true); //start punched anaimation
+            yield return new WaitForEndOfFrame();
+            anim.SetBool(hashPunched, false); //prevent loop
+        }
 
     }
 
