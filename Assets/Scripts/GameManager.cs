@@ -402,10 +402,16 @@ public class GameManager : MonoBehaviour
         while (!playerPunchedByEnemy)
             yield return null;
 
-        PlayerUI pUI_ = player.GetComponent<PlayerUI>();
-        pUI_.TextFeedback("Game Over", 5);
-        yield return new WaitForSeconds(2f);
-        ReloadLevel();
+        if(player.GetComponent<PlayerTrick>().dodgedEnemy)
+        {
+
+        }
+        else
+        {
+            player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
+            yield return new WaitForSeconds(2f);
+            ReloadLevel();
+        }
     }
     public bool IsGameOver() => gameover;
     public void ReloadLevel()

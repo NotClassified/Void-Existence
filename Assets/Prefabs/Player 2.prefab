@@ -568,8 +568,11 @@ MonoBehaviour:
   attemptedClimb: 0
   wcAlways: 0
   reposDuration: 0.2
-  punchedReaction: 0.34
   punchedWeightSpeed: 5
+  dodgeDelay: 0.166
+  dodgedEnemy: 0
+  dodgeWeightSpeed: 6
+  unDodgeWeightSpeed: 3
   startMethodCalled: 0
 --- !u!114 &1960693788365975428
 MonoBehaviour:

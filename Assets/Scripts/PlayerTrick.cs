@@ -78,13 +78,19 @@ public class PlayerTrick : MonoBehaviour
     #endregion
     #region PUNCHED & DODGE
     [SerializeField]
-    float punchedReaction;
-    [SerializeField]
     float punchedWeightSpeed;
     float punchedLayerWeight;
     bool dodgeMashPrevent = false;
     bool dodgeNow = false;
+    [SerializeField]
+    float dodgeDelay;
+    public bool dodgedEnemy = false;
+    [SerializeField]
+    float dodgeWeightSpeed;
+    [SerializeField]
+    float unDodgeWeightSpeed;
     Coroutine dodgeMashPreventRoutine;
+    Coroutine dodgeEnemyRoutine;
     #endregion
 
     public bool startMethodCalled = false;
@@ -377,6 +383,10 @@ public class PlayerTrick : MonoBehaviour
             anim.SetLayerWeight(3, punchedLayerWeight);
         }
 
+        if (dodgedEnemy && dodgeEnemyRoutine == null)
+            dodgeEnemyRoutine = StartCoroutine(DodgeEnemy());
+
+
         if (Input.GetKeyDown(KeyCode.D) && !dodgeNow)
         {
             dodgeMashPrevent = true;
@@ -389,39 +399,39 @@ public class PlayerTrick : MonoBehaviour
 
     }
 
-    IEnumerator ResetDodgeMashPrevent()
-    {
-        yield return new WaitForSeconds(.5f);
-        if(!dodgeNow)
-            dodgeMashPrevent = false;
-    }
-
+    #region PUNCHING & DODGING METHODS
     public IEnumerator PunchedByEnemy()
     {
         ToggleCC_OFF(); //prevent enemy collision
-        dodgeNow = true;
 
-        float timeToDodge = .33f;
-        bool dodged = false;
+        float timeToDodge = .266f; //start punched animation frame 10.5 (timeToDodge * 30 + 2.5)
+        float initialTimeToDodge = timeToDodge;
         while (timeToDodge > 0)
         {
             timeToDodge -= Time.deltaTime;
-            if (Input.GetKeyDown(KeyCode.D))
+            if(timeToDodge < initialTimeToDodge - dodgeDelay)
+            {
+                dodgeNow = true;
+                //dodgedEnemy = true; /*always dodge early*/ print("Dodged Early");
+            }
+
+            if (Input.GetKeyDown(KeyCode.D) && dodgeNow)
             {
                 if (dodgeMashPrevent)
-                {
-                    //tell player not to spam
-                }
+                    pUI.TextFeedback("Don't Spam", 3); //tell player not to spam
                 else
                 {
-                    dodged = true;
-                    //tell player that they dodged and stop game over
+                    dodgedEnemy = true;
+                    pUI.TextFeedback("Dodged!", 3); //tell player that they dodged
                 }
             }
             yield return null;
         }
+        /*dodgedEnemy = true; //always dodge late*/ print("Dodged Late");
 
-        if (!dodged)
+        if (dodgedEnemy)
+            ToggleCC_ON();
+        else
         {
             anim.SetBool(hashPunched, true); //start punched anaimation
             yield return new WaitForEndOfFrame();
@@ -429,6 +439,34 @@ public class PlayerTrick : MonoBehaviour
         }
 
     }
+
+    IEnumerator ResetDodgeMashPrevent()
+    {
+        yield return new WaitForSeconds(.5f);
+        if (!dodgeNow)
+            dodgeMashPrevent = false;
+    }
+
+    IEnumerator DodgeEnemy()
+    {
+        float weight = 0;
+        while(weight < 1)
+        {
+            weight += Time.deltaTime * dodgeWeightSpeed; //transition to layer 4 (dodge enemy pose)
+            anim.SetLayerWeight(4, weight); //correlate vars
+            yield return null;
+        }
+        weight = 1;
+        anim.SetLayerWeight(4, weight); //set layer weight to full influence
+        while(weight > 0)
+        {
+            weight -= Time.deltaTime * unDodgeWeightSpeed; //transition to layer 4 (dodge enemy pose)
+            anim.SetLayerWeight(4, weight); //correlate vars
+            yield return null;
+        }
+        anim.SetLayerWeight(4, 0); //set layer weight to no influence
+    }
+    #endregion
 
     void DelayForAutoJump() => anim.SetBool("jumpDown", JumpDownCheck());
 

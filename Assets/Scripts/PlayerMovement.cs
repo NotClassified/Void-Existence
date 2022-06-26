@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
     #region MOVEMENT VARS
     public bool upInput;
+    public bool jumpInput;
     public float velocityZ;
     [SerializeField]
     float walkAcceleration;
@@ -106,10 +107,20 @@ public class PlayerMovement : MonoBehaviour
             velocityZ = 0;
         if (Input.GetKeyDown(KeyCode.T))
         {
-            if (Time.timeScale == 0)
-                Time.timeScale = gm.timeScale / 100; //reset time
-            else
-                Time.timeScale = 0; //change time
+            float slowTimeSet = 30 / 100f; //enter the desired slower timescale
+            float fastTimeSet = 400 / 100f; //enter the desired faster timescale
+            if (Input.GetKey(KeyCode.LeftShift)) {
+                if (Time.timeScale == fastTimeSet)
+                    Time.timeScale = gm.timeScale / 100; //reset time
+                else
+                    Time.timeScale = fastTimeSet; //change time
+            }
+            else {
+                if (Time.timeScale == slowTimeSet)
+                    Time.timeScale = gm.timeScale / 100; //reset time
+                else
+                    Time.timeScale = slowTimeSet; //change time
+            }
         }
         //Cursor.lockState = CursorLockMode.Locked;
         #region MOVEMENT INPUT CONTROLS
@@ -121,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
             //leftInput = Input.GetKeyDown(KeyCode.A);
             //rightInput = Input.GetKeyDown(KeyCode.D);
             upInput = Input.GetKeyDown(KeyCode.W);
+            jumpInput = Input.GetKeyDown(KeyCode.Space);
         }
         else
         {
@@ -146,7 +158,7 @@ public class PlayerMovement : MonoBehaviour
         #region JUMP DOWN
         if (animator.GetBool(hashJumpDown)) //prevent loop of the jump down animation
             animator.SetBool(hashJumpDown, false);
-        if (upInput) //checking input for jump down
+        if (upInput || jumpInput) //checking input for jump down
         {
             pt.JumpDownCheck();
         }
