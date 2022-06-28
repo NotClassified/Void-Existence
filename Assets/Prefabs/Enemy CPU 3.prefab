@@ -1450,9 +1450,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7057600310833514429}
   - component: {fileID: 1822791164917762949}
-  - component: {fileID: 7851475497572048761}
   - component: {fileID: 1574042207186186520}
-  - component: {fileID: 4468787129033839467}
   - component: {fileID: 5221502641683217113}
   - component: {fileID: 8441202267673954534}
   m_Layer: 0
@@ -1502,41 +1500,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7851475497572048761
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7690585463846558983}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef24a746bbbcaa044bcaca19595b4220, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 1822791164917762949}
-  cc: {fileID: 8441202267673954534}
-  gm: {fileID: 0}
-  rootBone: {fileID: 6904839205765645834}
-  upInput: 0
-  velocityZ: 0
-  walkAcceleration: 60
-  runAcceleration: 15
-  maxWalkVelocity: 6
-  maxRunVelocity: 9
-  gravity: 6
-  fowardDrag: 4
-  fallvelocity: {x: 0, y: 0, z: 0}
-  inAirWeightSpeed: 3.5
-  cam1: {fileID: 0}
-  cam2: {fileID: 0}
-  head: {fileID: 9026820956817273300}
-  mouseSens: 600
-  controllerSens: 60
-  bsp: {fileID: 4377878506822200649}
-  bspOrtho: {fileID: 3451704797548942865}
-  activeInputSystem: 0
-  startMethodCalled: 0
 --- !u!114 &1574042207186186520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1566,63 +1529,6 @@ MonoBehaviour:
   bsp: {fileID: 4377878506822200649}
   bspOrtho: {fileID: 3451704797548942865}
   activeInputSystem: 0
-  startMethodCalled: 0
---- !u!114 &4468787129033839467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7690585463846558983}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df8c20ad8fae58144922870ba0eced44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pUI: {fileID: 0}
-  pm: {fileID: 7851475497572048761}
-  defaultMove: 1
-  inAir: 0
-  isJumping: 0
-  isClimbing: 0
-  isLanding: 0
-  isPunched: 0
-  distances:
-  - 0.1
-  - 1
-  - 0.2
-  - 2.45
-  - 0
-  - 1.5
-  - 0.5
-  - 3
-  - 1.88
-  - 5
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 8
-  attemptedLand: 0
-  isGrounded: 1
-  lAlways: 0
-  ldInputGap: 1.7
-  dDominator: 7.5
-  lResetDelay: 0.5
-  rayDir: {x: 0, y: -1, z: -0.3}
-  jAlways: 0
-  jResetDelay: 0.4
-  jSpeedResetDelay: 0.6
-  jBoost: 0.1
-  jDurationBoost: 81
-  jDecayBoost: 1.05
-  wcClipEnd: 0
-  attemptedClimb: 0
-  wcAlways: 0
-  reposDuration: 0.2
-  punchedReaction: 0
-  punchedWeightSpeed: 0
   startMethodCalled: 0
 --- !u!114 &5221502641683217113
 MonoBehaviour:

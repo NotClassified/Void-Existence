@@ -141,7 +141,7 @@ public class EnemyTrick : MonoBehaviour
 
     void Update()
     {
-        if (!em.startMethodCalled)
+        if (!em.startMethodCalled || gm.player == null)
             return;
 
 

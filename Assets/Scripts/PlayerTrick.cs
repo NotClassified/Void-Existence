@@ -80,7 +80,7 @@ public class PlayerTrick : MonoBehaviour
     [SerializeField]
     float punchedWeightSpeed;
     float punchedLayerWeight;
-    bool dodgeMashPrevent = false;
+    bool attemptDodge = false;
     bool dodgeNow = false;
     [SerializeField]
     float dodgeDelay;
@@ -241,7 +241,7 @@ public class PlayerTrick : MonoBehaviour
         if (!pm.startMethodCalled || !pUI.startMethodCalled)
             return;
 
-
+        #region ANIMATION VARS
         isJumping = !AnimCheck(1, "Empty"); //check jumping anims
         isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims
         isLanding = AnimCheck(0, "Land1") || AnimCheck(0, "Land2"); //check if landing
@@ -252,8 +252,9 @@ public class PlayerTrick : MonoBehaviour
             anim.SetBool("Exit", true);
         else if (anim.GetBool("Exit"))
             anim.SetBool("Exit", false);
+        #endregion
 
-
+        #region RAYCAST POSITIONS
         raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3];
         raypos[2] = transform.position + Vector3.up * distances[6];
         //Debug.DrawLine(raypos[2], raypos[2] + Vector3.back * distances[7], Color.cyan);
@@ -261,7 +262,8 @@ public class PlayerTrick : MonoBehaviour
         Vector3 visualOffset = new Vector3(0, 0, -.1f);
         //Debug.DrawLine(raypos[0] + visualOffset, raypos[0] + Vector3.down * distances[5] + visualOffset, Color.cyan);
         //Debug.DrawLine(raypos[0], raypos[0] + Vector3.down * distances[4], Color.red);
-        //Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f);
+        //Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f); 
+        #endregion
 
         #region LANDING, FALLING, AND GROUNDCHECK
 
@@ -389,7 +391,7 @@ public class PlayerTrick : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.D) && !dodgeNow)
         {
-            dodgeMashPrevent = true;
+            attemptDodge = true;
             if (dodgeMashPreventRoutine != null)
                 StopCoroutine(dodgeMashPreventRoutine);
             dodgeMashPreventRoutine = StartCoroutine(ResetDodgeMashPrevent());
@@ -417,8 +419,8 @@ public class PlayerTrick : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.D) && dodgeNow)
             {
-                if (dodgeMashPrevent)
-                    pUI.TextFeedback("Don't Spam", 3); //tell player not to spam
+                if (attemptDodge)
+                    pUI.DontSpamUIToggle(); //tell player not to spam
                 else
                 {
                     dodgedEnemy = true;
@@ -427,12 +429,20 @@ public class PlayerTrick : MonoBehaviour
             }
             yield return null;
         }
-        /*dodgedEnemy = true; //always dodge late*/ print("Dodged Late");
+        //dodgedEnemy = true; /*always dodge late*/ print("Dodged Late");
 
         if (dodgedEnemy)
             ToggleCC_ON();
         else
         {
+            if(gm.tutCanvas != null)
+            {
+                if(attemptDodge)
+                    pUI.TextFeedback("Dodged Too Early", 4); //tell player that they dodged too early
+                else
+                    pUI.TextFeedback("Dodged Too Late", 4); //tell player that they dodged too late
+            }
+
             anim.SetBool(hashPunched, true); //start punched anaimation
             yield return new WaitForEndOfFrame();
             anim.SetBool(hashPunched, false); //prevent loop
@@ -444,7 +454,7 @@ public class PlayerTrick : MonoBehaviour
     {
         yield return new WaitForSeconds(.5f);
         if (!dodgeNow)
-            dodgeMashPrevent = false;
+            attemptDodge = false;
     }
 
     IEnumerator DodgeEnemy()

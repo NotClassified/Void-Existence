@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
         if (gCanvas != null)
             gCam.SetActive(true);
         if (numTutorial != -1)
-            print("Tutorials skipped: " + (numTutorial + 1));
+            print("Tutorials skipped: " + (numTutorial + 1) + "\n Please set numTutorial = -1");
         if (tutCanvas != null)
             NextTutorial();
         else
@@ -166,8 +166,12 @@ public class GameManager : MonoBehaviour
     #region TUTORIAL METHODS
     public void StartPlayerTutorial()
     {
+        gameover = false;
+        playerPunchedByEnemy = false;
         if (player != null) //if players exist, destroy for new players
             Destroy(player);
+        if (enemy1 != null) //if enemy exists, destroy
+            Destroy(enemy1);
         gCam.SetActive(false); //toggle off goal camera
 
         //TOGGLE UI VISIBILITY:
@@ -186,9 +190,17 @@ public class GameManager : MonoBehaviour
         //Vector3 spawnRot = new Vector3(playerSpawn.rotation.x, playerSpawn.rotation.y, playerSpawn.rotation.z);
         //player.transform.rotation = Quaternion.Euler(spawnRot);
         //player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+        if (environment.childCount > envChildCountStart)
+            Destroy(environment.GetChild(0).gameObject);
         Instantiate(levels[numTutorial], environment).transform.SetAsFirstSibling();
         //player.GetComponent<PlayerTrick>().lAlways = true;
         //this.CallDelay(StartEnemy, delaySpawnEnemy);
+        if (numTutorial == 3)
+        {
+            enemy1 = Instantiate(enemyPref);
+            enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+            enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+        }
     }
 
     public void NextTutorial() //when player completes goal, go to next tutorial
@@ -203,8 +215,11 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (numTut == 3)
+            countGoal = 1;
+
         //SET UI FOR NEXT GOAL:
-        StartCoroutine(WaitForFirstTutorial(numTut)); //comment this line for faster testing
+        StartCoroutine(WaitForFirstTutorial(numTut)); //comment this line for faster testing*/ print("this line commented");
         gText.text = gMessagesStart[numTut].Replace("/newline/", "\n") + countGoal.ToString() + gMessagesEnd[numTut]; //goal
         //SET UI FOR NEXT COUNTER:
         cTextHeader.text = cHeaders[numTut]; //action for counter
@@ -235,7 +250,7 @@ public class GameManager : MonoBehaviour
                 Destroy(wallMarkerChild.gameObject);
         }
 
-        //FOR FASTER TESTING: //Also comment out line 212
+        //FOR FASTER TESTING: //Also comment out line 217 (this line -33)
         //foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
         //    gChild.gameObject.SetActive(true);
         //gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
@@ -309,7 +324,7 @@ public class GameManager : MonoBehaviour
         enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
         enemy2 = Instantiate(enemyPref);
         enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
-        StartCoroutine(Spawn(false));
+        StartCoroutine(Spawn());
 
     }
 
@@ -338,34 +353,26 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    public IEnumerator Spawn(bool waitForPunch)
+    public IEnumerator Spawn()
     {
         if(tutCanvas != null)
         {
-            print("yee");
             player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation); //reset position
             PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
             yield return new WaitForEndOfFrame();
             while (pt_.AnimCheck(0, "Exit")) //wait until player resets
                 yield return null;
             player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer; //reset speed
+            if(enemy1 != null)
+            {
+                Destroy(enemy1);
+                enemy1 = Instantiate(enemyPref);
+                enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+                enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+            }
         }
         else
         {
-            //if (waitForPunch == true)
-            //{
-            //    while (!playerPunchedByEnemy)
-            //        yield return null;
-            //    playerPunchedByEnemy = false;
-
-            //    PlayerUI pUI_ = player.GetComponent<PlayerUI>();
-            //    pUI_.TextFeedback("Game Over", 5);
-            //    yield return new WaitForSeconds(2f);
-
-            //    player.GetComponent<PlayerMovement>().ResetPlayer(false);
-            //    pUI_.ClearImportantTextFeedback();
-            //}
-
             while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
                 yield return null;
             //RESET POSITIONS AND INDEX OF ALL PLAYERS:
@@ -404,13 +411,18 @@ public class GameManager : MonoBehaviour
 
         if(player.GetComponent<PlayerTrick>().dodgedEnemy)
         {
-
+            if (tutCanvas != null)
+                IncreaseCounter();
         }
         else
         {
-            player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
-            yield return new WaitForSeconds(2f);
-            ReloadLevel();
+            if (tutCanvas == null) //if not in tutorial, show player "Game Over"
+                player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
+            yield return new WaitForSeconds(1f);
+            if (tutCanvas != null) //if in tutorial, don't reload scene
+                StartPlayerTutorial();
+            else
+                ReloadLevel();
         }
     }
     public bool IsGameOver() => gameover;

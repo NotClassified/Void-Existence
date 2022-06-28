@@ -195,7 +195,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &56923153
 GameObject:
@@ -834,7 +834,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &370620507
 GameObject:
@@ -949,7 +949,8 @@ MonoBehaviour:
   playerPunchedByEnemy: 0
   playerPref: {fileID: 810600191349574076, guid: 3a3af6d7e941329499ae0f95fbc580d0,
     type: 3}
-  enemyPref: {fileID: 0}
+  enemyPref: {fileID: 7690585463846558983, guid: 70087306caa8e264eabbd9c92f417770,
+    type: 3}
   actionsEnemy: 
   actionIndex1: 0
   actionIndex2: 0
@@ -961,9 +962,9 @@ MonoBehaviour:
   - {fileID: 8408839155764206812, guid: 7229eee0d4f6f2e46bfc87d1a0e1087b, type: 3}
   - {fileID: 742485723277452830, guid: 86a25773de18a6f4eaec23856a0cfaf3, type: 3}
   - {fileID: 5422632951829003479, guid: f86d0f4beebf17d429829dbe98cd3121, type: 3}
-  - {fileID: 5422632951829003479, guid: f86d0f4beebf17d429829dbe98cd3121, type: 3}
+  - {fileID: 7427483213098722244, guid: 2e7e4dd6f74a24942979f127093fd2e2, type: 3}
   playerSpawn: {fileID: 437617321}
-  enemySpawn: {fileID: 0}
+  enemySpawn: {fileID: 650896762}
   gCam: {fileID: 14363380}
   countGoal: 5
   gCanvas: {fileID: 1152580207}
@@ -981,7 +982,7 @@ MonoBehaviour:
   - ' Times'
   - ' Walls'
   - ' Times'
-  - ' Times'
+  - ' Time'
   gLoopClips:
   - {fileID: 32900000, guid: cfb26ec8e35648647ae48685a141faf8, type: 3}
   - {fileID: 32900000, guid: fe11da9bd75c1c7458bd6aeead752787, type: 3}
@@ -1000,8 +1001,8 @@ MonoBehaviour:
   - Lands
   - Climbs
   - Jumps
-  - 
-  numTutorial: 1
+  - Dodges
+  numTutorial: -1
   tutTransDelay: 1.5
   tutCanvas: {fileID: 1952699445}
   tutExtra: {fileID: 1429847528}
@@ -1382,6 +1383,36 @@ Transform:
   m_Father: {fileID: 2074599043}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &650896761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 650896762}
+  m_Layer: 0
+  m_Name: Enemy Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &650896762
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650896761}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 2, y: 0, z: -12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &740155234
 GameObject:
   m_ObjectHideFlags: 0
@@ -2427,7 +2458,7 @@ RectTransform:
   - {fileID: 1264041269}
   - {fileID: 1082720439}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3102,7 +3133,7 @@ RectTransform:
   m_Children:
   - {fileID: 67015994}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4099,7 +4130,7 @@ RectTransform:
   - {fileID: 1881288270}
   - {fileID: 1429847529}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4503,7 +4534,7 @@ RectTransform:
   - {fileID: 1080743854}
   - {fileID: 1921832173}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

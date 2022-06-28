@@ -16,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     #endregion
     #region MOVEMENT VARS
     public bool upInput;
-    public bool jumpInput;
     public float velocityZ;
     [SerializeField]
     float walkAcceleration;
@@ -131,8 +130,7 @@ public class PlayerMovement : MonoBehaviour
             //runInput = true;//Input.GetKey(KeyCode.LeftShift);
             //leftInput = Input.GetKeyDown(KeyCode.A);
             //rightInput = Input.GetKeyDown(KeyCode.D);
-            upInput = Input.GetKeyDown(KeyCode.W);
-            jumpInput = Input.GetKeyDown(KeyCode.Space);
+            upInput = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space);
         }
         else
         {
@@ -158,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
         #region JUMP DOWN
         if (animator.GetBool(hashJumpDown)) //prevent loop of the jump down animation
             animator.SetBool(hashJumpDown, false);
-        if (upInput || jumpInput) //checking input for jump down
+        if (upInput) //checking input for jump down
         {
             pt.JumpDownCheck();
         }
@@ -286,7 +284,7 @@ public class PlayerMovement : MonoBehaviour
         //pt.StopWallClimbFailRoutine();
         animator.Play("Exit", 0);
 
-        //animator.SetLayerWeight(3, 0); //reset punched layer
+        animator.SetLayerWeight(3, 0); //reset punched layer
 
         pt.attemptedClimb = false; //let player be able to climb again
         pt.attemptedLand = false; //let player be able to land again
@@ -294,6 +292,6 @@ public class PlayerMovement : MonoBehaviour
         fallvelocity.y = 0f;
 
         if (callGameManagerSpawnMethod)
-            StartCoroutine(gm.Spawn(false)); //reset player postition to starting point
+            StartCoroutine(gm.Spawn()); //reset player postition to starting point
     }
 }

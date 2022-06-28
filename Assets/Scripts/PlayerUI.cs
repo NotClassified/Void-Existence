@@ -48,6 +48,8 @@ public class PlayerUI : MonoBehaviour
     GameObject fParent;
     [SerializeField]
     float fTime;
+    [SerializeField]
+    GameObject fSpamParent;
     #endregion
     #region HASHES
     private int hashFall;
@@ -154,6 +156,16 @@ public class PlayerUI : MonoBehaviour
     {
         fText.text = "";
         TextFeedback("", -1);
+    }
+    public void DontSpamUIToggle()
+    {
+        if (fSpamParent.activeSelf)
+            fSpamParent.SetActive(false);
+        else
+        {
+            fSpamParent.SetActive(true);
+            this.CallDelay(DontSpamUIToggle, 1f);
+        }
     }
 
     IEnumerator SpeedSliderColorChange(Color startColor, Color endColor)
