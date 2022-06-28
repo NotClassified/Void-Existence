@@ -961,6 +961,7 @@ MonoBehaviour:
   - {fileID: 8408839155764206812, guid: 7229eee0d4f6f2e46bfc87d1a0e1087b, type: 3}
   - {fileID: 742485723277452830, guid: 86a25773de18a6f4eaec23856a0cfaf3, type: 3}
   - {fileID: 5422632951829003479, guid: f86d0f4beebf17d429829dbe98cd3121, type: 3}
+  - {fileID: 5422632951829003479, guid: f86d0f4beebf17d429829dbe98cd3121, type: 3}
   playerSpawn: {fileID: 437617321}
   enemySpawn: {fileID: 0}
   gCam: {fileID: 14363380}
@@ -975,18 +976,22 @@ MonoBehaviour:
   - 'Land '
   - Jump Climb/newline/
   - 'Jump '
+  - Dodge Enemy/newline/
   gMessagesEnd:
   - ' Times'
   - ' Walls'
+  - ' Times'
   - ' Times'
   gLoopClips:
   - {fileID: 32900000, guid: cfb26ec8e35648647ae48685a141faf8, type: 3}
   - {fileID: 32900000, guid: fe11da9bd75c1c7458bd6aeead752787, type: 3}
   - {fileID: 32900000, guid: bd0b14b8032a40447ba0b77c3899550b, type: 3}
+  - {fileID: 32900000, guid: 745de67e53b1f9d4f9f4bc64099455aa, type: 3}
   gInitialClips:
   - {fileID: 32900000, guid: 3f635e2ab2f346f4bb325e302c88aa6e, type: 3}
   - {fileID: 32900000, guid: 99682ceb29bddfb43b26809a7870ce89, type: 3}
   - {fileID: 32900000, guid: ac02e4d01f5e0b54d8074447c6083086, type: 3}
+  - {fileID: 32900000, guid: aaf2ce93b7be17c46934f2599aaa99c6, type: 3}
   cCanvas: {fileID: 1582179986}
   cTextHeader: {fileID: 1951874268}
   cSlider: {fileID: 67015995}
@@ -995,7 +1000,8 @@ MonoBehaviour:
   - Lands
   - Climbs
   - Jumps
-  numTutorial: -1
+  - 
+  numTutorial: 1
   tutTransDelay: 1.5
   tutCanvas: {fileID: 1952699445}
   tutExtra: {fileID: 1429847528}
@@ -1005,10 +1011,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b2dd416cad159d4438803a790ad5810d, type: 3}
   - {fileID: 21300000, guid: abb6ec232644cf54aa976bc729f7a5d3, type: 3}
   - {fileID: 21300000, guid: abb6ec232644cf54aa976bc729f7a5d3, type: 3}
+  - {fileID: 21300000, guid: d62ff4c58a4e7cd4ba51f24f92b913d4, type: 3}
   tutMessages:
   - Land
   - Climb
   - Jump
+  - Dodge
   eaMarker: {fileID: 0}
   eaParent: {fileID: 0}
   mode: 1
