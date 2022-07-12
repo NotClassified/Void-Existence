@@ -8,11 +8,18 @@ using UnityEngine.Video;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
     public float timeScale = 100;
     public static float time;
+    #region BACKGROUND ROCKS
+    public GameObject rockParent;
+    public GameObject rockPref;
+    public Vector3 maxRock;
+    public Vector3 minRock; 
+    #endregion
     #region PLAYERS
     public GameObject player;
     public GameObject enemy1;
@@ -114,6 +121,16 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        for (int i = 0; i < 700; i++)
+        {
+            GameObject rock = Instantiate(rockPref, rockParent.transform);
+            rock.transform.position = new Vector3(Random.Range(minRock.x, maxRock.x), Random.Range(minRock.y, maxRock.y), 
+                                                  Random.Range(minRock.z, maxRock.z));
+            rock.transform.eulerAngles = new Vector3(Random.Range(-360, 360), Random.Range(-360, 360), Random.Range(-360, 360));
+            float sizeOfRock = Random.Range(.1f, 1.5f);
+            rock.transform.localScale = new Vector3(sizeOfRock, sizeOfRock, sizeOfRock);
+        }
+
         Time.timeScale = timeScale / 100;
         //if (mode == 0)
         //{

@@ -20,7 +20,7 @@ public class LevelPrep : MonoBehaviour
         mPositions = new List<Vector3>(); //construct list of positions for wall markers instantiate method
         foreach (Transform child in transform) //traverse all children of this object
         {
-            if (child.name.Substring(0, 4).Equals("Cube"))
+            if (child.name.Substring(0, 4).Equals("Cube") || child.name.Substring(0, 4).Equals("Plat"))
                 child.gameObject.layer = 6; //platforms
             else if (child.name.Substring(0, 4).Equals("Wall"))
             {
