@@ -58,6 +58,9 @@ public class PlayerUI : MonoBehaviour
     private int hashClimbSpeed;
     private int hashLand;
     #endregion
+    #region DEVELOPER UI
+    public Image lAlwaysImage; 
+    #endregion
 
     public bool startMethodCalled = false;
     void Start()
@@ -132,6 +135,14 @@ public class PlayerUI : MonoBehaviour
             fallSlider.value = fall_sTarget; //correlate slider value 
         }
         #endregion
+    }
+
+    public void ToggleLandAlways()
+    {
+        if (pt.lAlways)
+            lAlwaysImage.color = Color.green;
+        else
+            lAlwaysImage.color = Color.grey;
     }
 
     public void TextFeedback (string message, int color) //text for giving feedback to the player

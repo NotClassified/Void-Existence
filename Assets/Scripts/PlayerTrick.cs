@@ -241,6 +241,12 @@ public class PlayerTrick : MonoBehaviour
         if (!pm.startMethodCalled || !pUI.startMethodCalled)
             return;
 
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            lAlways = !lAlways;
+            pUI.ToggleLandAlways();
+        }
+
         #region ANIMATION VARS
         isJumping = !AnimCheck(1, "Empty"); //check jumping anims
         isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims

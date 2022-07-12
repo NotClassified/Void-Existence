@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < 700; i++)
+        for (int i = 0; i < 2000; i++)
         {
             GameObject rock = Instantiate(rockPref, rockParent.transform);
             rock.transform.position = new Vector3(Random.Range(minRock.x, maxRock.x), Random.Range(minRock.y, maxRock.y), 
@@ -337,10 +337,13 @@ public class GameManager : MonoBehaviour
         level_.AddComponent<LevelPrep>();
 
         player = Instantiate(playerPref);
-        enemy1 = Instantiate(enemyPref);
-        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
-        enemy2 = Instantiate(enemyPref);
-        enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
+        if(mode == 1)
+        {
+            enemy1 = Instantiate(enemyPref);
+            enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+            enemy2 = Instantiate(enemyPref);
+            enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
+        }
         StartCoroutine(Spawn());
 
     }
@@ -390,29 +393,35 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
-                yield return null;
+            if (mode == 1)
+            {
+                while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
+                    yield return null;
+            }
             //RESET POSITIONS AND INDEX OF ALL PLAYERS:
             player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
-            enemy1.GetComponent<EnemyMovement>().ResetPlayer();
-            enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-            actionIndex1 = 0;
+            if(mode == 1)
+            {
+                enemy1.GetComponent<EnemyMovement>().ResetPlayer();
+                enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+                actionIndex1 = 0;
 
-            enemy2.GetComponent<EnemyMovement>().ResetPlayer();
-            enemy2.transform.SetPositionAndRotation(enemySpawn.GetChild(0).position, enemySpawn.rotation);
-            actionIndex2 = 0;
+                enemy2.GetComponent<EnemyMovement>().ResetPlayer();
+                enemy2.transform.SetPositionAndRotation(enemySpawn.GetChild(0).position, enemySpawn.rotation);
+                actionIndex2 = 0;
 
-            EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
-            EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
-            PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
-            yield return new WaitForEndOfFrame();
-            while (et1_.AnimCheck(0, "Exit") || et2_.AnimCheck(0, "Exit") || pt_.AnimCheck(0, "Exit")) //wait until all players reset
-                yield return null;
-            //RESET SPEED FOR ALL PLAYERS:
-            enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
-            enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
-            player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
+                EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
+                EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
+                PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
+                yield return new WaitForEndOfFrame();
+                while (et1_.AnimCheck(0, "Exit") || et2_.AnimCheck(0, "Exit") || pt_.AnimCheck(0, "Exit")) //wait until all players reset
+                    yield return null;
+                //RESET SPEED FOR ALL PLAYERS:
+                enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
+                enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
+                player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
+            }
 
             gameover = false;
             Time.timeScale = timeScale / 100;

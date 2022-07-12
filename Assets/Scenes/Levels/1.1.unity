@@ -1822,7 +1822,7 @@ MonoBehaviour:
   delaySpawnEnemy: 0.8
   environment: {fileID: 2074599043}
   levels:
-  - {fileID: 8963767811246040580, guid: ed67f82e5434988419b58a398adbcf21, type: 3}
+  - {fileID: 5305973694131069975, guid: 616b9cc5b8b8cc8459e8545a85787ec1, type: 3}
   - {fileID: 742485723277452830, guid: 86a25773de18a6f4eaec23856a0cfaf3, type: 3}
   - {fileID: 5422632951829003479, guid: f86d0f4beebf17d429829dbe98cd3121, type: 3}
   playerSpawn: {fileID: 437617321}
