@@ -33,7 +33,7 @@ public class PlayerTrick : MonoBehaviour
     #region FALLING & LANDING //d-distance l-land
     public bool attemptedLand = false;
     public bool isGrounded = true;
-    public bool lAlways = false;
+    public bool landAlways = false;
     [SerializeField]
     float ldInputGap; 
     [SerializeField]
@@ -77,6 +77,7 @@ public class PlayerTrick : MonoBehaviour
     private int hashPunched;
     #endregion
     #region PUNCHED & DODGE
+    public bool dodgeAlways = false;
     [SerializeField]
     float punchedWeightSpeed;
     float punchedLayerWeight;
@@ -243,8 +244,13 @@ public class PlayerTrick : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.L))
         {
-            lAlways = !lAlways;
+            landAlways = !landAlways;
             pUI.ToggleLandAlways();
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            dodgeAlways = !dodgeAlways;
+            pUI.ToggleDodgeAlways();
         }
 
         #region ANIMATION VARS
@@ -292,7 +298,7 @@ public class PlayerTrick : MonoBehaviour
                 }
                 else
                 {
-                    anim.SetBool(hashFall, !lAlways); //land fail unless set to always land
+                    anim.SetBool(hashFall, !landAlways); //land fail unless set to always land
                     pUI.TextFeedback("Early Landing", 4);
                     this.CallDelay(ClearLandingTextFeedback, lResetDelay); //if too early then give second chance for landing
                 }
@@ -306,7 +312,7 @@ public class PlayerTrick : MonoBehaviour
                 {
                     if (!attemptedLand) //check if player didn't do anything or pressed key too late
                     {
-                        anim.SetBool(hashFall, !lAlways); //land fail unless set to always land
+                        anim.SetBool(hashFall, !landAlways); //land fail unless set to always land
                         pUI.TextFeedback("Late Landing", 4);
                         gm.DecreaseCounter(); //if player is in tutorial for jumping, decrease counter
                     }
@@ -436,6 +442,8 @@ public class PlayerTrick : MonoBehaviour
             yield return null;
         }
         //dodgedEnemy = true; /*always dodge late*/ print("Dodged Late");
+        if (dodgeAlways)
+            dodgedEnemy = true;
 
         if (dodgedEnemy)
             ToggleCC_ON();

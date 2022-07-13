@@ -59,7 +59,8 @@ public class PlayerUI : MonoBehaviour
     private int hashLand;
     #endregion
     #region DEVELOPER UI
-    public Image lAlwaysImage; 
+    public Image landAlwaysImage;
+    public Image dodgeAlwaysImage;
     #endregion
 
     public bool startMethodCalled = false;
@@ -139,10 +140,17 @@ public class PlayerUI : MonoBehaviour
 
     public void ToggleLandAlways()
     {
-        if (pt.lAlways)
-            lAlwaysImage.color = Color.green;
+        if (pt.landAlways)
+            landAlwaysImage.color = Color.green;
         else
-            lAlwaysImage.color = Color.grey;
+            landAlwaysImage.color = Color.grey;
+    }
+    public void ToggleDodgeAlways()
+    {
+        if (pt.dodgeAlways)
+            dodgeAlwaysImage.color = Color.green;
+        else
+            dodgeAlwaysImage.color = Color.grey;
     }
 
     public void TextFeedback (string message, int color) //text for giving feedback to the player
