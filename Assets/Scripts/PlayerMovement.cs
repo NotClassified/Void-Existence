@@ -107,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             float slowTimeSet = 30 / 100f; //enter the desired slower timescale
-            float fastTimeSet = 400 / 100f; //enter the desired faster timescale
+            float fastTimeSet = 500 / 100f; //enter the desired faster timescale
             if (Input.GetKey(KeyCode.LeftShift)) {
                 if (Time.timeScale == fastTimeSet)
                     Time.timeScale = gm.timeScale / 100; //reset time

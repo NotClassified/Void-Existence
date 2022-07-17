@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
     int actionIndex1;
     [SerializeField]
     int actionIndex2;
+    [SerializeField]
+    float spawnOffsetForEnemy2;
     #endregion
     #region ENVIRONMENT
     public GameObject prefWallMarker;
@@ -342,8 +344,8 @@ public class GameManager : MonoBehaviour
         {
             enemy1 = Instantiate(enemyPref);
             enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
-            enemy2 = Instantiate(enemyPref);
-            enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
+            //enemy2 = Instantiate(enemyPref);
+            //enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
         }
         StartCoroutine(Spawn());
 
@@ -352,7 +354,7 @@ public class GameManager : MonoBehaviour
     public void LevelFinished(int level_)
     {
         player.GetComponent<PlayerUI>().TextFeedback("Level Finished!", 0);
-        this.CallDelay(ResetGame, 3f);
+        this.CallDelay(ResetGame, 1.05f);
         GameProgress.LevelComplete(level_);
     }
 
@@ -408,19 +410,19 @@ public class GameManager : MonoBehaviour
                 enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
                 actionIndex1 = 0;
 
-                enemy2.GetComponent<EnemyMovement>().ResetPlayer();
-                enemy2.transform.SetPositionAndRotation(enemySpawn.GetChild(0).position, enemySpawn.rotation);
-                actionIndex2 = 0;
+                //enemy2.GetComponent<EnemyMovement>().ResetPlayer();
+                //enemy2.transform.SetPositionAndRotation(enemySpawn.GetChild(0).position, enemySpawn.rotation);
+                //actionIndex2 = 0;
 
                 EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
-                EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
+                //EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
                 PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
                 yield return new WaitForEndOfFrame();
-                while (et1_.AnimCheck(0, "Exit") || et2_.AnimCheck(0, "Exit") || pt_.AnimCheck(0, "Exit")) //wait until all players reset
+                while (et1_.AnimCheck(0, "Exit") || /*et2_.AnimCheck(0, "Exit") ||*/ pt_.AnimCheck(0, "Exit")) //wait until all players reset
                     yield return null;
                 //RESET SPEED FOR ALL PLAYERS:
                 enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
-                enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
+                //enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
                 player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
             }
 
@@ -438,8 +440,16 @@ public class GameManager : MonoBehaviour
 
         if(player.GetComponent<PlayerTrick>().dodgedEnemy)
         {
+            gameover = false;
+            playerPunchedByEnemy = false;
+
             if (tutCanvas != null)
                 IncreaseCounter();
+
+            enemy2 = Instantiate(enemyPref);
+            enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
+            enemy2.transform.position = new Vector3(2, enemy1.transform.position.y, enemy1.transform.position.z + spawnOffsetForEnemy2);
+            enemy2.transform.eulerAngles = new Vector3(0, -90);
         }
         else
         {

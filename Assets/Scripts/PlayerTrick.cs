@@ -127,10 +127,10 @@ public class PlayerTrick : MonoBehaviour
         if (gm.numTutorial == 0) //check if playing landing tutorial
             return false; //don't jump during landing tutorial
 
-        //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively)
+        //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively) and hasn't finished level
         if (!attemptedJump && (defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f &&
             !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
-            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
+            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) && !pUI.GetFeedbackText().Equals("Level Finished!")) 
         {
             pm.StartCoroutine(pm.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
             if (gm.numTutorial == 2) //if player is in tutorial for jumping, increase counter
@@ -416,6 +416,7 @@ public class PlayerTrick : MonoBehaviour
     #region PUNCHING & DODGING METHODS
     public IEnumerator PunchedByEnemy()
     {
+        bool alreadyDodged = dodgedEnemy; //var for preventing player to dodge again
         ToggleCC_OFF(); //prevent enemy collision
 
         float timeToDodge = .266f; //start punched animation frame 10.5 (timeToDodge * 30 + 2.5)
@@ -429,7 +430,7 @@ public class PlayerTrick : MonoBehaviour
                 //dodgedEnemy = true; /*always dodge early*/ print("Dodged Early");
             }
 
-            if (Input.GetKeyDown(KeyCode.D) && dodgeNow)
+            if (Input.GetKeyDown(KeyCode.D) && dodgeNow && !alreadyDodged)
             {
                 if (attemptDodge)
                     pUI.DontSpamUIToggle(); //tell player not to spam
@@ -444,6 +445,9 @@ public class PlayerTrick : MonoBehaviour
         //dodgedEnemy = true; /*always dodge late*/ print("Dodged Late");
         if (dodgeAlways)
             dodgedEnemy = true;
+
+        if (alreadyDodged)
+            dodgedEnemy = false;
 
         if (dodgedEnemy)
             ToggleCC_ON();

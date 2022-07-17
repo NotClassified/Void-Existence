@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3197567962545993930}
   - component: {fileID: 3197567962545993931}
   - component: {fileID: 6435156577128982385}
+  - component: {fileID: 2478527160467756}
   m_Layer: 0
   m_Name: Portal
   m_TagString: Untagged
@@ -90,6 +91,7 @@ VFXRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 0}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -121,5 +123,19 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 2, y: 2, z: 1.9999995}
+  m_Center: {x: 0, y: -5, z: 5}
+--- !u!114 &2478527160467756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3197567962545993928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693358169ca65b74eadbdc04e3ef21a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  levelIndex: 0
