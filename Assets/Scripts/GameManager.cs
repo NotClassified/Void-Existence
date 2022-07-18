@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
     bool gameover = false;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
-    public int mode = 0; //0-singleplayer 1-singleplayer+enemy 2-multiplayer
+    public int mode = 0; //0-Tutorial 1-Level 2-No Enemies
 
     void Start()
     {
@@ -152,17 +152,22 @@ public class GameManager : MonoBehaviour
 
         //}
         envChildCountStart = environment.childCount;
-        levelFinished = false;
 
-        if (gCanvas != null)
-            gCam.SetActive(true);
-        if (numTutorial != -1)
-            print("Tutorials skipped: " + (numTutorial + 1) + "\n Please set numTutorial = -1");
-        if (tutCanvas != null)
-            NextTutorial();
+        //if (gCanvas != null)
+        //    gCam.SetActive(true);
+        //if (numTutorial != -1)
+        //    print("Tutorials skipped: " + (numTutorial + 1) + "\n Please set numTutorial = -1");
+        //if (tutCanvas != null)
+        //    NextTutorial();
+        //else
+        //    StartLevel();
+
+
+        levelFinished = false;
+        if (mode == 0)
+            StartTutorial();
         else
             StartLevel();
-
     }
     private void Update()
     {
@@ -186,7 +191,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #region TUTORIAL METHODS
+    #region OLD TUTORIAL METHODS
     public void StartPlayerTutorial()
     {
         gameover = false;
@@ -333,7 +338,15 @@ public class GameManager : MonoBehaviour
     {
         if (cCanvas != null && numTutorial == 2 && count > 0)
             count--;
-    } 
+    }
+    #endregion
+
+    #region TUTORIAL METHODS
+    void StartTutorial()
+    {
+        player = Instantiate(playerPref);
+        player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+    }
     #endregion
 
     void StartLevel()
