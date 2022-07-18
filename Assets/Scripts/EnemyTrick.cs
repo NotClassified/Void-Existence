@@ -316,6 +316,16 @@ public class EnemyTrick : MonoBehaviour
 
     public IEnumerator EnemyPunch()
     {
+        //CHANGE OFFSET IF ENEMY IS ON THE RIGHTSIDE & FLIP PUNCH ANIMATION IF ENEMY IS ON THE LEFTSIDE
+        Vector3 punchOffset_;
+        if (enemyNum == 1)
+            punchOffset_ = new Vector3(-punchOffset.x, 0, punchOffset.z);
+        else
+        {
+            punchOffset_ = punchOffset;
+            anim.SetFloat("FlipForPunch", 0);
+        }
+
         rigPunch.enabled = true; //for the aim constraint
         anim.SetBool(hashPunch, true); //punch
         yield return new WaitForEndOfFrame();
@@ -340,10 +350,10 @@ public class EnemyTrick : MonoBehaviour
         {
             time += Time.deltaTime;
             punchEndPosition.position = posPlayer.position;
-            transform.position = Vector3.Lerp(initialPos, punchEndPosition.position + punchOffset, time / punchDuration);
+            transform.position = Vector3.Lerp(initialPos, punchEndPosition.position + punchOffset_, time / punchDuration);
             yield return null;
         }
-        transform.position = punchEndPosition.position + punchOffset;
+        transform.position = punchEndPosition.position + punchOffset_;
 
         /* ENEMY HAS PUNCHED PLAYER */
         gm.playerPunchedByEnemy = true;

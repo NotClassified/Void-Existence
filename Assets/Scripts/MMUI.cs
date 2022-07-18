@@ -65,7 +65,7 @@ public class MMUI : MonoBehaviour
         {
             Application.Quit();
         }
-        else if (_button == "1.1")
+        else if (_button == "1")
         {
             SceneManager.LoadScene(scenes[2]);
         }

@@ -447,7 +447,10 @@ public class PlayerTrick : MonoBehaviour
             dodgedEnemy = true;
 
         if (alreadyDodged)
-            dodgedEnemy = false;
+        {
+            dodgedEnemy = false; //prevent player from dodging again
+            anim.SetFloat("FlipForPunch", 0); //flip punched animation
+        }
 
         if (dodgedEnemy)
             ToggleCC_ON();
