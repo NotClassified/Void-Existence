@@ -288,17 +288,13 @@ public class EnemyTrick : MonoBehaviour
         while (!defaultMove || !Physics.Raycast(raypos[3], Vector3.down, out hits[1], distances[1], groundMask) ||
             Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
-            //print("waiting for spot");
             yield return null;
         }
         //print("ready to punch");
         //if enemy is too ahead of player or if player isn't in default animation state
         if (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
         {
-            //print("stop");
-            anim.SetBool("Stop", true); //stop enemy to wait for player
-            yield return new WaitForEndOfFrame();
-            anim.SetBool("Stop", false); //prevent loop
+            StartEnemyStopRunningRoutine(); //stop enemy to wait for player
 
             while (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
                 yield return null;
@@ -307,7 +303,6 @@ public class EnemyTrick : MonoBehaviour
         }
         else //punch player
         {
-            //print("no stop");
             enemyPunchRoutine = StartCoroutine(EnemyPunch());
             StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
         }
@@ -394,4 +389,12 @@ public class EnemyTrick : MonoBehaviour
     }
 
     #endregion
+
+    public void StartEnemyStopRunningRoutine() => StartCoroutine(EnemyStopRunning());
+    IEnumerator EnemyStopRunning()
+    {
+        anim.SetBool("Stop", true); //stop enemy to wait for player
+        yield return new WaitForEndOfFrame();
+        anim.SetBool("Stop", false); //prevent loop
+    }
 }

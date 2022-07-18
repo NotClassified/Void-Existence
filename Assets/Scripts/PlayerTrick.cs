@@ -130,7 +130,7 @@ public class PlayerTrick : MonoBehaviour
         //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively) and hasn't finished level
         if (!attemptedJump && (defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f &&
             !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
-            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) && !pUI.GetFeedbackText().Equals("Level Finished!")) 
+            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
             pm.StartCoroutine(pm.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
             if (gm.numTutorial == 2) //if player is in tutorial for jumping, increase counter

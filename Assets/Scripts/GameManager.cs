@@ -120,6 +120,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     bool gameover = false;
+    public static bool levelFinished;
+    [SerializeField] float finishLevelDelay;
     public int mode = 0; //0-singleplayer 1-singleplayer+enemy 2-multiplayer
 
     void Start()
@@ -150,6 +152,7 @@ public class GameManager : MonoBehaviour
 
         //}
         envChildCountStart = environment.childCount;
+        levelFinished = false;
 
         if (gCanvas != null)
             gCam.SetActive(true);
@@ -335,9 +338,9 @@ public class GameManager : MonoBehaviour
 
     void StartLevel()
     {
-        GameObject level_ = Instantiate(levels[0], environment);
-        level_.transform.SetAsFirstSibling();
-        level_.AddComponent<LevelPrep>();
+        //GameObject level_ = Instantiate(levels[0], environment);
+        //level_.transform.SetAsFirstSibling();
+        //level_.AddComponent<LevelPrep>();
 
         player = Instantiate(playerPref);
         if(mode == 1)
@@ -354,7 +357,12 @@ public class GameManager : MonoBehaviour
     public void LevelFinished(int level_)
     {
         player.GetComponent<PlayerUI>().TextFeedback("Level Finished!", 0);
-        this.CallDelay(ResetGame, 1.05f);
+        if (enemy2 != null)
+            enemy2.GetComponent<EnemyTrick>().StartEnemyStopRunningRoutine();
+        else if (enemy1 != null)
+            enemy1.GetComponent<EnemyTrick>().StartEnemyStopRunningRoutine();
+        levelFinished = true;
+        this.CallDelay(ResetGame, finishLevelDelay);
         GameProgress.LevelComplete(level_);
     }
 

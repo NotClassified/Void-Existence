@@ -145,25 +145,27 @@ public class PlayerMovement : MonoBehaviour
             velocityZ += (walkAcceleration / 10) * Time.deltaTime;
         else if (velocityZ < maxRunVelocity && pt.isGrounded && !pt.isClimbing) //increse forward velocity when below running speed and is grounded
             velocityZ += (runAcceleration / 10) * Time.deltaTime;
+
         if (velocityZ != 9 && pt.AnimCheck(0, "Land1") || pt.isClimbing) //setting forward velocity when landing or climbing successfully
         {
             velocityZ = 9;
         }
         else if (velocityZ != 6 && pt.AnimCheck(0, "Land2")) //setting velocity when landing unsuccessfully
             velocityZ = 3;
+
         animator.SetFloat(hashVelocityZ, velocityZ); //correlating variables with animater
         #endregion
         #region JUMP DOWN
         if (animator.GetBool(hashJumpDown)) //prevent loop of the jump down animation
             animator.SetBool(hashJumpDown, false);
-        if (upInput && gm.levelnum >= 2) //checking input for jump down
+        if (upInput && gm.levelnum >= 2 && !GameManager.levelFinished) //checking input for jump down
         {
             pt.JumpDownCheck();
         }
         //jumpInput = false; //prevent loop of the side jump animation 
         #endregion
         #region WALL CLIMB
-        if ((pt.isClimbing && Time.time > pt.wcClipEnd && animator.GetBool(hashWallClimb))) //checking if climbing animation has ended
+        if (pt.isClimbing && Time.time > pt.wcClipEnd && animator.GetBool(hashWallClimb) && !GameManager.levelFinished) //checking if climbing animation has ended
         {
             transform.position = rootBone.transform.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
