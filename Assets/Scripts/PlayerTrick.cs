@@ -34,6 +34,8 @@ public class PlayerTrick : MonoBehaviour
     public bool attemptedLand = false;
     public bool isGrounded = true;
     public bool landAlways = false;
+    bool firstLand = true;
+    bool landedFirstLand = false;
     [SerializeField]
     float ldInputGap; 
     [SerializeField]
@@ -124,7 +126,7 @@ public class PlayerTrick : MonoBehaviour
 
     public bool JumpDownCheck()
     {
-        if (gm.numTutorial == 0) //check if playing landing tutorial
+        if (gm.tutNumber == 1) //check if playing landing tutorial
             return false; //don't jump during landing tutorial
 
         //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively) and hasn't finished level
@@ -133,7 +135,7 @@ public class PlayerTrick : MonoBehaviour
             !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
             pm.StartCoroutine(pm.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
-            if (gm.numTutorial == 2) //if player is in tutorial for jumping, increase counter
+            if (gm.tutNumber == 3) //if player is in tutorial for jumping, increase counter
                 gm.IncreaseCounter();
             anim.SetBool(hashJumpDown, true);
             return true;
@@ -182,7 +184,7 @@ public class PlayerTrick : MonoBehaviour
             this.CallDelay(ToggleCC_ON, 1f); //disable collider
             pm.velocityZ = 9; //set forward speed of player
 
-            if (gm.numTutorial == 1) //if player is in tutorial for wall climbing, increase counter
+            if (gm.tutNumber == 2) //if player is in tutorial for wall climbing, increase counter
                 gm.IncreaseCounter();
             return true; //play animation
         }
@@ -225,7 +227,7 @@ public class PlayerTrick : MonoBehaviour
             attemptedLand = false; //let player attempt landing again if still in air
             return;
         }
-        gm.DecreaseCounter();
+        //gm.DecreaseCounter();
     }
     void ClearJumpingFeedback()
     {
@@ -282,17 +284,44 @@ public class PlayerTrick : MonoBehaviour
         distances[4] = (-pm.fallvelocity.y) / dDominator; //distance for landing
         distances[5] = distances[4] + ldInputGap; //distance for landing input by player
 
-        raypos[0] = transform.position + Vector3.up * distances[0] + -transform.right * distances[2]; //raycast position for checking if player is grounded
-        if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[0], groundMask)) //check if player is in air (not grounded)
+        //raycast position for checking if player is grounded
+        raypos[0] = transform.position + Vector3.up * distances[0] + -transform.right * distances[2]; 
+        //check if player is in air (not grounded)
+        if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[0], groundMask)) 
         {
             isGrounded = false;
 
+            //if in landing tutorial, check if ground is within distance to land to light up tutorial input text
+            if (gm.tutNumber == 1 && Physics.Raycast(raypos[0], rayDir, out hits[0], distances[5], groundMask))
+            {
+                //print(Time.time); //figuring out the land input gap length (3 = 1/5 of a second)
+                if (!gm.GetInputTextLit())
+                    gm.LightUpInputText(true);//light up tutorial input text
+
+                if (firstLand)
+                {
+                    firstLand = false;
+                    this.CallDelay(gm.FreezeTutorial, .1f);
+                }
+            }
+
             if (Input.GetKeyDown(KeyCode.S) && !attemptedLand) //landing input
             {
+                if (!landedFirstLand)
+                {
+                    if (Time.timeScale == 0) //if frozen, unfreeze
+                    {
+                        landedFirstLand = true;
+                        Time.timeScale = gm.timeScale / 100;
+                    }
+                    else
+                        return;
+                }
+
                 if (Physics.Raycast(raypos[0], rayDir, out hits[0], distances[5], groundMask)) //check if ground is within distance to land
                 {
                     anim.SetBool(hashFall, false); //land success
-                    if (gm.numTutorial == 0) //if player is in tutorial for landing, increase counter
+                    if (gm.tutNumber == 1) //if player is in tutorial for landing, increase counter
                         gm.IncreaseCounter();
                     pUI.TextFeedback("Perfect Landing!", 3);
                 }
@@ -314,13 +343,13 @@ public class PlayerTrick : MonoBehaviour
                     {
                         anim.SetBool(hashFall, !landAlways); //land fail unless set to always land
                         pUI.TextFeedback("Late Landing", 4);
-                        gm.DecreaseCounter(); //if player is in tutorial for jumping, decrease counter
+                        //gm.DecreaseCounter(); //if player is in tutorial for jumping, decrease counter
                     }
                     anim.SetBool(hashLand, true);
                     if (anim.GetBool(hashFall))
-                        this.CallDelay(ClearTextFeedback, 1.1f);
+                        this.CallDelay(ClearTextFeedback, lResetDelay);
                     else
-                        this.CallDelay(ClearTextFeedback, .6f);
+                        this.CallDelay(ClearTextFeedback, lResetDelay);
                 }
                 else //not close enough to platform
                 {
@@ -337,6 +366,11 @@ public class PlayerTrick : MonoBehaviour
             attemptedLand = false;
             //anim.SetBool(hashFall, true);
             //pUI.tShowed[0] = false; //keep playing tutorial
+
+            if (gm.tutNumber == 1 && gm.GetInputTextLit())
+            {
+                gm.LightUpInputText(false); //unlight the input text
+            }
         }
         anim.SetBool("IsGrounded", isGrounded); //correlate animation vars 
         #endregion

@@ -27,15 +27,15 @@ public class MMUI : MonoBehaviour
         mmChildren[1].SetActive(true);  //MM1
         mmChildren[2].SetActive(false);  //MM2
 
-        gpcText.text = GameProgress.levelCompleted.ToString(); //get progression number
+        gpcText.text = GameProgress.levelLastCompleted.ToString(); //get progression number
         //LOCKING AND UNLOCKING LEVELS:
-        for (int i = 0; i < levelButtons.Length && i < GameProgress.levelCompleted + 1; i++) //unlock levels completed plus 1 extra level
+        for (int i = 0; i < levelButtons.Length && i < GameProgress.levelLastCompleted + 1; i++) //unlock levels completed plus 1 extra level
         {
             levelButtons[i].GetComponent<Button>().interactable = true;
             levelButtons[i].transform.Find("#").gameObject.SetActive(true);
             levelButtons[i].transform.Find("Lock").gameObject.SetActive(false);
         }
-        for (int i = GameProgress.levelCompleted + 1; i < levelButtons.Length; i++) //lock remaining levels
+        for (int i = GameProgress.levelLastCompleted + 1; i < levelButtons.Length; i++) //lock remaining levels
         {
             levelButtons[i].GetComponent<Button>().interactable = false;
             levelButtons[i].transform.Find("#").gameObject.SetActive(false);
@@ -78,9 +78,9 @@ public class MMUI : MonoBehaviour
     #region TESTING
     public void GameProgressCountChange(int i)
     {
-        if (!(GameProgress.levelCompleted == -1 && i < 0))
+        if (!(GameProgress.levelLastCompleted == -1 && i < 0))
         {
-            GameProgress.levelCompleted += i;
+            GameProgress.levelLastCompleted += i;
             Start();
         }
     } 

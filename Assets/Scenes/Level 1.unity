@@ -21098,6 +21098,12 @@ MonoBehaviour:
   tutExtra: {fileID: 0}
   tutKey: {fileID: 0}
   tutText: {fileID: 0}
+  tutInputColorON:
+    serializedVersion: 2
+    rgba: 0
+  tutInputColorOFF:
+    serializedVersion: 2
+    rgba: 0
   keys:
   - {fileID: 21300000, guid: b2dd416cad159d4438803a790ad5810d, type: 3}
   - {fileID: 21300000, guid: abb6ec232644cf54aa976bc729f7a5d3, type: 3}

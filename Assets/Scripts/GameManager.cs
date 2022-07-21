@@ -54,6 +54,8 @@ public class GameManager : MonoBehaviour
     Transform playerSpawn;
     [SerializeField]
     Transform enemySpawn;
+    [SerializeField]
+    GameObject endPointPortal;
     #endregion
     #region GOAL //g-Goal
     public GameObject gCam;
@@ -96,7 +98,7 @@ public class GameManager : MonoBehaviour
     string[] cHeaders;
     #endregion
     #region TUTORAIL //tut-Tutorial
-    public int numTutorial;
+    public int tutNumber;
     [SerializeField]
     float tutTransDelay;
     [SerializeField]
@@ -107,6 +109,12 @@ public class GameManager : MonoBehaviour
     Image tutKey;
     [SerializeField]
     TextMeshProUGUI tutText;
+    [SerializeField]
+    Color32 tutInputColorON;
+    [SerializeField]
+    Color32 tutInputColorOFF;
+    [SerializeField]
+    GameObject tutGreyTint;
     [SerializeField]
     Sprite[] keys;
     [SerializeField]
@@ -209,7 +217,7 @@ public class GameManager : MonoBehaviour
             cChild.gameObject.SetActive(true);
         foreach (Transform tutChild in tutCanvas)
             tutChild.gameObject.SetActive(true);
-        if (numTutorial != 2)
+        if (tutNumber != 2)
             tutExtra.SetActive(false);
 
         //SPAWNING PLAYERS AND MAKING LEVEL:
@@ -220,10 +228,10 @@ public class GameManager : MonoBehaviour
         //player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
         if (environment.childCount > envChildCountStart)
             Destroy(environment.GetChild(0).gameObject);
-        Instantiate(levels[numTutorial], environment).transform.SetAsFirstSibling();
+        Instantiate(levels[tutNumber], environment).transform.SetAsFirstSibling();
         //player.GetComponent<PlayerTrick>().lAlways = true;
         //this.CallDelay(StartEnemy, delaySpawnEnemy);
-        if (numTutorial == 3)
+        if (tutNumber == 3)
         {
             enemy1 = Instantiate(enemyPref);
             enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
@@ -233,8 +241,8 @@ public class GameManager : MonoBehaviour
 
     public void NextTutorial() //when player completes goal, go to next tutorial
     {
-        numTutorial++; //increase index of tutorial
-        int numTut = numTutorial; //get index of tutorial
+        tutNumber++; //increase index of tutorial
+        int numTut = tutNumber; //get index of tutorial
         if (numTut >= tutMessages.Length) //if there are no more tutorials and goals left, end tutorial
         {
             player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished!", 0);
@@ -320,25 +328,27 @@ public class GameManager : MonoBehaviour
             this.CallDelay(NextTutorial, tutTransDelay);
     }
 
-    public void IncreaseCounter() //when player follows goal, increase count
-    {
-        if (cCanvas != null)
-        {
-            count++;
-            if (count >= countGoal) //goal completed
-            {
-                if (numTutorial != 2)
-                    this.CallDelay(NextTutorial, tutTransDelay);
-                else
-                    StartCoroutine(LastCountWaitForLand());
-            }
-        }
-    }
-    public void DecreaseCounter() //when player doesn't land after jump
-    {
-        if (cCanvas != null && numTutorial == 2 && count > 0)
-            count--;
-    }
+    //public void IncreaseCounter() //when player follows goal, increase count
+    //{
+    //    if (cCanvas != null)
+    //    {
+    //        count++;
+    //        if (count >= countGoal) //goal completed
+    //        {
+    //            if (numTutorial != 2)
+    //                this.CallDelay(NextTutorial, tutTransDelay);
+    //            else
+    //                StartCoroutine(LastCountWaitForLand());
+    //        }
+    //    }
+    //}
+    //public void DecreaseCounter() //when player doesn't land after jump
+    //{
+    //    if (cCanvas != null && numTutorial == 2 && count > 0)
+    //        count--;
+    //}
+
+    //public int GetCount() => count;
     #endregion
 
     #region TUTORIAL METHODS
@@ -346,6 +356,61 @@ public class GameManager : MonoBehaviour
     {
         player = Instantiate(playerPref);
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+    }
+
+    public void LightUpInputText(bool lightUpText)
+    {
+        if (lightUpText)
+        {
+            tutKey.color = tutInputColorON; //light up key
+            tutKey.GetComponent<Animator>().SetBool("Input", true); //play input animation
+        }
+        else
+        {
+            tutKey.color = tutInputColorOFF; //unlight key
+            tutKey.GetComponent<Animator>().SetBool("Input", false); //reset input animation to default
+            tutGreyTint.SetActive(false); //toggle off grey tint ui
+        }
+    }
+    public bool GetInputTextLit() => tutKey.color == tutInputColorON;
+
+    public void FreezeTutorial()
+    {
+        tutGreyTint.SetActive(true); //toggle on grey tint ui
+        Time.timeScale = 0; //freeze tutorial to wait for player to input correct action
+    }
+
+    public void ReSpawnPlayerTutorial() => this.CallDelay(ReSpawnPlayerTutorialDelay, finishLevelDelay);
+    public void ReSpawnPlayerTutorialDelay() => player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+
+    public void IncreaseCounter() //when player follows goal, increase count
+    {
+        if (cCanvas != null)
+        {
+            count++;
+            if (count >= countGoal) //if goal completed, end tutorial
+            {
+                GameProgress.TutorialComplete(tutNumber); //tutorial progress
+
+                if (endPointPortal.GetComponent<EndPoint>().perfectTutorial) //player finished tutorial perfectly
+                {
+                    player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished Perfectly!", 0);
+                }
+                else
+                {
+                    player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished!", 0);
+                    this.CallDelay(ResetGame, finishLevelDelay); //go back to main menu
+                }
+            }
+        }
+    }
+
+    public int GetCount() => count;
+
+    public void FinishTutorialPerfectly()
+    {
+        levelFinished = true;
+        this.CallDelay(ResetGame, finishLevelDelay);
     }
     #endregion
 

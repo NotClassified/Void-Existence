@@ -165,7 +165,8 @@ public class PlayerMovement : MonoBehaviour
         //jumpInput = false; //prevent loop of the side jump animation 
         #endregion
         #region WALL CLIMB
-        if (pt.isClimbing && Time.time > pt.wcClipEnd && animator.GetBool(hashWallClimb) && !GameManager.levelFinished) //checking if climbing animation has ended
+        //checking if climbing animation has ended
+        if (pt.isClimbing && Time.time > pt.wcClipEnd && animator.GetBool(hashWallClimb) && !GameManager.levelFinished)
         {
             transform.position = rootBone.transform.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
@@ -193,7 +194,7 @@ public class PlayerMovement : MonoBehaviour
             if(gm.tutCanvas != null)
             {
                 ResetPlayer(true);
-                gm.DecreaseCounter();
+                //gm.DecreaseCounter();
             }
             else
                 gm.ReloadLevel();

@@ -584,11 +584,11 @@ RectTransform:
   m_Father: {fileID: 3412211318930382454}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -170, y: 0}
-  m_SizeDelta: {x: 160.4455, y: 73.1352}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 160.44556, y: 73.1352}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4442182125313487467
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -886,12 +886,12 @@ MonoBehaviour:
   attemptedLand: 0
   isGrounded: 1
   landAlways: 0
-  ldInputGap: 1.7
+  ldInputGap: 3
   dDominator: 7.5
-  lResetDelay: 0.5
+  lResetDelay: 1.5
   rayDir: {x: 0, y: -1, z: -0.3}
   jAlways: 0
-  jResetDelay: 0.4
+  jResetDelay: 1
   jSpeedResetDelay: 0.6
   jBoost: 0.1
   jDurationBoost: 81
@@ -1377,7 +1377,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -200}
+  m_AnchoredPosition: {x: 0, y: -250}
   m_SizeDelta: {x: 492.74, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &8994396604514041254
@@ -1515,7 +1515,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000076293945, y: 0}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6617925149411889777
@@ -1994,10 +1994,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2000, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -2086,7 +2086,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000076293945, y: 0}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1028657724882599684
@@ -2620,8 +2620,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 331.66, y: -51.6}
-  m_SizeDelta: {x: 613.32, y: 100.98}
+  m_AnchoredPosition: {x: 484.99, y: -84}
+  m_SizeDelta: {x: 919.98, y: 151.47}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4806387155057700449
 CanvasRenderer:
@@ -2679,8 +2679,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 150
+  m_fontSizeBase: 150
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2863,7 +2863,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -45}
-  m_SizeDelta: {x: 663.32, y: 100}
+  m_SizeDelta: {x: 969.98, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &4357147215154066471
 MonoBehaviour:
@@ -3403,8 +3403,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 331.66, y: -57.6}
-  m_SizeDelta: {x: 663.32, y: 115.2}
+  m_AnchoredPosition: {x: 484.99, y: -90}
+  m_SizeDelta: {x: 969.98, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5009248601244052537
 CanvasRenderer:
@@ -4230,11 +4230,11 @@ RectTransform:
   m_Father: {fileID: 3412211318930382454}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160.4455, y: 73.1352}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 180, y: 0}
+  m_SizeDelta: {x: 160.44556, y: 73.1352}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2077890455053599924
 CanvasRenderer:
   m_ObjectHideFlags: 0
