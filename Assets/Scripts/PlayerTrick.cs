@@ -307,7 +307,7 @@ public class PlayerTrick : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.S) && !attemptedLand) //landing input
             {
-                if (!landedFirstLand)
+                if (gm.tutNumber == 1 && !landedFirstLand)
                 {
                     if (Time.timeScale == 0) //if frozen, unfreeze
                     {

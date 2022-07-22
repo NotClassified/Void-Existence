@@ -51,6 +51,9 @@ public class PlayerUI : MonoBehaviour
     [SerializeField]
     GameObject fSpamParent;
     #endregion
+    #region PAUSE MENU
+    [SerializeField] GameObject restartPrompt;
+    #endregion
     #region HASHES
     private int hashFall;
     private int hashWallClimb;
@@ -61,6 +64,7 @@ public class PlayerUI : MonoBehaviour
     #region DEVELOPER UI
     public Image landAlwaysImage;
     public Image dodgeAlwaysImage;
+    public TextMeshProUGUI tutorialProgress;
     #endregion
 
     public bool startMethodCalled = false;
@@ -76,6 +80,13 @@ public class PlayerUI : MonoBehaviour
         hashClimbFail = Animator.StringToHash("Climb Fail");
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
+
+        if (gm.mode == 1)
+            restartPrompt.SetActive(true);
+        else
+            restartPrompt.SetActive(false);
+        fParent.SetActive(false);
+        fSpamParent.SetActive(false);
 
         startMethodCalled = true;
     }

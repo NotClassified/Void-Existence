@@ -116,6 +116,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject tutGreyTint;
     [SerializeField]
+    GameObject tutSkip;
+    [SerializeField]
     Sprite[] keys;
     [SerializeField]
     string[] tutMessages;
@@ -356,6 +358,11 @@ public class GameManager : MonoBehaviour
     {
         player = Instantiate(playerPref);
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+
+        if (GameProgress.tutorialLastCompleted >= tutNumber)
+            tutSkip.SetActive(true);
+        else
+            tutSkip.SetActive(false);
     }
 
     public void LightUpInputText(bool lightUpText)
@@ -551,8 +558,14 @@ public class GameManager : MonoBehaviour
     public bool IsGameOver() => gameover;
     public void ReloadLevel()
     {
-        if(!player.GetComponent<PlayerUI>().GetFeedbackText().Equals("Level Finished!"))
+        if (mode == 0 && GameProgress.tutorialLastCompleted >= tutNumber) //if player has already completed tutorial
+        {
+            ResetGame();
+        }
+        else if (mode == 1 && !player.GetComponent<PlayerUI>().GetFeedbackText().Equals("Level Finished!")) //level
+        {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
     private void ResetGame() => SceneManager.LoadScene(0);
 }
