@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -10,6 +12,7 @@ public class PlayerUI : MonoBehaviour
     PlayerTrick pt;
     Animator anim;
     GameManager gm;
+    Exposure volumeExposure;
     #endregion
     #region COLORS //m-Material
     [SerializeField]
@@ -77,6 +80,10 @@ public class PlayerUI : MonoBehaviour
         pt = gameObject.GetComponent<PlayerTrick>();
         anim = gameObject.GetComponent<Animator>();
         gm = FindObjectOfType<GameManager>();
+
+        Volume globalVolume = FindObjectOfType<Volume>();
+        VolumeProfile volumeProfile = globalVolume.sharedProfile;
+        volumeProfile.TryGet(out volumeExposure);
 
         hashFall = Animator.StringToHash("Fall");
         hashWallClimb = Animator.StringToHash("Climb");
@@ -232,7 +239,9 @@ public class PlayerUI : MonoBehaviour
         sChangingColor = false;
     }
 
-    public void PauseMenu(string action)
+
+    #region PAUSE MENU
+    public void PauseMenuButtons(string action)
     {
         if (action.Equals("continue"))
         {
@@ -260,5 +269,12 @@ public class PlayerUI : MonoBehaviour
         //{
 
         //}
+    } 
+
+    public void BrightnessSlider(float value)
+    {
+        print(volumeExposure);
+        volumeExposure.fixedExposure.value = value;
     }
+    #endregion
 }
