@@ -11,7 +11,7 @@ public class MMUI : MonoBehaviour
 
     [SerializeField]
     GameObject[] levelButtons;
-    #region TESTING
+    #region DEVELOPER UI
     public TextMeshProUGUI gpcText; //game progress count text
     #endregion
 
@@ -75,7 +75,7 @@ public class MMUI : MonoBehaviour
         //}
     }
 
-    #region TESTING
+    #region DEVELOPER UI
     public void GameProgressCountChange(int i)
     {
         if (!(GameProgress.levelLastCompleted == -1 && i < 0))

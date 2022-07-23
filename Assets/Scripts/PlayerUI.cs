@@ -53,6 +53,9 @@ public class PlayerUI : MonoBehaviour
     #endregion
     #region PAUSE MENU
     [SerializeField] GameObject restartPrompt;
+    [SerializeField] GameObject pauseParent;
+    [SerializeField] Button pauseRestartButton;
+    bool showHUD = true;
     #endregion
     #region HASHES
     private int hashFall;
@@ -82,9 +85,16 @@ public class PlayerUI : MonoBehaviour
         hashLand = Animator.StringToHash("Land");
 
         if (gm.mode == 1)
+        {
             restartPrompt.SetActive(true);
+            pauseRestartButton.interactable = true;
+        }
         else
+        {
             restartPrompt.SetActive(false);
+            pauseRestartButton.interactable = false;
+        }
+        pauseParent.SetActive(false);
         fParent.SetActive(false);
         fSpamParent.SetActive(false);
 
@@ -96,6 +106,16 @@ public class PlayerUI : MonoBehaviour
         if (!pm.startMethodCalled || !pt.startMethodCalled)
             return;
 
+        #region PAUSE MENU
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            pauseParent.SetActive(!pauseParent.activeSelf); //toggle pause menu
+            if (pauseParent.activeSelf)
+                Time.timeScale = 0; //pause
+            else
+                Time.timeScale = gm.timeScale / 100; //unpause
+        }
+        #endregion
         #region FORWARD SPEED SLIDER VALUE
         if (pm.velocityZ < 0) //Player's foward speed = target value
             speed_sTarget = 0;
@@ -174,7 +194,7 @@ public class PlayerUI : MonoBehaviour
             fText.text = message;
             if (message.Equals("")) //if clearing text
                 fParent.SetActive(false);
-            else
+            else if(showHUD)
                 fParent.SetActive(true);
         }
 
@@ -191,7 +211,7 @@ public class PlayerUI : MonoBehaviour
     {
         if (fSpamParent.activeSelf)
             fSpamParent.SetActive(false);
-        else
+        else if(showHUD)
         {
             fSpamParent.SetActive(true);
             this.CallDelay(DontSpamUIToggle, 1f);
@@ -210,5 +230,35 @@ public class PlayerUI : MonoBehaviour
         }
         speedFillSlider.color = endColor;
         sChangingColor = false;
+    }
+
+    public void PauseMenu(string action)
+    {
+        if (action.Equals("continue"))
+        {
+            pauseParent.SetActive(!pauseParent.activeSelf); //toggle off pause menu
+            Time.timeScale = gm.timeScale / 100; //unpause
+        }
+        else if (action.Equals("restart"))
+        {
+            gm.ReloadLevel();
+        }
+        else if (action.Equals("hud"))
+        {
+            //TOGGLE HUD
+            showHUD = !showHUD;
+            gm.ShowHUD(showHUD);
+
+            if (gm.mode == 1) //if in level, toggle testart prompt
+                restartPrompt.SetActive(!restartPrompt.activeSelf);
+        }
+        else if (action.Equals("quit"))
+        {
+            gm.ResetGame();
+        }
+        //else if (action.Equals(""))
+        //{
+
+        //}
     }
 }

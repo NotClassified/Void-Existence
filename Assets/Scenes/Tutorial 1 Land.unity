@@ -18367,7 +18367,7 @@ MonoBehaviour:
   - Jumps
   tutNumber: 1
   tutTransDelay: 1.5
-  tutCanvas: {fileID: 0}
+  tutCanvas: {fileID: 798880365}
   tutExtra: {fileID: 0}
   tutKey: {fileID: 1362609327}
   tutText: {fileID: 0}

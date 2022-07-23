@@ -196,9 +196,10 @@ public class GameManager : MonoBehaviour
         #endregion
         if (Input.GetKeyDown(KeyCode.Space) && !gInitialVideoDisplay.activeSelf && gCam.activeSelf)
             StartPlayerTutorial();
-        if (Input.GetKeyDown(KeyCode.Escape))
-            ResetGame();
-
+        if (Input.GetKeyDown(KeyCode.Q) && mode == 1)
+        {
+            ReloadLevel();
+        }
     }
 
     #region OLD TUTORIAL METHODS
@@ -419,6 +420,12 @@ public class GameManager : MonoBehaviour
         levelFinished = true;
         this.CallDelay(ResetGame, finishLevelDelay);
     }
+
+    public void ShowHUD(bool active)
+    {
+        tutCanvas.gameObject.SetActive(active);
+        cCanvas.gameObject.SetActive(active);
+    }
     #endregion
 
     void StartLevel()
@@ -567,7 +574,7 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
-    private void ResetGame() => SceneManager.LoadScene(0);
+    public void ResetGame() => SceneManager.LoadScene(0);
 }
 
 public static class MonoBehavoirExtension

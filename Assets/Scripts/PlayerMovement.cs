@@ -97,11 +97,6 @@ public class PlayerMovement : MonoBehaviour
         if (!pUI.startMethodCalled || !pt.startMethodCalled)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            gm.ReloadLevel();
-            //ResetPlayer(true);
-        }
         if (Input.GetKey(KeyCode.F))
             velocityZ = 0;
         if (Input.GetKeyDown(KeyCode.T))
