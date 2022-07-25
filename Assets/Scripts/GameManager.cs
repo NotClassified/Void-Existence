@@ -122,6 +122,16 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     string[] tutMessages;
     #endregion
+    #region PROGRESS BAR
+    [SerializeField] GameObject progressCanvas;
+    [SerializeField] GameObject progressBar;
+    [SerializeField] Slider progressPlayer;
+    [SerializeField] Slider progressEnemy;
+    [SerializeField] Transform portalStart;
+    [SerializeField] Transform portalEnd;
+    float progressDistance;
+    Vector3 progressStartPosition;
+    #endregion
     #region ENEMY ACTION MARKERS //ea-enemy action
     [SerializeField]
     GameObject eaMarker;
@@ -172,12 +182,16 @@ public class GameManager : MonoBehaviour
         //else
         //    StartLevel();
 
-
         levelFinished = false;
         if (mode == 0)
             StartTutorial();
-        else
+        else if (mode == 1)
+        {
+            progressDistance = Vector3.Distance(portalStart.position, portalEnd.position);
+            progressStartPosition = portalStart.position;
+
             StartLevel();
+        }
     }
     private void Update()
     {
@@ -193,6 +207,22 @@ public class GameManager : MonoBehaviour
         csDelta *= Time.deltaTime * csVelocity; //make actual value gradually change
         csValue += csDelta; //increase actual value closer to target value
         cSlider.value = csValue; //correlate slider values
+        #endregion
+        #region PROGRESS BAR VALUE
+        if (mode == 1 && progressCanvas.activeSelf)
+        {
+            progressPlayer.value = Vector3.Distance(progressStartPosition, player.transform.position) / progressDistance;
+
+            if (enemy1.transform.position.z < progressStartPosition.z)
+            {
+                if (enemy2 != null)
+                    progressEnemy.value = Vector3.Distance(progressStartPosition, enemy2.transform.position) / progressDistance;
+                else if (enemy1 != null)
+                    progressEnemy.value = Vector3.Distance(progressStartPosition, enemy1.transform.position) / progressDistance;
+            }
+            else
+                progressEnemy.value = 0;
+        }
         #endregion
         if (Input.GetKeyDown(KeyCode.Space) && !gInitialVideoDisplay.activeSelf && gCam.activeSelf)
             StartPlayerTutorial();
@@ -420,13 +450,20 @@ public class GameManager : MonoBehaviour
         levelFinished = true;
         this.CallDelay(ResetGame, finishLevelDelay);
     }
+    #endregion
 
     public void ShowHUD(bool active)
     {
-        tutCanvas.gameObject.SetActive(active);
-        cCanvas.gameObject.SetActive(active);
+        if (mode == 0)
+        {
+            tutCanvas.gameObject.SetActive(active);
+            cCanvas.gameObject.SetActive(active);
+        }
+        else if (mode == 1)
+        {
+            progressCanvas.gameObject.SetActive(active);
+        }
     }
-    #endregion
 
     void StartLevel()
     {

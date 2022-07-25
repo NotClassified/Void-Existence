@@ -3719,8 +3719,8 @@ RectTransform:
   - {fileID: 3612372218200198556}
   - {fileID: 990528050908412035}
   - {fileID: 9176163087425150286}
-  - {fileID: 2212955304283659816}
   - {fileID: 2673284292909690147}
+  - {fileID: 2212955304283659816}
   - {fileID: 6942136270300797491}
   m_Father: {fileID: 1563187317962642072}
   m_RootOrder: 6
@@ -6101,7 +6101,7 @@ PrefabInstance:
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PauseMenu
+      value: PauseMenuButtons
       objectReference: {fileID: 0}
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
@@ -6178,7 +6178,7 @@ PrefabInstance:
     - target: {fileID: 7286595646526244540, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7286595646526244540, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
@@ -6308,7 +6308,7 @@ PrefabInstance:
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PauseMenu
+      value: PauseMenuButtons
       objectReference: {fileID: 0}
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
@@ -6513,7 +6513,7 @@ PrefabInstance:
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PauseMenu
+      value: PauseMenuButtons
       objectReference: {fileID: 0}
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
@@ -6588,7 +6588,7 @@ PrefabInstance:
     - target: {fileID: 7286595646526244540, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7286595646526244540, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
@@ -6718,7 +6718,7 @@ PrefabInstance:
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PauseMenu
+      value: PauseMenuButtons
       objectReference: {fileID: 0}
     - target: {fileID: 7286595646526244543, guid: 5200583e1d1060b4caf7125e2caca156,
         type: 3}

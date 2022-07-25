@@ -273,7 +273,6 @@ public class PlayerUI : MonoBehaviour
 
     public void BrightnessSlider(float value)
     {
-        print(volumeExposure);
         volumeExposure.fixedExposure.value = value;
     }
     #endregion
