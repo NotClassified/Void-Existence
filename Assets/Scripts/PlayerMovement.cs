@@ -153,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         #region JUMP DOWN
         if (animator.GetBool(hashJumpDown)) //prevent loop of the jump down animation
             animator.SetBool(hashJumpDown, false);
-        if (upInput && gm.levelnum >= 2 && !GameManager.levelFinished) //checking input for jump down
+        if (upInput && (gm.levelnum >= 3 || gm.tutNumber == 3) && !GameManager.levelFinished) //checking input for jump down
         {
             pt.JumpDownCheck();
         }
@@ -170,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
             //this.CallDelay(pt.ToggleCC, .2f);
             pt.ToggleCC_ON(); //enable collider
         }
-        if (upInput && !pt.isClimbing && velocityZ > 5.9f && gm.levelnum >= 3) //checking input for wall climb
+        if (upInput && !pt.isClimbing && velocityZ > 5.9f && (gm.levelnum >= 2 || gm.tutNumber == 2)) //checking input for wall climb
             pt.WallClimbCheck();
         #endregion
         #region FALLING

@@ -70,6 +70,8 @@ public class PlayerUI : MonoBehaviour
     #region DEVELOPER UI
     public Image landAlwaysImage;
     public Image dodgeAlwaysImage;
+    public Image wallClimbAlwaysImage;
+    public Image jumpAlwaysImage;
     public TextMeshProUGUI tutorialProgress;
     #endregion
 
@@ -189,6 +191,20 @@ public class PlayerUI : MonoBehaviour
             dodgeAlwaysImage.color = Color.green;
         else
             dodgeAlwaysImage.color = Color.grey;
+    }
+    public void ToggleWCAlways()
+    {
+        if (pt.wcAlways)
+            wallClimbAlwaysImage.color = Color.green;
+        else
+            wallClimbAlwaysImage.color = Color.grey;
+    }
+    public void ToggleJumpAlways()
+    {
+        if (pt.jAlways)
+            jumpAlwaysImage.color = Color.green;
+        else
+            jumpAlwaysImage.color = Color.grey;
     }
 
     public void TextFeedback (string message, int color) //text for giving feedback to the player

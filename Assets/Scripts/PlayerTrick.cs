@@ -34,8 +34,8 @@ public class PlayerTrick : MonoBehaviour
     public bool attemptedLand = false;
     public bool isGrounded = true;
     public bool landAlways = false;
-    bool firstLand = true;
-    bool landedFirstLand = false;
+    bool firstAction = true;
+    bool doneFirstAction = false;
     [SerializeField]
     float ldInputGap; 
     [SerializeField]
@@ -126,9 +126,6 @@ public class PlayerTrick : MonoBehaviour
 
     public bool JumpDownCheck()
     {
-        if (gm.tutNumber == 1) //check if playing landing tutorial
-            return false; //don't jump during landing tutorial
-
         //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively) and hasn't finished level
         if (!attemptedJump && (defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f &&
             !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
@@ -167,8 +164,21 @@ public class PlayerTrick : MonoBehaviour
     public bool WallClimbCheck()
     {
         //check if player hasn't tried to climb yet and is in front of a wall
-        if (defaultMove && !attemptedClimb && !pUI.GetFeedbackText().Equals("Too Late To Climb") && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+        if (defaultMove && !attemptedClimb && !pUI.GetFeedbackText().Equals("Too Late To Climb") && 
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
+            if (gm.tutNumber == 2 && !doneFirstAction) //if in tutorial and frozen, unfreeze, otherwise prevent wallclimb
+            {
+                if (Time.timeScale == 0) //if frozen, unfreeze
+                {
+                    doneFirstAction = true;
+                    Time.timeScale = gm.timeScale / 100;
+                    gm.LightUpInputText(false); //unlight the input text
+                }
+                else
+                    return false;
+            }
+
             //PLAYER SUCCEEDED WALL CLIMB, PLAY ANIMATION:
             pUI.TextFeedback("Perfect Climb!", 3);
             anim.SetBool(hashClimbFail, false);
@@ -188,7 +198,8 @@ public class PlayerTrick : MonoBehaviour
                 gm.IncreaseCounter();
             return true; //play animation
         }
-        else if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) //check if player is too far from wall
+        //check if player is too far from wall
+        else if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) 
         {
             pUI.TextFeedback("Too Early To Climb", 4);
             attemptedClimb = true; //prevent repressing key
@@ -244,6 +255,12 @@ public class PlayerTrick : MonoBehaviour
         if (!pm.startMethodCalled || !pUI.startMethodCalled)
             return;
 
+        #region DEVELOPER TOOLS
+        if (Input.GetKeyDown(KeyCode.Semicolon))
+        {
+            dodgeAlways = !dodgeAlways;
+            pUI.ToggleDodgeAlways();
+        }
         if (Input.GetKeyDown(KeyCode.L))
         {
             landAlways = !landAlways;
@@ -251,9 +268,15 @@ public class PlayerTrick : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.K))
         {
-            dodgeAlways = !dodgeAlways;
-            pUI.ToggleDodgeAlways();
+            wcAlways = !wcAlways;
+            pUI.ToggleWCAlways();
         }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            jAlways = !jAlways;
+            pUI.ToggleJumpAlways();
+        } 
+        #endregion
 
         #region ANIMATION VARS
         isJumping = !AnimCheck(1, "Empty"); //check jumping anims
@@ -298,20 +321,20 @@ public class PlayerTrick : MonoBehaviour
                 if (!gm.GetInputTextLit())
                     gm.LightUpInputText(true);//light up tutorial input text
 
-                if (firstLand)
+                if (firstAction)
                 {
-                    firstLand = false;
+                    firstAction = false;
                     this.CallDelay(gm.FreezeTutorial, .1f);
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.S) && !attemptedLand) //landing input
             {
-                if (gm.tutNumber == 1 && !landedFirstLand)
+                if (gm.tutNumber == 1 && !doneFirstAction)
                 {
                     if (Time.timeScale == 0) //if frozen, unfreeze
                     {
-                        landedFirstLand = true;
+                        doneFirstAction = true;
                         Time.timeScale = gm.timeScale / 100;
                     }
                     else
@@ -378,10 +401,10 @@ public class PlayerTrick : MonoBehaviour
         #region WALL CLIMB FAIL & AUTO JUMP
         if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
         {
-            if (wcAlways && !autoWallClimb)
+            if (wcAlways/* && !autoWallClimb*/)
             {
                 anim.SetBool(hashWallClimb, WallClimbCheck());
-                autoWallClimb = true;
+                //autoWallClimb = true;
             }
             else if(!isClimbingFail)
             {
@@ -412,6 +435,22 @@ public class PlayerTrick : MonoBehaviour
         //} 
         #endregion
 
+        #region TUTORIAL FOR WALL CLIMB & JUMP
+        if (gm.tutNumber == 2 && defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+        { 
+            //print(Time.time); //figuring out the land input gap length (3 = 1/5 of a second)
+            if (!gm.GetInputTextLit())
+                gm.LightUpInputText(true);//light up tutorial input text
+
+            if (firstAction)
+            {
+                firstAction = false;
+                this.CallDelay(gm.FreezeTutorial, .1f);
+            }
+        }
+        else if (gm.GetInputTextLit())
+            gm.LightUpInputText(false);//light up tutorial input text
+        #endregion
 
         #region PUNCHING & DODGING
 
