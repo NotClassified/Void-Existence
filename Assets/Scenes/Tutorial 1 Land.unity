@@ -18502,6 +18502,13 @@ MonoBehaviour:
   - Land
   - Climb
   - Jump
+  progressCanvas: {fileID: 0}
+  progressBar: {fileID: 0}
+  progressPlayer: {fileID: 0}
+  progressEnemy: {fileID: 0}
+  portalStart: {fileID: 0}
+  portalEnd: {fileID: 1654169789}
+  portalTriggerOffsetZ: 5
   eaMarker: {fileID: 1056155761849556616, guid: ee5ad3f87c7fbaf46a035750f5d53907,
     type: 3}
   eaParent: {fileID: 0}
@@ -48042,7 +48049,7 @@ PrefabInstance:
     - target: {fileID: 3197567962545995573, guid: 11e672fa58dfb374da8cc9e133ddccd8,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -76
+      value: -69
       objectReference: {fileID: 0}
     - target: {fileID: 3197567962545995573, guid: 11e672fa58dfb374da8cc9e133ddccd8,
         type: 3}

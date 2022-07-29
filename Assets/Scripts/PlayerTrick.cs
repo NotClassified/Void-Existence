@@ -65,7 +65,6 @@ public class PlayerTrick : MonoBehaviour
     public float wcClipEnd;
     public bool attemptedClimb = false;
     public bool wcAlways;
-    bool autoWallClimb = false;
     [SerializeField]
     float reposDuration;
     #endregion
@@ -173,7 +172,7 @@ public class PlayerTrick : MonoBehaviour
                 {
                     doneFirstAction = true;
                     Time.timeScale = gm.timeScale / 100;
-                    gm.LightUpInputText(false); //unlight the input text
+                    gm.LightUpInputText(false); //unlight the input text for wall climb
                 }
                 else
                     return false;
@@ -319,7 +318,7 @@ public class PlayerTrick : MonoBehaviour
             {
                 //print(Time.time); //figuring out the land input gap length (3 = 1/5 of a second)
                 if (!gm.GetInputTextLit())
-                    gm.LightUpInputText(true);//light up tutorial input text
+                    gm.LightUpInputText(true);//light up tutorial input text  for landing
 
                 if (firstAction)
                 {
@@ -392,7 +391,7 @@ public class PlayerTrick : MonoBehaviour
 
             if (gm.tutNumber == 1 && gm.GetInputTextLit())
             {
-                gm.LightUpInputText(false); //unlight the input text
+                gm.LightUpInputText(false); //unlight the input text for landing
             }
         }
         anim.SetBool("IsGrounded", isGrounded); //correlate animation vars 
@@ -436,20 +435,23 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
         #region TUTORIAL FOR WALL CLIMB & JUMP
-        if (gm.tutNumber == 2 && defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
-        { 
-            //print(Time.time); //figuring out the land input gap length (3 = 1/5 of a second)
-            if (!gm.GetInputTextLit())
-                gm.LightUpInputText(true);//light up tutorial input text
-
-            if (firstAction)
+        if (gm.tutNumber == 2)
+        {
+            if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //for wall climbing
             {
-                firstAction = false;
-                this.CallDelay(gm.FreezeTutorial, .1f);
+                //print(Time.time); //figuring out the land input gap length (3 = 1/5 of a second)
+                if (!gm.GetInputTextLit())
+                    gm.LightUpInputText(true);//light up tutorial input text for wall climb
+
+                if (firstAction)
+                {
+                    firstAction = false;
+                    this.CallDelay(gm.FreezeTutorial, .1f);
+                }
             }
+            else if (gm.GetInputTextLit())
+                gm.LightUpInputText(false);//light up tutorial input text for wall climb
         }
-        else if (gm.GetInputTextLit())
-            gm.LightUpInputText(false);//light up tutorial input text
         #endregion
 
         #region PUNCHING & DODGING

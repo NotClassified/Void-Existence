@@ -186,12 +186,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (fallvelocity.y < -16) //check if player has fallen off map
         {
-            if(gm.tutCanvas != null)
-            {
-                ResetPlayer(true);
-                //gm.DecreaseCounter();
-            }
-            else
+            //if(gm.tutCanvas != null)
+            //{
+            //    ResetPlayer(true);
+            //    //gm.DecreaseCounter();
+            //}
+            //else
                 gm.ReloadLevel();
         }
 
@@ -270,26 +270,26 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void ResetPlayer(bool callGameManagerSpawnMethod)
-    {
-        //if (pt.isClimbing)
-        //{
-        //    transform.position = rootBone.transform.position; //sync player's position to character (root bone)
-        //    animator.SetBool(hashWallClimb, false); //end wall climb animation
-        //    pt.ToggleCC_ON(); //enable collider
-        //}
-        StopCoroutine(gm.LastCountWaitForLand()); //if player doesn't jump far enough don't let player finish tutorial
-        //pt.StopWallClimbFailRoutine();
-        animator.Play("Exit", 0);
+    //public void ResetPlayer(bool callGameManagerSpawnMethod)
+    //{
+    //    //if (pt.isClimbing)
+    //    //{
+    //    //    transform.position = rootBone.transform.position; //sync player's position to character (root bone)
+    //    //    animator.SetBool(hashWallClimb, false); //end wall climb animation
+    //    //    pt.ToggleCC_ON(); //enable collider
+    //    //}
+    //    StopCoroutine(gm.LastCountWaitForLand()); //if player doesn't jump far enough don't let player finish tutorial
+    //    //pt.StopWallClimbFailRoutine();
+    //    animator.Play("Exit", 0);
 
-        animator.SetLayerWeight(3, 0); //reset punched layer
+    //    animator.SetLayerWeight(3, 0); //reset punched layer
 
-        pt.attemptedClimb = false; //let player be able to climb again
-        pt.attemptedLand = false; //let player be able to land again
-        pUI.TextFeedback("", -1); //empty the climb feedback text
-        fallvelocity.y = 0f;
+    //    pt.attemptedClimb = false; //let player be able to climb again
+    //    pt.attemptedLand = false; //let player be able to land again
+    //    pUI.TextFeedback("", -1); //empty the climb feedback text
+    //    fallvelocity.y = 0f;
 
-        if (callGameManagerSpawnMethod)
-            StartCoroutine(gm.Spawn()); //reset player postition to starting point
-    }
+    //    if (callGameManagerSpawnMethod)
+    //        StartCoroutine(gm.Spawn()); //reset player postition to starting point
+    //}
 }

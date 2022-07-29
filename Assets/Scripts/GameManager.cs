@@ -122,13 +122,17 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     string[] tutMessages;
     #endregion
-    #region PROGRESS BAR
+    #region PROGRESS
     [SerializeField] GameObject progressCanvas;
     [SerializeField] GameObject progressBar;
     [SerializeField] Slider progressPlayer;
     [SerializeField] Slider progressEnemy;
     [SerializeField] Transform portalStart;
     [SerializeField] Transform portalEnd;
+    [SerializeField] float portalTriggerOffsetZ;
+    float portalTriggerOffsetY = -2.3f;
+    bool progressPerfectTutorial = true;
+    bool progressTutorialRespawn = false;
     float progressDistance;
     Vector3 progressStartPosition;
     #endregion
@@ -224,8 +228,40 @@ public class GameManager : MonoBehaviour
                 progressEnemy.value = 0;
         }
         #endregion
-        if (Input.GetKeyDown(KeyCode.Space) && !gInitialVideoDisplay.activeSelf && gCam.activeSelf)
-            StartPlayerTutorial();
+        #region PROGRESS CHECK
+        if (!levelFinished && player.transform.position.z < portalEnd.position.z + portalTriggerOffsetZ)
+        {
+            if (mode == 0)
+            {
+                if (progressPerfectTutorial && count >= countGoal) //if player completed tutorial perfectly
+                {
+                    levelFinished = true;
+                }
+                else
+                {
+                    progressPerfectTutorial = false;
+                    progressTutorialRespawn = true;
+                }
+            }
+            else if (mode == 1)
+            {
+                LevelFinished(levelnum);
+            }
+        }
+        if (player.transform.position.y < portalEnd.position.y + portalTriggerOffsetY)
+        {
+            if (levelFinished) //completed level, go back to main menu
+                ResetGame();
+            else if (progressTutorialRespawn) //didn't complete tutorial, respawn player
+                player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+            else if(progressPerfectTutorial) //completed tutorial perfectly, load next level
+                ResetGame(); //TODO: load next level
+            else
+                Debug.LogError("didn't register whether player completed level or tutorial or did tutorial perfectly");
+        }
+        #endregion
+        //if (Input.GetKeyDown(KeyCode.Space) && !gInitialVideoDisplay.activeSelf && gCam.activeSelf)
+        //    StartPlayerTutorial();
         if (Input.GetKeyDown(KeyCode.Q) && mode == 1)
         {
             ReloadLevel();
@@ -233,133 +269,133 @@ public class GameManager : MonoBehaviour
     }
 
     #region OLD TUTORIAL METHODS
-    public void StartPlayerTutorial()
-    {
-        gameover = false;
-        playerPunchedByEnemy = false;
-        if (player != null) //if players exist, destroy for new players
-            Destroy(player);
-        if (enemy1 != null) //if enemy exists, destroy
-            Destroy(enemy1);
-        gCam.SetActive(false); //toggle off goal camera
+    //public void StartPlayerTutorial()
+    //{
+    //    gameover = false;
+    //    playerPunchedByEnemy = false;
+    //    if (player != null) //if players exist, destroy for new players
+    //        Destroy(player);
+    //    if (enemy1 != null) //if enemy exists, destroy
+    //        Destroy(enemy1);
+    //    gCam.SetActive(false); //toggle off goal camera
 
-        //TOGGLE UI VISIBILITY:
-        foreach (Transform gChild in gCanvas)
-            gChild.gameObject.SetActive(false);
-        foreach (Transform cChild in cCanvas)
-            cChild.gameObject.SetActive(true);
-        foreach (Transform tutChild in tutCanvas)
-            tutChild.gameObject.SetActive(true);
-        if (tutNumber != 2)
-            tutExtra.SetActive(false);
+    //    //TOGGLE UI VISIBILITY:
+    //    foreach (Transform gChild in gCanvas)
+    //        gChild.gameObject.SetActive(false);
+    //    foreach (Transform cChild in cCanvas)
+    //        cChild.gameObject.SetActive(true);
+    //    foreach (Transform tutChild in tutCanvas)
+    //        tutChild.gameObject.SetActive(true);
+    //    if (tutNumber != 2)
+    //        tutExtra.SetActive(false);
 
-        //SPAWNING PLAYERS AND MAKING LEVEL:
-        player = Instantiate(playerPref);
-        player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-        //Vector3 spawnRot = new Vector3(playerSpawn.rotation.x, playerSpawn.rotation.y, playerSpawn.rotation.z);
-        //player.transform.rotation = Quaternion.Euler(spawnRot);
-        //player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-        if (environment.childCount > envChildCountStart)
-            Destroy(environment.GetChild(0).gameObject);
-        Instantiate(levels[tutNumber], environment).transform.SetAsFirstSibling();
-        //player.GetComponent<PlayerTrick>().lAlways = true;
-        //this.CallDelay(StartEnemy, delaySpawnEnemy);
-        if (tutNumber == 3)
-        {
-            enemy1 = Instantiate(enemyPref);
-            enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
-            enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-        }
-    }
+    //    //SPAWNING PLAYERS AND MAKING LEVEL:
+    //    player = Instantiate(playerPref);
+    //    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+    //    //Vector3 spawnRot = new Vector3(playerSpawn.rotation.x, playerSpawn.rotation.y, playerSpawn.rotation.z);
+    //    //player.transform.rotation = Quaternion.Euler(spawnRot);
+    //    //player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+    //    if (environment.childCount > envChildCountStart)
+    //        Destroy(environment.GetChild(0).gameObject);
+    //    Instantiate(levels[tutNumber], environment).transform.SetAsFirstSibling();
+    //    //player.GetComponent<PlayerTrick>().lAlways = true;
+    //    //this.CallDelay(StartEnemy, delaySpawnEnemy);
+    //    if (tutNumber == 3)
+    //    {
+    //        enemy1 = Instantiate(enemyPref);
+    //        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+    //        enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+    //    }
+    //}
 
-    public void NextTutorial() //when player completes goal, go to next tutorial
-    {
-        tutNumber++; //increase index of tutorial
-        int numTut = tutNumber; //get index of tutorial
-        if (numTut >= tutMessages.Length) //if there are no more tutorials and goals left, end tutorial
-        {
-            player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished!", 0);
-            this.CallDelay(ResetGame, 3f);
-            GameProgress.LevelComplete(0);
-            return;
-        }
+    //public void NextTutorial() //when player completes goal, go to next tutorial
+    //{
+    //    tutNumber++; //increase index of tutorial
+    //    int numTut = tutNumber; //get index of tutorial
+    //    if (numTut >= tutMessages.Length) //if there are no more tutorials and goals left, end tutorial
+    //    {
+    //        player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished!", 0);
+    //        this.CallDelay(ResetGame, 3f);
+    //        GameProgress.LevelComplete(0);
+    //        return;
+    //    }
 
-        if (numTut == 3)
-            countGoal = 1;
+    //    if (numTut == 3)
+    //        countGoal = 1;
 
-        //SET UI FOR NEXT GOAL:
-        StartCoroutine(WaitForFirstTutorial(numTut)); //comment this line for faster testing*/ print("this line commented");
-        gText.text = gMessagesStart[numTut].Replace("/newline/", "\n") + countGoal.ToString() + gMessagesEnd[numTut]; //goal
-        //SET UI FOR NEXT COUNTER:
-        cTextHeader.text = cHeaders[numTut]; //action for counter
-        //SET UI FOR NEXT TUTORIAL:
-        tutKey.sprite = keys[numTut]; //key input
-        tutText.text = tutMessages[numTut]; //action for key
+    //    //SET UI FOR NEXT GOAL:
+    //    StartCoroutine(WaitForFirstTutorial(numTut)); //comment this line for faster testing*/ print("this line commented");
+    //    gText.text = gMessagesStart[numTut].Replace("/newline/", "\n") + countGoal.ToString() + gMessagesEnd[numTut]; //goal
+    //    //SET UI FOR NEXT COUNTER:
+    //    cTextHeader.text = cHeaders[numTut]; //action for counter
+    //    //SET UI FOR NEXT TUTORIAL:
+    //    tutKey.sprite = keys[numTut]; //key input
+    //    tutText.text = tutMessages[numTut]; //action for key
 
-        //TOGGLE UI VISIBILITY:
-        foreach (Transform gChild in gCanvas)
-            gChild.gameObject.SetActive(false);
-        foreach (Transform cChild in cCanvas)
-            cChild.gameObject.SetActive(false);
-        foreach (Transform tutChild in tutCanvas)
-            tutChild.gameObject.SetActive(false);
-        //RESET COUNTER:
-        csValue = 0f;
-        count = 0;
+    //    //TOGGLE UI VISIBILITY:
+    //    foreach (Transform gChild in gCanvas)
+    //        gChild.gameObject.SetActive(false);
+    //    foreach (Transform cChild in cCanvas)
+    //        cChild.gameObject.SetActive(false);
+    //    foreach (Transform tutChild in tutCanvas)
+    //        tutChild.gameObject.SetActive(false);
+    //    //RESET COUNTER:
+    //    csValue = 0f;
+    //    count = 0;
 
-        gCam.SetActive(true); //toggle on goal camera
-        //destroy players, level, and world space UI, if they exist:
-        if (player != null)
-            Destroy(player);
-        if (environment.childCount > envChildCountStart)
-            Destroy(environment.GetChild(0).gameObject);
-        if (environment.Find("Wall Markers").childCount != 0)
-        {
-            foreach (Transform wallMarkerChild in environment.Find("Wall Markers"))
-                Destroy(wallMarkerChild.gameObject);
-        }
+    //    gCam.SetActive(true); //toggle on goal camera
+    //    //destroy players, level, and world space UI, if they exist:
+    //    if (player != null)
+    //        Destroy(player);
+    //    if (environment.childCount > envChildCountStart)
+    //        Destroy(environment.GetChild(0).gameObject);
+    //    if (environment.Find("Wall Markers").childCount != 0)
+    //    {
+    //        foreach (Transform wallMarkerChild in environment.Find("Wall Markers"))
+    //            Destroy(wallMarkerChild.gameObject);
+    //    }
 
-        //FOR FASTER TESTING: //Also comment out line 217 (this line -33)
-        //foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
-        //    gChild.gameObject.SetActive(true);
-        //gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
-        //gSkipPopUp.SetActive(false); //toggle skip text
-        //gLoopVideoPlayer.clip = gLoopClips[numTut]; //2nd part of video tutorial plays
-        //StartPlayerTutorial();
-        //print("Faster Testing Block is Uncommented");
-    }
-    IEnumerator WaitForFirstTutorial(int numTut)
-    {
-        gInitialVideoPlayer.clip = gInitialClips[numTut]; //beginning video tutorial plays
-        gInitialVideoDisplay.SetActive(true); //toggle display of tutorial
-        gSkipPopUp.SetActive(false); //toggle skip text
-        yield return new WaitForSeconds((float)gInitialClips[numTut].length);
+    //    //FOR FASTER TESTING: //Also comment out line 217 (this line -33)
+    //    //foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
+    //    //    gChild.gameObject.SetActive(true);
+    //    //gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
+    //    //gSkipPopUp.SetActive(false); //toggle skip text
+    //    //gLoopVideoPlayer.clip = gLoopClips[numTut]; //2nd part of video tutorial plays
+    //    //StartPlayerTutorial();
+    //    //print("Faster Testing Block is Uncommented");
+    //}
+    //IEnumerator WaitForFirstTutorial(int numTut)
+    //{
+    //    gInitialVideoPlayer.clip = gInitialClips[numTut]; //beginning video tutorial plays
+    //    gInitialVideoDisplay.SetActive(true); //toggle display of tutorial
+    //    gSkipPopUp.SetActive(false); //toggle skip text
+    //    yield return new WaitForSeconds((float)gInitialClips[numTut].length);
 
-        gInitialVideoPlayer.clip = gInitialClips[numTut]; //play again
-        gSkipPopUp.SetActive(true); //toggle skip text
-        float timeOut = 0;
+    //    gInitialVideoPlayer.clip = gInitialClips[numTut]; //play again
+    //    gSkipPopUp.SetActive(true); //toggle skip text
+    //    float timeOut = 0;
 
-        while (!Input.GetKeyDown(KeyCode.Space) && timeOut < (float)gInitialClips[numTut].length * 2) //play video twice unless player skips
-        {
-            timeOut += Time.deltaTime;
-            yield return null;
-        }
-        foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
-            gChild.gameObject.SetActive(true);
-        gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
-        gSkipPopUp.SetActive(false); //toggle skip text
-        gLoopVideoPlayer.clip = gLoopClips[numTut]; //2nd part of video tutorial plays
-    }
+    //    while (!Input.GetKeyDown(KeyCode.Space) && timeOut < (float)gInitialClips[numTut].length * 2) //play video twice unless player skips
+    //    {
+    //        timeOut += Time.deltaTime;
+    //        yield return null;
+    //    }
+    //    foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
+    //        gChild.gameObject.SetActive(true);
+    //    gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
+    //    gSkipPopUp.SetActive(false); //toggle skip text
+    //    gLoopVideoPlayer.clip = gLoopClips[numTut]; //2nd part of video tutorial plays
+    //}
 
-    public IEnumerator LastCountWaitForLand() //before tutorial finishes for jumping, make sure player lands
-    {
-        PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
-        while (!pt_.isLanding)
-            yield return null;
-        yield return new WaitForFixedUpdate();
-        if (pt_.AnimCheck(0, "Land1"))
-            this.CallDelay(NextTutorial, tutTransDelay);
-    }
+    //public IEnumerator LastCountWaitForLand() //before tutorial finishes for jumping, make sure player lands
+    //{
+    //    PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
+    //    while (!pt_.isLanding)
+    //        yield return null;
+    //    yield return new WaitForFixedUpdate();
+    //    if (pt_.AnimCheck(0, "Land1"))
+    //        this.CallDelay(NextTutorial, tutTransDelay);
+    //}
 
     //public void IncreaseCounter() //when player follows goal, increase count
     //{
@@ -418,9 +454,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0; //freeze tutorial to wait for player to input correct action
     }
 
-    public void ReSpawnPlayerTutorial() => this.CallDelay(ReSpawnPlayerTutorialDelay, finishLevelDelay);
-    public void ReSpawnPlayerTutorialDelay() => player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-
     public void IncreaseCounter() //when player follows goal, increase count
     {
         if (cCanvas != null)
@@ -430,7 +463,7 @@ public class GameManager : MonoBehaviour
             {
                 GameProgress.TutorialComplete(tutNumber); //tutorial progress
 
-                if (endPointPortal.GetComponent<EndPoint>().perfectTutorial) //player finished tutorial perfectly
+                if (progressPerfectTutorial) //player finished tutorial perfectly
                 {
                     player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished Perfectly!", 0);
                 }
@@ -445,11 +478,6 @@ public class GameManager : MonoBehaviour
 
     public int GetCount() => count;
 
-    public void FinishTutorialPerfectly()
-    {
-        levelFinished = true;
-        this.CallDelay(ResetGame, finishLevelDelay);
-    }
     #endregion
 
     public void ShowHUD(bool active)
@@ -491,7 +519,6 @@ public class GameManager : MonoBehaviour
         else if (enemy1 != null)
             enemy1.GetComponent<EnemyTrick>().StartEnemyStopRunningRoutine();
         levelFinished = true;
-        this.CallDelay(ResetGame, finishLevelDelay);
         GameProgress.LevelComplete(level_);
     }
 
@@ -593,9 +620,9 @@ public class GameManager : MonoBehaviour
             if (tutCanvas == null) //if not in tutorial, show player "Game Over"
                 player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
             yield return new WaitForSeconds(1f);
-            if (tutCanvas != null) //if in tutorial, don't reload scene
-                StartPlayerTutorial();
-            else
+            //if (tutCanvas != null) //if in tutorial, don't reload scene
+            //    StartPlayerTutorial();
+            //else
                 ReloadLevel();
         }
     }

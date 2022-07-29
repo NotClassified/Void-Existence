@@ -21340,6 +21340,7 @@ MonoBehaviour:
   progressEnemy: {fileID: 1047256883}
   portalStart: {fileID: 1044445801}
   portalEnd: {fileID: 1654169789}
+  portalTriggerOffsetZ: 10
   eaMarker: {fileID: 1056155761849556616, guid: ee5ad3f87c7fbaf46a035750f5d53907,
     type: 3}
   eaParent: {fileID: 0}
@@ -56504,14 +56505,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2074599043}
     m_Modifications:
-    - target: {fileID: 2478527160467756, guid: 11e672fa58dfb374da8cc9e133ddccd8, type: 3}
-      propertyPath: gm
-      value: 
-      objectReference: {fileID: 397030636}
-    - target: {fileID: 2478527160467756, guid: 11e672fa58dfb374da8cc9e133ddccd8, type: 3}
-      propertyPath: levelIndex
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3197567962545993928, guid: 11e672fa58dfb374da8cc9e133ddccd8,
         type: 3}
       propertyPath: m_Name
@@ -56545,7 +56538,7 @@ PrefabInstance:
     - target: {fileID: 3197567962545995573, guid: 11e672fa58dfb374da8cc9e133ddccd8,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -199
+      value: -167
       objectReference: {fileID: 0}
     - target: {fileID: 3197567962545995573, guid: 11e672fa58dfb374da8cc9e133ddccd8,
         type: 3}
