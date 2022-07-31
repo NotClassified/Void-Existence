@@ -531,7 +531,7 @@ public class PlayerTrick : MonoBehaviour
             ToggleCC_ON();
         else
         {
-            if(gm.tutCanvas != null)
+            if(gm.mode == 2)
             {
                 if(attemptDodge)
                     pUI.TextFeedback("Dodged Too Early", 4); //tell player that they dodged too early

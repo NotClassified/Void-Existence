@@ -1016,6 +1016,7 @@ MonoBehaviour:
   restartPrompt: {fileID: 215483575577479867}
   pauseParent: {fileID: 4970703317386847374}
   pauseRestartButton: {fileID: 9176163087425150285}
+  brightnessSlider: {fileID: 1423565070838215234}
   landAlwaysImage: {fileID: 1884762569867225708}
   dodgeAlwaysImage: {fileID: 7240293558837699825}
   wallClimbAlwaysImage: {fileID: 1366408334339847744}
@@ -5666,7 +5667,7 @@ GameObject:
   - component: {fileID: 2911350285590005838}
   - component: {fileID: 1423565070838215234}
   m_Layer: 0
-  m_Name: Slider
+  m_Name: Slider_Brightness
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

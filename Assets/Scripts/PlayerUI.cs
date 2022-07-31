@@ -58,6 +58,7 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] GameObject restartPrompt;
     [SerializeField] GameObject pauseParent;
     [SerializeField] Button pauseRestartButton;
+    [SerializeField] Slider brightnessSlider;
     #endregion
     #region HASHES
     private int hashFall;
@@ -85,6 +86,10 @@ public class PlayerUI : MonoBehaviour
         Volume globalVolume = FindObjectOfType<Volume>();
         VolumeProfile volumeProfile = globalVolume.sharedProfile;
         volumeProfile.TryGet(out volumeExposure);
+
+        float brightnessInitial = GameManager.brightness;
+        brightnessSlider.value = brightnessInitial;
+        BrightnessSlider(brightnessInitial);
 
         hashFall = Animator.StringToHash("Fall");
         hashWallClimb = Animator.StringToHash("Climb");
@@ -288,6 +293,7 @@ public class PlayerUI : MonoBehaviour
     public void BrightnessSlider(float value)
     {
         volumeExposure.fixedExposure.value = value;
+        GameManager.brightness = value;
     }
     #endregion
 }

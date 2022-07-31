@@ -18472,7 +18472,7 @@ MonoBehaviour:
   - {fileID: 32900000, guid: 3f635e2ab2f346f4bb325e302c88aa6e, type: 3}
   - {fileID: 32900000, guid: 99682ceb29bddfb43b26809a7870ce89, type: 3}
   - {fileID: 32900000, guid: ac02e4d01f5e0b54d8074447c6083086, type: 3}
-  cCanvas: {fileID: 1582179986}
+  cCanvas: {fileID: 1582179985}
   cTextHeader: {fileID: 1951874268}
   cSlider: {fileID: 67015995}
   csVelocity: 6
@@ -18482,7 +18482,7 @@ MonoBehaviour:
   - Jumps
   tutNumber: 1
   tutTransDelay: 1.5
-  tutCanvas: {fileID: 798880365}
+  tutCanvas: {fileID: 798880364}
   tutExtra: {fileID: 0}
   tutKey: {fileID: 1362609327}
   tutText: {fileID: 0}

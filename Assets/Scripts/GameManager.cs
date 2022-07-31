@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
     #endregion
     #region COUNTER //c-Counter s-Slider
     [SerializeField]
-    Transform cCanvas;
+    GameObject cCanvas;
     [SerializeField]
     TextMeshProUGUI cTextHeader;
     [SerializeField]
@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     float tutTransDelay;
     [SerializeField]
-    public Transform tutCanvas;
+    GameObject tutCanvas;
     [SerializeField]
     GameObject tutExtra;
     [SerializeField]
@@ -145,6 +145,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     public static bool showHUD = true;
+    public static float brightness = 11.6f;
     bool gameover = false;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
@@ -193,6 +194,11 @@ public class GameManager : MonoBehaviour
             StartTutorial();
         else if (mode == 1)
         {
+            if (showHUD)
+                progressCanvas.SetActive(true);
+            else
+                progressCanvas.SetActive(false);
+
             progressDistance = Vector3.Distance(portalStart.position, portalEnd.position);
             progressStartPosition = portalStart.position;
 
@@ -436,9 +442,18 @@ public class GameManager : MonoBehaviour
         player = Instantiate(playerPref);
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
+        if (showHUD)
+        {
+            tutCanvas.SetActive(true);
+            cCanvas.SetActive(true);
+        }
+        else
+        {
+            tutCanvas.SetActive(false);
+            cCanvas.SetActive(false);
+        }
 
-
-        if (GameProgress.tutorialLastCompleted >= tutNumber)
+        if (GameProgress.tutorialLastCompleted >= tutNumber) //if player has completed tutorial before, let player skip tutorial
         {
             tutSkipAbility = true;
             if (showHUD)
@@ -506,8 +521,8 @@ public class GameManager : MonoBehaviour
         showHUD = !showHUD;
         if (mode == 0)
         {
-            tutCanvas.gameObject.SetActive(showHUD);
-            cCanvas.gameObject.SetActive(showHUD);
+            tutCanvas.SetActive(showHUD);
+            cCanvas.SetActive(showHUD);
         }
         else if (mode == 1)
         {
