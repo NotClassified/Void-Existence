@@ -117,6 +117,7 @@ public class GameManager : MonoBehaviour
     GameObject tutGreyTint;
     [SerializeField]
     GameObject tutSkip;
+    bool tutSkipAbility;
     [SerializeField]
     Sprite[] keys;
     [SerializeField]
@@ -143,6 +144,7 @@ public class GameManager : MonoBehaviour
     Transform eaParent;
     #endregion
 
+    public static bool showHUD = true;
     bool gameover = false;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
@@ -194,6 +196,7 @@ public class GameManager : MonoBehaviour
             progressDistance = Vector3.Distance(portalStart.position, portalEnd.position);
             progressStartPosition = portalStart.position;
 
+            progressPerfectTutorial = false;
             StartLevel();
         }
     }
@@ -250,21 +253,28 @@ public class GameManager : MonoBehaviour
         }
         if (player.transform.position.y < portalEnd.position.y + portalTriggerOffsetY)
         {
-            if (levelFinished) //completed level, go back to main menu
-                ResetGame();
+            print(levelFinished + ", " + progressTutorialRespawn + ", " + progressPerfectTutorial);
+            if (progressPerfectTutorial) //completed tutorial perfectly, load next level
+                LoadNextLevel();
+
             else if (progressTutorialRespawn) //didn't complete tutorial, respawn player
                 player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-            else if(progressPerfectTutorial) //completed tutorial perfectly, load next level
-                ResetGame(); //TODO: load next level
+
+            else if (levelFinished) //completed level, go back to main menu
+                ResetGame();
+
             else
                 Debug.LogError("didn't register whether player completed level or tutorial or did tutorial perfectly");
         }
         #endregion
         //if (Input.GetKeyDown(KeyCode.Space) && !gInitialVideoDisplay.activeSelf && gCam.activeSelf)
         //    StartPlayerTutorial();
-        if (Input.GetKeyDown(KeyCode.Q) && mode == 1)
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            ReloadLevel();
+            if (mode == 1)
+                ReloadLevel();
+            else if (mode == 0 && tutSkipAbility)
+                LoadNextLevel();
         }
     }
 
@@ -426,10 +436,19 @@ public class GameManager : MonoBehaviour
         player = Instantiate(playerPref);
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
+
+
         if (GameProgress.tutorialLastCompleted >= tutNumber)
-            tutSkip.SetActive(true);
+        {
+            tutSkipAbility = true;
+            if (showHUD)
+                tutSkip.SetActive(true);
+        }
         else
+        {
+            tutSkipAbility = false;
             tutSkip.SetActive(false);
+        }
     }
 
     public void LightUpInputText(bool lightUpText)
@@ -470,7 +489,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished!", 0);
-                    this.CallDelay(ResetGame, finishLevelDelay); //go back to main menu
+                    this.CallDelay(LoadNextLevel, finishLevelDelay); //load next level
                 }
             }
         }
@@ -478,18 +497,21 @@ public class GameManager : MonoBehaviour
 
     public int GetCount() => count;
 
+    void LoadNextLevel() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+
     #endregion
 
-    public void ShowHUD(bool active)
+    public void ShowHUD()
     {
+        showHUD = !showHUD;
         if (mode == 0)
         {
-            tutCanvas.gameObject.SetActive(active);
-            cCanvas.gameObject.SetActive(active);
+            tutCanvas.gameObject.SetActive(showHUD);
+            cCanvas.gameObject.SetActive(showHUD);
         }
         else if (mode == 1)
         {
-            progressCanvas.gameObject.SetActive(active);
+            progressCanvas.gameObject.SetActive(showHUD);
         }
     }
 

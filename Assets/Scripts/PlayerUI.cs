@@ -58,7 +58,6 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] GameObject restartPrompt;
     [SerializeField] GameObject pauseParent;
     [SerializeField] Button pauseRestartButton;
-    bool showHUD = true;
     #endregion
     #region HASHES
     private int hashFall;
@@ -95,7 +94,8 @@ public class PlayerUI : MonoBehaviour
 
         if (gm.mode == 1)
         {
-            restartPrompt.SetActive(true);
+            if(GameManager.showHUD)
+                restartPrompt.SetActive(true);
             pauseRestartButton.interactable = true;
         }
         else
@@ -217,7 +217,7 @@ public class PlayerUI : MonoBehaviour
             fText.text = message;
             if (message.Equals("")) //if clearing text
                 fParent.SetActive(false);
-            else if(showHUD)
+            else if(GameManager.showHUD)
                 fParent.SetActive(true);
         }
 
@@ -234,7 +234,7 @@ public class PlayerUI : MonoBehaviour
     {
         if (fSpamParent.activeSelf)
             fSpamParent.SetActive(false);
-        else if(showHUD)
+        else if(GameManager.showHUD)
         {
             fSpamParent.SetActive(true);
             this.CallDelay(DontSpamUIToggle, 1f);
@@ -270,12 +270,10 @@ public class PlayerUI : MonoBehaviour
         }
         else if (action.Equals("hud"))
         {
-            //TOGGLE HUD
-            showHUD = !showHUD;
-            gm.ShowHUD(showHUD);
+            gm.ShowHUD(); //toggle HUD
 
-            if (gm.mode == 1) //if in level, toggle testart prompt
-                restartPrompt.SetActive(!restartPrompt.activeSelf);
+            if (gm.mode == 1) //if in level, toggle restart prompt
+                restartPrompt.SetActive(GameManager.showHUD);
         }
         else if (action.Equals("quit"))
         {
