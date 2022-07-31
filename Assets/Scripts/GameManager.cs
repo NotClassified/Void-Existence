@@ -210,17 +210,21 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         #region COUNTER SLIDER VALUE SMOOTHING
-        if (count < 0) //Player's foward speed = target value
-            csTarget = 0;
-        else if (count > countGoal)
-            csTarget = countGoal;
-        else
-            csTarget = count;
-        //MAKE THE VALUE GRADUALLY CHANGE TO TARGET:
-        csDelta = csTarget - csValue; //difference between target value and actual value (slider's value)
-        csDelta *= Time.deltaTime * csVelocity; //make actual value gradually change
-        csValue += csDelta; //increase actual value closer to target value
-        cSlider.value = csValue; //correlate slider values
+        if (mode == 0)
+        {
+            if (count < 0) //Player's foward speed = target value
+                csTarget = 0;
+            else if (count > countGoal)
+                csTarget = countGoal;
+            else
+                csTarget = count;
+            //MAKE THE VALUE GRADUALLY CHANGE TO TARGET:
+            csDelta = csTarget - csValue; //difference between target value and actual value (slider's value)
+            csDelta *= Time.deltaTime * csVelocity; //make actual value gradually change
+            csValue += csDelta; //increase actual value closer to target value
+            cSlider.value = csValue; //correlate slider values
+        }
+        
         #endregion
         #region PROGRESS BAR VALUE
         if (mode == 1 && progressCanvas.activeSelf)
