@@ -149,6 +149,7 @@ public class GameManager : MonoBehaviour
     bool gameover = false;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
+    bool loadingScene = false;
     public int mode = 0; //0-Tutorial 1-Level 2-No Enemies
 
     void Start()
@@ -259,7 +260,6 @@ public class GameManager : MonoBehaviour
         }
         if (player.transform.position.y < portalEnd.position.y + portalTriggerOffsetY)
         {
-            print(levelFinished + ", " + progressTutorialRespawn + ", " + progressPerfectTutorial);
             if (progressPerfectTutorial) //completed tutorial perfectly, load next level
                 LoadNextLevel();
 
@@ -512,7 +512,14 @@ public class GameManager : MonoBehaviour
 
     public int GetCount() => count;
 
-    void LoadNextLevel() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    void LoadNextLevel()
+    {
+        if (!loadingScene)
+        {
+            loadingScene = true;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+    }
 
     #endregion
 
