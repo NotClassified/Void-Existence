@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.HighDefinition;
+//using UnityEngine.Rendering.HighDefinition;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -12,7 +12,7 @@ public class PlayerUI : MonoBehaviour
     PlayerTrick pt;
     Animator anim;
     GameManager gm;
-    Exposure volumeExposure;
+    //Exposure volumeExposure;
     #endregion
     #region COLORS //m-Material
     [SerializeField]
@@ -83,13 +83,13 @@ public class PlayerUI : MonoBehaviour
         anim = gameObject.GetComponent<Animator>();
         gm = FindObjectOfType<GameManager>();
 
-        Volume globalVolume = FindObjectOfType<Volume>();
-        VolumeProfile volumeProfile = globalVolume.sharedProfile;
-        volumeProfile.TryGet(out volumeExposure);
+        //Volume globalVolume = FindObjectOfType<Volume>();
+        //VolumeProfile volumeProfile = globalVolume.sharedProfile;
+        //volumeProfile.TryGet(out volumeExposure);
 
-        float brightnessInitial = GameManager.brightness;
-        brightnessSlider.value = brightnessInitial;
-        BrightnessSlider(brightnessInitial);
+        //float brightnessInitial = GameManager.brightness;
+        //brightnessSlider.value = brightnessInitial;
+        //BrightnessSlider(brightnessInitial);
 
         hashFall = Animator.StringToHash("Fall");
         hashWallClimb = Animator.StringToHash("Climb");
@@ -292,7 +292,7 @@ public class PlayerUI : MonoBehaviour
 
     public void BrightnessSlider(float value)
     {
-        volumeExposure.fixedExposure.value = value;
+        //volumeExposure.fixedExposure.value = value;
         GameManager.brightness = value;
     }
     #endregion
