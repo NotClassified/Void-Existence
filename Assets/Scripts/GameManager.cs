@@ -243,38 +243,38 @@ public class GameManager : MonoBehaviour
         }
         #endregion
         #region PROGRESS CHECK
-        if (!levelFinished && player.transform.position.z < portalEnd.position.z + portalTriggerOffsetZ)
+        if (player.transform.position.z < portalEnd.position.z + portalTriggerOffsetZ)
         {
-            if (mode == 0)
+            if (!levelFinished)
             {
-                if (progressPerfectTutorial && count >= countGoal) //if player completed tutorial perfectly
+                if (mode == 0)
                 {
-                    levelFinished = true;
+                    if (progressPerfectTutorial && count >= countGoal) //if player completed tutorial perfectly
+                        levelFinished = true;
+                    else
+                    {
+                        progressPerfectTutorial = false;
+                        progressTutorialRespawn = true;
+                    }
                 }
+                else if (mode == 1)
+                    LevelFinished(levelnum);
+            }
+
+            if (player.transform.position.y < portalEnd.position.y + portalTriggerOffsetY)
+            {
+                if (progressPerfectTutorial) //completed tutorial perfectly, load next level
+                    LoadNextLevel();
+
+                else if (progressTutorialRespawn) //didn't complete tutorial, respawn player
+                    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+
+                else if (levelFinished) //completed level, go back to main menu
+                    ResetGame();
+
                 else
-                {
-                    progressPerfectTutorial = false;
-                    progressTutorialRespawn = true;
-                }
+                    Debug.LogError("didn't register whether player completed level or tutorial or did tutorial perfectly");
             }
-            else if (mode == 1)
-            {
-                LevelFinished(levelnum);
-            }
-        }
-        if (player.transform.position.y < portalEnd.position.y + portalTriggerOffsetY)
-        {
-            if (progressPerfectTutorial) //completed tutorial perfectly, load next level
-                LoadNextLevel();
-
-            else if (progressTutorialRespawn) //didn't complete tutorial, respawn player
-                player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-
-            else if (levelFinished) //completed level, go back to main menu
-                ResetGame();
-
-            else
-                Debug.LogError("didn't register whether player completed level or tutorial or did tutorial perfectly");
         }
         #endregion
         //if (Input.GetKeyDown(KeyCode.Space) && !gInitialVideoDisplay.activeSelf && gCam.activeSelf)
