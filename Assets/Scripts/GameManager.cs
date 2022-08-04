@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     #region ENVIRONMENT
     public GameObject prefWallMarker;
     [SerializeField]
+    Light worldLight;
+    [SerializeField]
     float delaySpawnEnemy;
     [SerializeField]
     Transform environment;
@@ -145,7 +147,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     public static bool showHUD = true;
-    public static float brightness = 11.6f;
+    public static float brightness = 1f;
     bool gameover = false;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
@@ -190,6 +192,7 @@ public class GameManager : MonoBehaviour
         //else
         //    StartLevel();
 
+        ChangeBrightness();
         levelFinished = false;
         if (mode == 0)
             StartTutorial();
@@ -527,6 +530,7 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    public void ChangeBrightness() => worldLight.intensity = brightness;
     public void ShowHUD()
     {
         showHUD = !showHUD;

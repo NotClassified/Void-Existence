@@ -12,7 +12,6 @@ public class PlayerUI : MonoBehaviour
     PlayerTrick pt;
     Animator anim;
     GameManager gm;
-    //Exposure volumeExposure;
     #endregion
     #region COLORS //m-Material
     [SerializeField]
@@ -59,6 +58,7 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] GameObject pauseParent;
     [SerializeField] Button pauseRestartButton;
     [SerializeField] Slider brightnessSlider;
+    [SerializeField] Button brightnessResetButton;
     #endregion
     #region HASHES
     private int hashFall;
@@ -72,7 +72,6 @@ public class PlayerUI : MonoBehaviour
     public Image dodgeAlwaysImage;
     public Image wallClimbAlwaysImage;
     public Image jumpAlwaysImage;
-    public TextMeshProUGUI tutorialProgress;
     #endregion
 
     public bool startMethodCalled = false;
@@ -82,14 +81,6 @@ public class PlayerUI : MonoBehaviour
         pt = gameObject.GetComponent<PlayerTrick>();
         anim = gameObject.GetComponent<Animator>();
         gm = FindObjectOfType<GameManager>();
-
-        //Volume globalVolume = FindObjectOfType<Volume>();
-        //VolumeProfile volumeProfile = globalVolume.sharedProfile;
-        //volumeProfile.TryGet(out volumeExposure);
-
-        //float brightnessInitial = GameManager.brightness;
-        //brightnessSlider.value = brightnessInitial;
-        //BrightnessSlider(brightnessInitial);
 
         hashFall = Animator.StringToHash("Fall");
         hashWallClimb = Animator.StringToHash("Climb");
@@ -111,6 +102,11 @@ public class PlayerUI : MonoBehaviour
         pauseParent.SetActive(false);
         fParent.SetActive(false);
         fSpamParent.SetActive(false);
+        brightnessSlider.value = GameManager.brightness;
+        if (GameManager.brightness == 1)
+            brightnessResetButton.interactable = false;
+        else
+            brightnessResetButton.interactable = true;
 
         startMethodCalled = true;
     }
@@ -292,8 +288,16 @@ public class PlayerUI : MonoBehaviour
 
     public void BrightnessSlider(float value)
     {
-        //volumeExposure.fixedExposure.value = value;
         GameManager.brightness = value;
+        gm.ChangeBrightness();
+
+        if (value == 1)
+        {
+            brightnessResetButton.interactable = false;
+            brightnessSlider.value = GameManager.brightness;
+        }
+        else
+            brightnessResetButton.interactable = true;
     }
     #endregion
 }

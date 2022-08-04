@@ -18040,6 +18040,7 @@ MonoBehaviour:
   actionIndex2: 0
   spawnOffsetForEnemy2: 6
   prefWallMarker: {fileID: 0}
+  worldLight: {fileID: 1823675188213088911}
   delaySpawnEnemy: 0.8
   environment: {fileID: 2074599043}
   levels: []
@@ -94559,3 +94560,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a63a85c929a1d1744b7d19516323529c, type: 3}
+--- !u!108 &1823675188213088911 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 1823675187727911850, guid: a63a85c929a1d1744b7d19516323529c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1823675188213088910}
+  m_PrefabAsset: {fileID: 0}

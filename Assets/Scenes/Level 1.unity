@@ -20595,6 +20595,7 @@ MonoBehaviour:
   actionIndex2: 0
   spawnOffsetForEnemy2: 6
   prefWallMarker: {fileID: 0}
+  worldLight: {fileID: 2071596266}
   delaySpawnEnemy: 0.8
   environment: {fileID: 2074599043}
   levels: []
@@ -109748,6 +109749,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2071493460}
   m_Mesh: {fileID: -8971355165230693711, guid: 6c5325a19b615bb4ca29efac5e16a46b, type: 3}
+--- !u!108 &2071596266 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 1823675187727911850, guid: a63a85c929a1d1744b7d19516323529c,
+    type: 3}
+  m_PrefabInstance: {fileID: 781072759}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2073027974
 GameObject:
   m_ObjectHideFlags: 0
