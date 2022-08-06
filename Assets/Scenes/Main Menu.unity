@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &8756640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -812,7 +812,7 @@ GameObject:
   - component: {fileID: 385556874}
   - component: {fileID: 385556873}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -857,7 +857,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Level 1
+  m_text: Level 2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 197b86ad747427b46abd87035b0a8877, type: 2}
   m_sharedMaterial: {fileID: 7025910908116649135, guid: 197b86ad747427b46abd87035b0a8877,
@@ -1459,9 +1459,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 197b86ad747427b46abd87035b0a8877, type: 2}
   m_sharedMaterial: {fileID: 7025910908116649135, guid: 197b86ad747427b46abd87035b0a8877,
@@ -1694,7 +1692,7 @@ MonoBehaviour:
   scenes:
   - Main Menu
   - Tutorial 1 Land
-  - Level 1
+  - Tutorial 2 Wall Jump
   levelButtons:
   - {fileID: 1933197368}
   - {fileID: 1479399962}
@@ -2198,7 +2196,7 @@ GameObject:
   - component: {fileID: 1479399965}
   - component: {fileID: 1479399964}
   m_Layer: 5
-  m_Name: Level 1
+  m_Name: Level 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2280,7 +2278,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 1
+          m_StringArgument: 2
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1479399965
@@ -2513,7 +2511,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 197b86ad747427b46abd87035b0a8877, type: 2}
   m_sharedMaterial: {fileID: 7025910908116649135, guid: 197b86ad747427b46abd87035b0a8877,
@@ -2987,7 +2985,7 @@ GameObject:
   - component: {fileID: 1933197371}
   - component: {fileID: 1933197370}
   m_Layer: 5
-  m_Name: Tutorial
+  m_Name: Level 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3069,7 +3067,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: tutorial
+          m_StringArgument: 1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1933197371
@@ -3122,7 +3120,7 @@ GameObject:
   - component: {fileID: 2041254455}
   - component: {fileID: 2041254454}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3167,7 +3165,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tutorial
+  m_text: Level 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 197b86ad747427b46abd87035b0a8877, type: 2}
   m_sharedMaterial: {fileID: 7025910908116649135, guid: 197b86ad747427b46abd87035b0a8877,

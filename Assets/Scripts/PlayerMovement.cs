@@ -11,8 +11,7 @@ public class PlayerMovement : MonoBehaviour
     PlayerTrick pt;
     PlayerUI pUI;
     public GameManager gm;
-    [SerializeField]
-    GameObject rootBone;
+    public Transform rootBone;
     #endregion
     #region MOVEMENT VARS
     public bool upInput;
@@ -163,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
         //checking if climbing animation has ended
         if (pt.isClimbing && Time.time > pt.wcClipEnd && animator.GetBool(hashWallClimb) && !GameManager.levelFinished)
         {
-            transform.position = rootBone.transform.position; //sync player's position to character (root bone)
+            transform.position = rootBone.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
             pt.attemptedClimb = false; //let player be able to climb again
             pUI.TextFeedback("", -1); //empty the climb feedback text
@@ -186,13 +185,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (fallvelocity.y < -16) //check if player has fallen off map
         {
-            //if(gm.tutCanvas != null)
-            //{
-            //    ResetPlayer(true);
-            //    //gm.DecreaseCounter();
-            //}
-            //else
-                gm.ReloadLevel();
+            Debug.LogError("player has fallen off map");
+            gm.ReloadLevel();
         }
 
         animator.SetBool(hashIsGrounded, pt.isGrounded);
@@ -241,9 +235,9 @@ public class PlayerMovement : MonoBehaviour
         }
         if (pt.isClimbing)
         {
-            cam1.transform.position = rootBone.transform.position; //camera follows player
+            cam1.transform.position = rootBone.position; //camera follows player
             cam1.transform.localPosition += wcOffset;
-            bsp.transform.position = rootBone.transform.position; //shadow follows player
+            bsp.transform.position = rootBone.position; //shadow follows player
             bsp.transform.localPosition += bspOffset;
             //bspOrtho.transform.localPosition = bsp.transform.localPosition; //shadow follows player
         }

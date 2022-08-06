@@ -1988,7 +1988,7 @@ MonoBehaviour:
   cc: {fileID: 8441202267673954534}
   et: {fileID: 5221502641683217113}
   gm: {fileID: 0}
-  rootBone: {fileID: 6904839205765645834}
+  rootBone: {fileID: 7670127871357108089}
   velocityZ: 0
   walkAcceleration: 60
   runAcceleration: 15

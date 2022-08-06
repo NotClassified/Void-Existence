@@ -11,8 +11,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField]
     EnemyTrick et;
     public GameManager gm;
-    [SerializeField]
-    GameObject rootBone;
+    public Transform rootBone;
     #endregion
     #region MOVEMENT VARS
     public float velocityZ;
@@ -101,7 +100,7 @@ public class EnemyMovement : MonoBehaviour
         #region WALL CLIMB
         if (et.isClimbing && Time.time > et.wcClipEnd && animator.GetBool(hashWallClimb)) //checking if climbing animation has ended
         {
-            transform.position = rootBone.transform.position; //sync player's position to character (root bone)
+            transform.position = rootBone.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
             et.ToggleCC_ON(); //enable collider
         }
@@ -153,7 +152,7 @@ public class EnemyMovement : MonoBehaviour
     {
         if (et.isClimbing)
         {
-            bsp.transform.position = rootBone.transform.position;
+            bsp.transform.position = rootBone.position;
             bsp.transform.localPosition += bspOffset;
             bspOrtho.transform.localPosition = bsp.transform.localPosition;
         }
@@ -182,7 +181,7 @@ public class EnemyMovement : MonoBehaviour
     {
         if (et.isClimbing)
         {
-            transform.position = rootBone.transform.position; //sync player's position to character (root bone)
+            transform.position = rootBone.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
             et.ToggleCC_ON(); //enable collider
         }

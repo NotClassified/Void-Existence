@@ -184,6 +184,8 @@ public class PlayerTrick : MonoBehaviour
             anim.SetBool(hashWallClimb, true);
 
             float wallClimbSpeed = (pm.velocityZ - 6) / 10 + 1;
+            if (wallClimbSpeed < 1)
+                wallClimbSpeed = 1;
             anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
 
             string num = hits[2].transform.name.Substring(4); //get the correct wall number
@@ -223,21 +225,17 @@ public class PlayerTrick : MonoBehaviour
     #region TEXT FEEDBACK
     void ClearTextFeedback()
     {
-        if (!pUI.GetFeedbackText().Equals("Too Early To Jump"))
+        if (pUI.GetFeedbackText().Equals("Early Landing") || pUI.GetFeedbackText().Equals("Late Landing")
+            || pUI.GetFeedbackText().Equals("Perfect Landing!"))
             pUI.TextFeedback("", -1); //empty feedback text
     }
-    void ClearLandingTextFeedback()
+    void ClearEarlyLandingTextFeedback()
     {
         if (!isLanding)
         {
-            //if (pUI.GetFeedbackText().Equals("Too Early To Jump"))
-            //    return;
-
             pUI.TextFeedback("", -1); //empty feedback text
             attemptedLand = false; //let player attempt landing again if still in air
-            return;
         }
-        //gm.DecreaseCounter();
     }
     void ClearJumpingFeedback()
     {
@@ -351,7 +349,7 @@ public class PlayerTrick : MonoBehaviour
                 {
                     anim.SetBool(hashFall, !landAlways); //land fail unless set to always land
                     pUI.TextFeedback("Early Landing", 4);
-                    this.CallDelay(ClearLandingTextFeedback, lResetDelay); //if too early then give second chance for landing
+                    this.CallDelay(ClearEarlyLandingTextFeedback, lResetDelay); //if too early then give second chance for landing
                 }
                 attemptedLand = true; //prevent repressing key
             }
@@ -368,10 +366,7 @@ public class PlayerTrick : MonoBehaviour
                         //gm.DecreaseCounter(); //if player is in tutorial for jumping, decrease counter
                     }
                     anim.SetBool(hashLand, true);
-                    if (anim.GetBool(hashFall))
-                        this.CallDelay(ClearTextFeedback, lResetDelay);
-                    else
-                        this.CallDelay(ClearTextFeedback, lResetDelay);
+                    this.CallDelay(ClearTextFeedback, lResetDelay);
                 }
                 else //not close enough to platform
                 {
@@ -397,25 +392,23 @@ public class PlayerTrick : MonoBehaviour
         anim.SetBool("IsGrounded", isGrounded); //correlate animation vars 
         #endregion
 
-        #region WALL CLIMB FAIL & AUTO JUMP
-        if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
+        #region WALL CLIMB FAIL & AUTO WALL CLIMB & AUTO JUMP
+        if (defaultMove && !isClimbingFail && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
         {
-            if (wcAlways/* && !autoWallClimb*/)
-            {
-                anim.SetBool(hashWallClimb, WallClimbCheck());
-                //autoWallClimb = true;
-            }
-            else if(!isClimbingFail)
-            {
-                isClimbingFail = true;
+            isClimbingFail = true;
 
-                if (!attemptedClimb) //check if player didn't do anything or pressed key too late
-                    pUI.TextFeedback("Too Late To Climb", 4);
-                attemptedClimb = true;
+            if (!attemptedClimb) //check if player didn't do anything or pressed key too late
+                pUI.TextFeedback("Too Late To Climb", 4);
+            attemptedClimb = true;
 
-                //StartCoroutine(WallClimbDebug());
-                wallClimbFailRoutine = StartCoroutine(WallClimbFail());
-            }
+            //StartCoroutine(WallClimbDebug());
+            wallClimbFailRoutine = StartCoroutine(WallClimbFail());
+        }
+
+        if (defaultMove && wcAlways && 
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //auto wall climb
+        {
+            anim.SetBool(hashWallClimb, WallClimbCheck());
         }
 
         if (jAlways && !autoJumped && defaultMove && pm.velocityZ > 5.9f &&

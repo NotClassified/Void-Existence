@@ -207,11 +207,16 @@ public class EnemyTrick : MonoBehaviour
             if (!actionPrevent[1] && gm.GetEnemyAction(enemyNum)) //check if enemy should wall climb
             {
                 anim.SetBool(hashClimbFail, false); //player succeeded wall climb
+
                 float wallClimbSpeed = (em.velocityZ - 6) / 10 + 1;
+                if (wallClimbSpeed < 1)
+                    wallClimbSpeed = 1;
                 anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
+
                 string num = hits[2].transform.name.Substring(4); //get the correct wall number
                 StartCoroutine(WCRepos(hits[2].transform.GetChild(0))); //gradually reposition player for wall climb animation
                 wcClipEnd = Time.time + 2.666667f / wallClimbSpeed; //find when animation clip will end
+
                 this.CallDelay(ToggleCC_OFF, 1f); //disable collider
                 em.velocityZ = 9; //set forward speed of player
                 anim.SetBool(hashWallClimb, true);
@@ -272,11 +277,11 @@ public class EnemyTrick : MonoBehaviour
             else //if over 1, then equal 1
                 anim.SetLayerWeight(2, 1); //correlate vars
         }
-        if(enemyNum == 2)
-        {
-            Debug.DrawLine(raypos[3], raypos[3] + Vector3.down * distances[1], Color.red); //wall check raycast
-            Debug.DrawLine(raypos[2], raypos[2] + Vector3.back * distances[7], Color.red); //edge check raycast
-        }
+        //if(enemyNum == 2)
+        //{
+        //    Debug.DrawLine(raypos[3], raypos[3] + Vector3.down * distances[1], Color.red); //wall check raycast
+        //    Debug.DrawLine(raypos[2], raypos[2] + Vector3.back * distances[7], Color.red); //edge check raycast
+        //}
 
         #endregion
     }

@@ -974,7 +974,7 @@ MonoBehaviour:
   animator: {fileID: -518339708669993154}
   cc: {fileID: -7737031796344775587}
   gm: {fileID: 0}
-  rootBone: {fileID: 4492143280087110321}
+  rootBone: {fileID: 861421760175287234}
   upInput: 0
   velocityZ: 0
   walkAcceleration: 60
@@ -1098,7 +1098,6 @@ MonoBehaviour:
   dodgeAlwaysImage: {fileID: 7240293558837699825}
   wallClimbAlwaysImage: {fileID: 1366408334339847744}
   jumpAlwaysImage: {fileID: 4223892947789860258}
-  tutorialProgress: {fileID: 0}
   startMethodCalled: 0
 --- !u!143 &-7737031796344775587
 CharacterController:
@@ -1205,7 +1204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3412211318930382454
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4238,7 +4237,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.03
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -4290,7 +4289,7 @@ MonoBehaviour:
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
-  m_Antialiasing: 0
+  m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0

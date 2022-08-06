@@ -16,10 +16,11 @@ public class GameManager : MonoBehaviour
     public static float time;
     public int levelnum;
     #region BACKGROUND ROCKS
+    public int rocksAmount;
     public GameObject rockParent;
     public GameObject rockPref;
     public Vector3 maxRock;
-    public Vector3 minRock; 
+    public Vector3 minRock;
     #endregion
     #region PLAYERS
     public GameObject player;
@@ -35,11 +36,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     bool[] actionsEnemy;
     [SerializeField]
-    int actionIndex1;
+    int actionIndex;
     [SerializeField]
-    int actionIndex2;
-    [SerializeField]
-    float spawnOffsetForEnemy2;
+    float spawnDelayForEnemy2;
     #endregion
     #region ENVIRONMENT
     public GameObject prefWallMarker;
@@ -133,6 +132,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform portalStart;
     [SerializeField] Transform portalEnd;
     [SerializeField] float portalTriggerOffsetZ;
+    Transform progressPlayerPosition;
+    Transform progressEnemyPosition;
     float portalTriggerOffsetY = -2.3f;
     bool progressPerfectTutorial = true;
     bool progressTutorialRespawn = false;
@@ -156,10 +157,11 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        //for (int i = 0; i < 2000; i++)
+        //SPAWN ROCKS FOR ENVIRONMENT
+        //for (int i = 0; i < rocksAmount; i++)
         //{
         //    GameObject rock = Instantiate(rockPref, rockParent.transform);
-        //    rock.transform.position = new Vector3(Random.Range(minRock.x, maxRock.x), Random.Range(minRock.y, maxRock.y), 
+        //    rock.transform.position = new Vector3(Random.Range(minRock.x, maxRock.x), Random.Range(minRock.y, maxRock.y),
         //                                          Random.Range(minRock.z, maxRock.z));
         //    rock.transform.eulerAngles = new Vector3(Random.Range(-360, 360), Random.Range(-360, 360), Random.Range(-360, 360));
         //    float sizeOfRock = Random.Range(.1f, 1.5f);
@@ -167,30 +169,7 @@ public class GameManager : MonoBehaviour
         //}
 
         Time.timeScale = timeScale / 100;
-        //if (mode == 0)
-        //{
-        //    Instantiate(playerPref);
-        //}
-        //else if(mode == 1)
-        //{
-        //    GameObject player = Instantiate(playerPref);
-        //    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-        //    //Instantiate(enemyPref);
-        //}
-        //else
-        //{
-
-        //}
         envChildCountStart = environment.childCount;
-
-        //if (gCanvas != null)
-        //    gCam.SetActive(true);
-        //if (numTutorial != -1)
-        //    print("Tutorials skipped: " + (numTutorial + 1) + "\n Please set numTutorial = -1");
-        //if (tutCanvas != null)
-        //    NextTutorial();
-        //else
-        //    StartLevel();
 
         ChangeBrightness();
         levelFinished = false;
@@ -227,22 +206,21 @@ public class GameManager : MonoBehaviour
             csValue += csDelta; //increase actual value closer to target value
             cSlider.value = csValue; //correlate slider values
         }
-        
+
         #endregion
         #region PROGRESS BAR VALUE
-        if (mode == 1 && progressCanvas.activeSelf)
+        if (mode == 1 && progressCanvas.activeSelf && progressEnemyPosition != null) //in the level mode, and the progress bar is showing
         {
-            progressPlayer.value = Vector3.Distance(progressStartPosition, player.transform.position) / progressDistance;
+            //percentage of the level traveled by the player
+            progressPlayer.value = Vector3.Distance(progressStartPosition, progressPlayerPosition.position) / progressDistance;
 
-            if (enemy1.transform.position.z < progressStartPosition.z)
+            if (enemy1.transform.position.z < progressStartPosition.z) //if enemy has reached the start of the level
             {
-                if (enemy2 != null)
-                    progressEnemy.value = Vector3.Distance(progressStartPosition, enemy2.transform.position) / progressDistance;
-                else if (enemy1 != null)
-                    progressEnemy.value = Vector3.Distance(progressStartPosition, enemy1.transform.position) / progressDistance;
+                //percentage of the level traveled by the enemy
+                progressEnemy.value = Vector3.Distance(progressStartPosition, progressEnemyPosition.position) / progressDistance;
             }
             else
-                progressEnemy.value = 0;
+                progressEnemy.value = 0; //enemy hasn't reached the starting point of the level
         }
         #endregion
         #region PROGRESS CHECK
@@ -280,9 +258,8 @@ public class GameManager : MonoBehaviour
             }
         }
         #endregion
-        //if (Input.GetKeyDown(KeyCode.Space) && !gInitialVideoDisplay.activeSelf && gCam.activeSelf)
-        //    StartPlayerTutorial();
-        if (Input.GetKeyDown(KeyCode.Q))
+
+        if (Input.GetKeyDown(KeyCode.Q)) //restart or skip tutorial
         {
             if (mode == 1)
                 ReloadLevel();
@@ -545,6 +522,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     void StartLevel()
     {
         //GameObject level_ = Instantiate(levels[0], environment);
@@ -562,7 +540,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Spawn());
 
     }
-
     public void LevelFinished(int level_)
     {
         player.GetComponent<PlayerUI>().TextFeedback("Level Finished!", 0);
@@ -574,79 +551,92 @@ public class GameManager : MonoBehaviour
         GameProgress.LevelComplete(level_);
     }
 
+
     public bool GetEnemyAction(int enemyNum)
     {
-        if (actionsEnemy.Length > actionIndex1) //if there is an action left
+        if (actionsEnemy.Length > actionIndex) //if there is an action left
         {
-            if (enemyNum == 2 && actionsEnemy.Length > actionIndex2) //if actionindex is being given to left enemy
-            {
-                //MAKE ENEMY ACTION MARKERS FOR LEVEL:
-                //GameObject marker_ = Instantiate(eaMarker, enemy2.transform.position, eaMarker.transform.rotation); //create
-                //marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex2.ToString(); //change text to index of action
-                //marker_.transform.SetParent(eaParent); //make child of a parent
+            //MAKE ENEMY ACTION MARKERS FOR LEVEL:
+            //GameObject marker_ = Instantiate(eaMarker, enemy1.transform.position, eaMarker.transform.rotation); //create using enemy1 postition
+            //marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex.ToString(); //change text to index of action
+            //marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
 
-                return actionsEnemy[actionIndex2++];
-            }
-            return actionsEnemy[actionIndex1++]; //give actionIndex, then increase
+            return actionsEnemy[actionIndex++]; //give actionIndex, then increase
         }
         return true;
     }
+    void SpawnEnemy2()
+    {
+        enemy2 = Instantiate(enemyPref);
+        enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
+        enemy2.transform.position = new Vector3(2, enemy1.transform.position.y, enemy1.transform.position.z);
+        enemy2.transform.eulerAngles = new Vector3(0, -90);
+
+        progressEnemyPosition = enemy2.GetComponent<EnemyMovement>().rootBone; //progress bar checks enemy2 instead of enemy1
+    }
+
 
     public IEnumerator Spawn()
     {
-        if(tutCanvas != null)
+        //if(tutCanvas != null)
+        //{
+        //    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation); //reset position
+        //    PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
+        //    yield return new WaitForEndOfFrame();
+        //    while (pt_.AnimCheck(0, "Exit")) //wait until player resets
+        //        yield return null;
+        //    player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer; //reset speed
+        //    if(enemy1 != null)
+        //    {
+        //        Destroy(enemy1);
+        //        enemy1 = Instantiate(enemyPref);
+        //        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+        //        enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+        //    }
+        //}
+        //else
+        //{
+
+        if (mode == 1)
         {
-            player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation); //reset position
+            while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
+                yield return null;
+        }
+        //RESET POSITIONS AND INDEX OF ALL PLAYERS:
+        player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+
+        if(mode == 1)
+        {
+            enemy1.GetComponent<EnemyMovement>().ResetPlayer();
+            enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+            actionIndex = 0;
+
+            //enemy2.GetComponent<EnemyMovement>().ResetPlayer();
+            //enemy2.transform.SetPositionAndRotation(enemySpawn.GetChild(0).position, enemySpawn.rotation);
+            //actionIndex2 = 0;
+
+            EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
+            //EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
             PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
             yield return new WaitForEndOfFrame();
-            while (pt_.AnimCheck(0, "Exit")) //wait until player resets
+            while (et1_.AnimCheck(0, "Exit") || /*et2_.AnimCheck(0, "Exit") ||*/ pt_.AnimCheck(0, "Exit")) //wait until all players reset
                 yield return null;
-            player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer; //reset speed
-            if(enemy1 != null)
-            {
-                Destroy(enemy1);
-                enemy1 = Instantiate(enemyPref);
-                enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
-                enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-            }
+            //RESET SPEED FOR ALL PLAYERS:
+            enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
+            //enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
+            player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
+
+
+            progressPlayerPosition = player.GetComponent<PlayerMovement>().rootBone;
+            progressEnemyPosition = enemy1.GetComponent<EnemyMovement>().rootBone;
         }
-        else
-        {
-            if (mode == 1)
-            {
-                while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
-                    yield return null;
-            }
-            //RESET POSITIONS AND INDEX OF ALL PLAYERS:
-            player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
-            if(mode == 1)
-            {
-                enemy1.GetComponent<EnemyMovement>().ResetPlayer();
-                enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-                actionIndex1 = 0;
-
-                //enemy2.GetComponent<EnemyMovement>().ResetPlayer();
-                //enemy2.transform.SetPositionAndRotation(enemySpawn.GetChild(0).position, enemySpawn.rotation);
-                //actionIndex2 = 0;
-
-                EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
-                //EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
-                PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
-                yield return new WaitForEndOfFrame();
-                while (et1_.AnimCheck(0, "Exit") || /*et2_.AnimCheck(0, "Exit") ||*/ pt_.AnimCheck(0, "Exit")) //wait until all players reset
-                    yield return null;
-                //RESET SPEED FOR ALL PLAYERS:
-                enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
-                //enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
-                player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
-            }
-
-            gameover = false;
-            Time.timeScale = timeScale / 100;
+        gameover = false;
+        Time.timeScale = timeScale / 100;
             //UsefulShortcuts.ClearConsole();
-        }
+        //}
     }
+
 
     public IEnumerator GameOver()
     {
@@ -662,10 +652,7 @@ public class GameManager : MonoBehaviour
             if (tutCanvas != null)
                 IncreaseCounter();
 
-            enemy2 = Instantiate(enemyPref);
-            enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
-            enemy2.transform.position = new Vector3(2, enemy1.transform.position.y, enemy1.transform.position.z + spawnOffsetForEnemy2);
-            enemy2.transform.eulerAngles = new Vector3(0, -90);
+            this.CallDelay(SpawnEnemy2, spawnDelayForEnemy2);
         }
         else
         {
@@ -679,6 +666,8 @@ public class GameManager : MonoBehaviour
         }
     }
     public bool IsGameOver() => gameover;
+
+
     public void ReloadLevel()
     {
         if (mode == 0 && GameProgress.tutorialLastCompleted >= tutNumber) //if player has already completed tutorial
@@ -690,6 +679,8 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
+
+
     public void ResetGame() => SceneManager.LoadScene(0);
 }
 
