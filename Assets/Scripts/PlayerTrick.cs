@@ -59,6 +59,7 @@ public class PlayerTrick : MonoBehaviour
     [SerializeField]
     float jDecayBoost;
     bool attemptedJump = false;
+    Coroutine jumpMashPreventRoutine;
     #endregion
     #region WALL CLIMB //wc-wall climb
     Coroutine wallClimbFailRoutine;
@@ -127,32 +128,46 @@ public class PlayerTrick : MonoBehaviour
     public void ToggleCC_OFF() => cc.enabled = false; //toggle Character Controller component off (collider)
     public void ToggleCC_ON() => cc.enabled = true; //toggle Character Controller component on (collider)
 
+    #region JUMPING METHODS
     public bool JumpDownCheck()
     {
-        //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively) and hasn't finished level
-        if (!attemptedJump && (defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f &&
-            !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
-            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
+        if (attemptedJump) //if player is spamming, prevent jump
         {
+            if (!pUI.GetSpamUIActiveSelf())
+                pUI.DontSpamUIToggle();
+
+            StopCoroutine(jumpMashPreventRoutine); //stop routine to keep player from jumping
+            jumpMashPreventRoutine = StartCoroutine(JumpMashPrevent()); //prevent repressing key
+            return false;
+        }
+
+        //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively) and hasn't finished level
+        if ((defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f &&
+            !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
+            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+        {
+            pUI.TextFeedback("Perfect Jump!", 3);
+
             pm.StartCoroutine(pm.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
-            if (gm.tutNumber == 3) //if player is in tutorial for jumping, increase counter
-                gm.IncreaseCounter();
-            anim.SetBool(hashJumpDown, true);
+            anim.SetBool(hashJumpDown, true); //jump animation
             return true;
         }
         //check if player is not in front of a wall
-        else if (defaultMove && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) 
+        else if (defaultMove && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask))
         {
-            attemptedJump = true; //prevent repressing key
+            if (jumpMashPreventRoutine != null)
+                StopCoroutine(jumpMashPreventRoutine); //stop routine to keep player from jumping
+            jumpMashPreventRoutine = StartCoroutine(JumpMashPrevent()); //prevent repressing key
+
             if (pm.velocityZ < 6f) //check if player is below speed limit for jumping
             {
                 pUI.TextFeedback("Not Enough Speed To Jump", 4);
                 this.CallDelay(ClearJumpingFeedback, jSpeedResetDelay); //if too early then give second chance for jumping
             }
-            else //player is too far from edge
+            else if (!Physics.Raycast(raypos[4], Vector3.down, out hits[1], distances[1], groundMask))  //player is too far from edge
             {
-                pUI.TextFeedback("Too Early To Jump", 4);
-                this.CallDelay(ClearJumpingFeedback, jResetDelay); //if too early then give second chance for jumping
+                pUI.TextFeedback("Early Jump", 4);
+                anim.SetBool(hashJumpDown, true); //jump without boost
             }
         }
         else if (isLanding)
@@ -162,6 +177,15 @@ public class PlayerTrick : MonoBehaviour
         }
         return false;
     }
+
+    IEnumerator JumpMashPrevent()
+    {
+        attemptedJump = true;
+        yield return new WaitForSeconds(1f);
+        attemptedJump = false;
+        print("end");
+    } 
+    #endregion
 
     #region WALL CLIMBING METHODS
     public bool WallClimbCheck()
@@ -243,7 +267,7 @@ public class PlayerTrick : MonoBehaviour
     }
     void ClearJumpingFeedback()
     {
-        if (pUI.GetFeedbackText().Equals("Too Early To Jump") || pUI.GetFeedbackText().Equals("Not Enough Speed To Jump"))
+        if (defaultMove && pUI.GetFeedbackText().Equals("Too Early To Jump") || pUI.GetFeedbackText().Equals("Not Enough Speed To Jump"))
         {
             pUI.TextFeedback("", -1); //empty feedback text
             attemptedJump = false; //let player attempt jumping again
@@ -294,7 +318,10 @@ public class PlayerTrick : MonoBehaviour
 
         #region RAYCAST POSITIONS
         raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3]; //jump
+        raypos[4] = transform.position + Vector3.up * distances[0] + -transform.right * distances[10]; //early jump check
         raypos[2] = transform.position + Vector3.up * distances[6]; //wall climb
+        Debug.DrawLine(raypos[4], raypos[4] + Vector3.down * distances[1], Color.cyan);
+        Debug.DrawLine(raypos[1], raypos[1] + Vector3.down * distances[1], Color.red);
         //Debug.DrawLine(raypos[2], raypos[2] + Vector3.back * distances[7], Color.cyan);
         //Debug.DrawLine(raypos[2] + Vector3.up * .1f, raypos[2] + Vector3.back * distances[8] + Vector3.up * .1f, Color.red);
         Vector3 visualOffset = new Vector3(0, 0, -.1f);
@@ -328,8 +355,8 @@ public class PlayerTrick : MonoBehaviour
                     this.CallDelay(gm.FreezeTutorial, .1f);
                 }
             }
-
-            if (Input.GetKeyDown(KeyCode.S) && !attemptedLand) //landing input
+            //landing input, prevent land if player jumped early
+            if (Input.GetKeyDown(KeyCode.S) && !attemptedLand && !pUI.GetFeedbackText().Equals("Early Jump"))
             {
                 if (gm.tutNumber == 1 && !doneFirstAction)
                 {
@@ -345,7 +372,7 @@ public class PlayerTrick : MonoBehaviour
                 if (Physics.Raycast(raypos[0], rayDir, out hits[0], distances[5], groundMask)) //check if ground is within distance to land
                 {
                     anim.SetBool(hashFall, false); //land success
-                    if (gm.tutNumber == 1) //if player is in tutorial for landing, increase counter
+                    if (gm.tutNumber == 1 || gm.tutNumber == 3) //if player is in tutorial for landing or jumping, increase counter
                         gm.IncreaseCounter();
                     pUI.TextFeedback("Perfect Landing!", 3);
                 }
@@ -372,18 +399,18 @@ public class PlayerTrick : MonoBehaviour
                     anim.SetBool(hashLand, true);
                     this.CallDelay(ClearTextFeedback, lResetDelay);
                 }
-                else //not close enough to platform
-                {
-                    cc.Move(new Vector3(0, 0, .1f)); //move player back to avoid platform
-                    pm.velocityZ = 0; //stop player from going forward
-                    pUI.TextFeedback("", -1); //empty feedback text
-                }
+                //else //not close enough to platform
+                //{
+                //    cc.Move(new Vector3(0, 0, .1f)); //move player back to avoid platform
+                //    pm.velocityZ = 0; //stop player from going forward
+                //    pUI.TextFeedback("", -1); //empty feedback text
+                //}
             }
-            else if (Physics.Raycast(raypos[2] + inAirClimbOffset, Vector3.back, out hits[2], distances[7], wallMask))
+            //if player didn't reach platforms due to jumping too early or late
+            else if (Physics.Raycast(raypos[2] + inAirClimbOffset, Vector3.back, out hits[2], distances[7], wallMask)) 
             {
                 anim.SetFloat(hashClimbSpeed, 1); //set speed of wall climb based on forward velocity
 
-                isClimbing = true;
                 transform.position = hits[2].transform.GetChild(0).position; //reposition player for wall climb animation
                 wcClipEnd = Time.time + 2.07999f; //find when animation clip will end
 
@@ -393,6 +420,9 @@ public class PlayerTrick : MonoBehaviour
                 anim.SetBool(hashAirToClimb, true);
                 anim.SetBool(hashClimbFail, false);
                 anim.SetBool(hashWallClimb, true);
+
+                if(!pUI.GetFeedbackText().Equals("Early Jump"))
+                    pUI.TextFeedback("Too Late To Jump", 4);
             }
         }
         else //isgrounded
@@ -412,8 +442,9 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
         #region WALL CLIMB FAIL & AUTO WALL CLIMB & AUTO JUMP
+        //check if player is too close to wall
         if (defaultMove && !isClimbingFail && !anim.GetBool(hashAirToClimb) &&
-            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask))
         {
             isClimbingFail = true;
 
@@ -424,27 +455,23 @@ public class PlayerTrick : MonoBehaviour
             //StartCoroutine(WallClimbDebug());
             wallClimbFailRoutine = StartCoroutine(WallClimbFail());
         }
-
+        //auto wall climb
         if (defaultMove && wcAlways && 
-            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //auto wall climb
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
             anim.SetBool(hashWallClimb, WallClimbCheck());
         }
 
+        //auto jump
         if (jAlways && !autoJumped && defaultMove && pm.velocityZ > 5.9f &&
             !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
             !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
             autoJumped = true;
-            this.CallDelay(DelayForAutoJump, .2f);
+            anim.SetBool(hashJumpDown, JumpDownCheck());
         }
         if (autoJumped && isLanding)
             autoJumped = false;
-
-        //if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[10], wallMask))
-        //{
-        //    anim.SetBool(hashWallClimb, WallClimbCheck());
-        //} 
         #endregion
 
         #region TUTORIAL FOR WALL CLIMB & JUMP
@@ -587,8 +614,7 @@ public class PlayerTrick : MonoBehaviour
     }
     #endregion
 
-    void DelayForAutoJump() => anim.SetBool("jumpDown", JumpDownCheck());
-
+    #region WALL CLIMB FAIL
     //IEnumerator WallClimbDebug()
     //{
     //    float time_ = Time.time;
@@ -636,4 +662,5 @@ public class PlayerTrick : MonoBehaviour
         if(wallClimbFailRoutine != null)
             StopCoroutine(wallClimbFailRoutine);
     }
+    #endregion
 }

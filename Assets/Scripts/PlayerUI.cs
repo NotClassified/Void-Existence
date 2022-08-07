@@ -241,6 +241,7 @@ public class PlayerUI : MonoBehaviour
             this.CallDelay(DontSpamUIToggle, 1f);
         }
     }
+    public bool GetSpamUIActiveSelf() => fSpamParent.activeSelf;
 
     IEnumerator SpeedSliderColorChange(Color startColor, Color endColor)
     {
@@ -267,7 +268,7 @@ public class PlayerUI : MonoBehaviour
         }
         else if (action.Equals("restart"))
         {
-            gm.ReloadLevel();
+            gm.ReloadLevel(false);
         }
         else if (action.Equals("hud"))
         {

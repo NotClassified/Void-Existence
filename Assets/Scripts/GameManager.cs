@@ -262,9 +262,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q)) //restart or skip tutorial
         {
             if (mode == 1)
-                ReloadLevel();
+                ReloadLevel(false);
             else if (mode == 0 && tutSkipAbility)
                 LoadNextLevel();
+
+            if (mode == 0) ReloadLevel(true); print("developer restart enabled");
         }
     }
 
@@ -662,14 +664,20 @@ public class GameManager : MonoBehaviour
             //if (tutCanvas != null) //if in tutorial, don't reload scene
             //    StartPlayerTutorial();
             //else
-                ReloadLevel();
+                ReloadLevel(false);
         }
     }
     public bool IsGameOver() => gameover;
 
 
-    public void ReloadLevel()
+    public void ReloadLevel(bool developerSkip)
     {
+        if (developerSkip)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
+        }
+
         if (mode == 0 && GameProgress.tutorialLastCompleted >= tutNumber) //if player has already completed tutorial
         {
             ResetGame();

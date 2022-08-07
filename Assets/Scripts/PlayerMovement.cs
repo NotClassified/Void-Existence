@@ -179,7 +179,7 @@ public class PlayerMovement : MonoBehaviour
         if (fallvelocity.y < -16) //check if player has fallen off map
         {
             Debug.LogError("player has fallen off map");
-            gm.ReloadLevel();
+            gm.ReloadLevel(false);
         }
 
         animator.SetBool(hashIsGrounded, pt.isGrounded);
@@ -223,19 +223,19 @@ public class PlayerMovement : MonoBehaviour
             cam1.SetActive(true);
             cam2.SetActive(false);
         }
-        if (pt.isClimbing)
-        {
-            cam1.transform.position = rootBone.position; //camera follows player
-            cam1.transform.localPosition += wcOffset;
-            bsp.transform.position = rootBone.position; //shadow follows player
-            bsp.transform.localPosition += bspOffset;
-            //bspOrtho.transform.localPosition = bsp.transform.localPosition; //shadow follows player
-        }
-        else if(cam1.transform.localPosition != wcOffset || bsp.transform.localPosition != bspOffset)
-        {
-            cam1.transform.localPosition = wcOffset;
-            bsp.transform.localPosition = bspOffset;
-        }
+        //if (pt.isClimbing)
+        //{
+        cam1.transform.position = rootBone.position; //camera follows player
+        cam1.transform.localPosition += wcOffset;
+        bsp.transform.position = rootBone.position; //shadow follows player
+        bsp.transform.localPosition += bspOffset;
+        //bspOrtho.transform.localPosition = bsp.transform.localPosition; //shadow follows player
+        //}
+        //else if(cam1.transform.localPosition != wcOffset || bsp.transform.localPosition != bspOffset)
+        //{
+        //    cam1.transform.localPosition = wcOffset;
+        //    bsp.transform.localPosition = bspOffset;
+        //}
     }
 
     public IEnumerator BoostPlayer(float boost, float duration, float boostDecay)
