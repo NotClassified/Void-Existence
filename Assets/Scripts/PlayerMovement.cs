@@ -14,7 +14,8 @@ public class PlayerMovement : MonoBehaviour
     public Transform rootBone;
     #endregion
     #region MOVEMENT VARS
-    public bool upInput;
+    bool wallCLimbInput;
+    bool jumpInput;
     public float velocityZ;
     [SerializeField]
     float walkAcceleration;
@@ -57,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
     //private int hashGapJump;
     private int hashJumpDown;
     private int hashWallClimb;
+    private int hashAirToClimb;
     private int hashIsGrounded;
     private int hashInAir;
     //private string hashTrick = "trick"; 
@@ -81,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
         //hashGapJump = Animator.StringToHash("gapJump");
         hashJumpDown = Animator.StringToHash("jumpDown");
         hashWallClimb = Animator.StringToHash("Climb");
+        hashAirToClimb = Animator.StringToHash("AirToClimb");
         hashIsGrounded = Animator.StringToHash("IsGrounded");
         hashInAir = Animator.StringToHash("InAir");
         wcOffset = cam1.transform.localPosition;
@@ -119,17 +122,8 @@ public class PlayerMovement : MonoBehaviour
         #region MOVEMENT INPUT CONTROLS
         if (!activeInputSystem)
         {
-            //levelAxis = Input.GetAxis("Horizontal");
-            //forwardInput = true;//Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl);
-            //runInput = true;//Input.GetKey(KeyCode.LeftShift);
-            //leftInput = Input.GetKeyDown(KeyCode.A);
-            //rightInput = Input.GetKeyDown(KeyCode.D);
-            upInput = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space);
-        }
-        else
-        {
-            //forwardInput = forwardAxis > 0;
-            //runInput = forwardAxis > .7;
+            wallCLimbInput = Input.GetKeyDown(KeyCode.W);
+            jumpInput = Input.GetKeyDown(KeyCode.Space);
         }
         #endregion
         #region FORWARD MOVEMENT
@@ -152,11 +146,10 @@ public class PlayerMovement : MonoBehaviour
         #region JUMP DOWN
         if (animator.GetBool(hashJumpDown)) //prevent loop of the jump down animation
             animator.SetBool(hashJumpDown, false);
-        if (upInput && (gm.levelnum >= 3 || gm.tutNumber == 3) && !GameManager.levelFinished) //checking input for jump down
+        if (jumpInput && (gm.levelnum >= 3 || gm.tutNumber == 3) && !GameManager.levelFinished) //checking input for jump down
         {
             pt.JumpDownCheck();
         }
-        //jumpInput = false; //prevent loop of the side jump animation 
         #endregion
         #region WALL CLIMB
         //checking if climbing animation has ended
@@ -164,12 +157,12 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.position = rootBone.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
+            animator.SetBool(hashAirToClimb, false); //toggle off air to climb parameter
             pt.attemptedClimb = false; //let player be able to climb again
             pUI.TextFeedback("", -1); //empty the climb feedback text
-            //this.CallDelay(pt.ToggleCC, .2f);
             pt.ToggleCC_ON(); //enable collider
         }
-        if (upInput && !pt.isClimbing && velocityZ > 5.9f && (gm.levelnum >= 2 || gm.tutNumber == 2)) //checking input for wall climb
+        if (wallCLimbInput && !pt.isClimbing && velocityZ > 5.9f && (gm.levelnum >= 2 || gm.tutNumber == 2)) //checking input for wall climb
             pt.WallClimbCheck();
         #endregion
         #region FALLING
@@ -216,10 +209,7 @@ public class PlayerMovement : MonoBehaviour
         #endregion
     }
 
-    public void ClipDuration()
-    {
-        print(animator.GetCurrentAnimatorStateInfo(0).length);
-    }
+    public void ClipDuration() => print(animator.GetCurrentAnimatorStateInfo(0).length);
     
     private void LateUpdate()
     {

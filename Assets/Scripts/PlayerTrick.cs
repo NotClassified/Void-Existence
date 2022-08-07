@@ -67,10 +67,13 @@ public class PlayerTrick : MonoBehaviour
     public bool wcAlways;
     [SerializeField]
     float reposDuration;
+    [SerializeField]
+    Vector3 inAirClimbOffset;
     #endregion
     #region HASHES
     private int hashFall;
     private int hashWallClimb;
+    private int hashAirToClimb;
     private int hashClimbFail;
     private int hashClimbSpeed;
     private int hashLand;
@@ -105,6 +108,7 @@ public class PlayerTrick : MonoBehaviour
         raypos = new Vector3[10];
         hashFall = Animator.StringToHash("Fall");
         hashWallClimb = Animator.StringToHash("Climb");
+        hashAirToClimb = Animator.StringToHash("AirToClimb");
         hashClimbFail = Animator.StringToHash("Climb Fail");
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
@@ -178,26 +182,26 @@ public class PlayerTrick : MonoBehaviour
                     return false;
             }
 
-            //PLAYER SUCCEEDED WALL CLIMB, PLAY ANIMATION:
-            pUI.TextFeedback("Perfect Climb!", 3);
-            anim.SetBool(hashClimbFail, false);
-            anim.SetBool(hashWallClimb, true);
 
             float wallClimbSpeed = (pm.velocityZ - 6) / 10 + 1;
             if (wallClimbSpeed < 1)
                 wallClimbSpeed = 1;
             anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
 
-            string num = hits[2].transform.name.Substring(4); //get the correct wall number
-            StartCoroutine(WCRepos(hits[2].transform.GetChild(0))); //gradually reposition player for wall climb animation
+            StartCoroutine(WallClimbReposition(hits[2].transform.GetChild(0))); //gradually reposition player for wall climb animation
             wcClipEnd = Time.time + 2.666667f / wallClimbSpeed; //find when animation clip will end
 
-            this.CallDelay(ToggleCC_ON, 1f); //disable collider
+            this.CallDelay(ToggleCC_OFF, 1f); //disable collider
             pm.velocityZ = 9; //set forward speed of player
 
             if (gm.tutNumber == 2) //if player is in tutorial for wall climbing, increase counter
                 gm.IncreaseCounter();
-            return true; //play animation
+
+            //PLAYER SUCCEEDED WALL CLIMB, PLAY ANIMATION:
+            pUI.TextFeedback("Perfect Climb!", 3);
+            anim.SetBool(hashClimbFail, false);
+            anim.SetBool(hashWallClimb, true);
+            return true;
         }
         //check if player is too far from wall
         else if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) 
@@ -208,7 +212,7 @@ public class PlayerTrick : MonoBehaviour
         return false; //don't play animation
     }
 
-    IEnumerator WCRepos(Transform pos)
+    IEnumerator WallClimbReposition(Transform pos)
     {
         Vector3 initial = transform.position; //starting position
         float time = 0;
@@ -277,7 +281,7 @@ public class PlayerTrick : MonoBehaviour
 
         #region ANIMATION VARS
         isJumping = !AnimCheck(1, "Empty"); //check jumping anims
-        isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims
+        isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail") || AnimCheck(0, "Wall Climb In Air"); //check climbing anims
         isLanding = AnimCheck(0, "Land1") || AnimCheck(0, "Land2"); //check if landing
         isPunched = AnimCheck(3, "Punched"); //check if being punched by enemy
         defaultMove = !(isJumping || isClimbing || isLanding || AnimCheck(0, "Exit")); //false if player is any of these states
@@ -289,8 +293,8 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
         #region RAYCAST POSITIONS
-        raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3];
-        raypos[2] = transform.position + Vector3.up * distances[6];
+        raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3]; //jump
+        raypos[2] = transform.position + Vector3.up * distances[6]; //wall climb
         //Debug.DrawLine(raypos[2], raypos[2] + Vector3.back * distances[7], Color.cyan);
         //Debug.DrawLine(raypos[2] + Vector3.up * .1f, raypos[2] + Vector3.back * distances[8] + Vector3.up * .1f, Color.red);
         Vector3 visualOffset = new Vector3(0, 0, -.1f);
@@ -299,7 +303,7 @@ public class PlayerTrick : MonoBehaviour
         //Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f); 
         #endregion
 
-        #region LANDING, FALLING, AND GROUNDCHECK
+        #region LANDING, FALLING, GROUNDCHECK, AND WALL CHECK
 
         distances[4] = (-pm.fallvelocity.y) / dDominator; //distance for landing
         distances[5] = distances[4] + ldInputGap; //distance for landing input by player
@@ -375,6 +379,21 @@ public class PlayerTrick : MonoBehaviour
                     pUI.TextFeedback("", -1); //empty feedback text
                 }
             }
+            else if (Physics.Raycast(raypos[2] + inAirClimbOffset, Vector3.back, out hits[2], distances[7], wallMask))
+            {
+                anim.SetFloat(hashClimbSpeed, 1); //set speed of wall climb based on forward velocity
+
+                isClimbing = true;
+                transform.position = hits[2].transform.GetChild(0).position; //reposition player for wall climb animation
+                wcClipEnd = Time.time + 2.07999f; //find when animation clip will end
+
+                ToggleCC_OFF(); //disable collider
+                pm.velocityZ = 9; //set forward speed of player
+
+                anim.SetBool(hashAirToClimb, true);
+                anim.SetBool(hashClimbFail, false);
+                anim.SetBool(hashWallClimb, true);
+            }
         }
         else //isgrounded
         {
@@ -393,7 +412,8 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
         #region WALL CLIMB FAIL & AUTO WALL CLIMB & AUTO JUMP
-        if (defaultMove && !isClimbingFail && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
+        if (defaultMove && !isClimbingFail && !anim.GetBool(hashAirToClimb) &&
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if player is too close to wall
         {
             isClimbingFail = true;
 
@@ -591,13 +611,16 @@ public class PlayerTrick : MonoBehaviour
 
         if (!pUI.GetFeedbackText().Equals("Perfect Climb!"))
         {
-            anim.SetBool(hashClimbFail, true); //player failed wall climb
             float wallClimbSpeed = 1.3f;
             anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
+
             string num = hits[2].transform.name.Substring(4); //get the correct wall number
             transform.position = hits[2].transform.GetChild(0).position; //reposition player for wall climb animation
             wcClipEnd = Time.time + 4f / wallClimbSpeed; //find when animation clip will end
+
             this.CallDelay(ToggleCC_OFF, 1f); //disable collider
+
+            anim.SetBool(hashClimbFail, true); //player failed wall climb
             anim.SetBool(hashWallClimb, true);
             if (pm.velocityZ < 6f) //check if player is below speed limit for climbing
                 pUI.TextFeedback("Not Enough Speed To Climb", 4);

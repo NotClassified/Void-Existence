@@ -975,7 +975,6 @@ MonoBehaviour:
   cc: {fileID: -7737031796344775587}
   gm: {fileID: 0}
   rootBone: {fileID: 861421760175287234}
-  upInput: 0
   velocityZ: 0
   walkAcceleration: 60
   runAcceleration: 30
@@ -1050,6 +1049,7 @@ MonoBehaviour:
   attemptedClimb: 0
   wcAlways: 0
   reposDuration: 0.2
+  inAirClimbOffset: {x: 0, y: 1, z: 0}
   dodgeAlways: 0
   punchedWeightSpeed: 5
   dodgeDelay: 0.166

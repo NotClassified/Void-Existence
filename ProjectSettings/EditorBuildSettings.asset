@@ -16,10 +16,16 @@ EditorBuildSettings:
     guid: 8fefba7133b52174aa9612ef1179fe82
   - enabled: 1
     path: Assets/Scenes/Tutorial 2 Wall Jump.unity
-    guid: a2c8a44676f37e344977e35dac88bc5c
+    guid: 336a96730ed7c0345b3e593ba43d4fdb
   - enabled: 1
     path: Assets/Scenes/Level 2.unity
     guid: 6619653f75e4d8943aaecec37bf22376
+  - enabled: 1
+    path: Assets/Scenes/Tutorial 3 Jump.unity
+    guid: a2c8a44676f37e344977e35dac88bc5c
+  - enabled: 1
+    path: Assets/Scenes/Level 3.unity
+    guid: 1309d6ea815af534cb88bef489b855f5
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 46c2b55ecb6dfa04b9dfc1671506c1a7,
       type: 2}
