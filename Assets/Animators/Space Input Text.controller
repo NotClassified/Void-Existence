@@ -85,7 +85,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Input Text
+  m_Name: Space Input Text
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Input
@@ -153,7 +153,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c8a29f7dfb8a3214992ac660c469344e, type: 2}
+  m_Motion: {fileID: 7400000, guid: 3cf0444bce5bd734a9e9264c404398e5, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

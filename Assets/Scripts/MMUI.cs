@@ -48,18 +48,10 @@ public class MMUI : MonoBehaviour
         {
             Application.Quit();
         }
-        else if (_button == "1")
+        else //load tutorial
         {
-            SceneManager.LoadScene(scenes[1]);
+            SceneManager.LoadScene(scenes[int.Parse(_button)]);
         }
-        else if (_button == "2")
-        {
-            SceneManager.LoadScene(scenes[2]);
-        }
-        //else if (_button == "")
-        //{
-
-        //}
     }
 
     void UpdateGameProgress()

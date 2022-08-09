@@ -12601,8 +12601,8 @@ MonoBehaviour:
   tutNumber: 0
   tutTransDelay: 1.5
   tutCanvas: {fileID: 0}
-  tutExtra: {fileID: 0}
   tutKey: {fileID: 0}
+  tutExtraKey: {fileID: 0}
   tutText: {fileID: 0}
   tutInputColorON:
     serializedVersion: 2
@@ -34665,7 +34665,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1091941565
 Transform:
   m_ObjectHideFlags: 0

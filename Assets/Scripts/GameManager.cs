@@ -105,9 +105,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject tutCanvas;
     [SerializeField]
-    GameObject tutExtra;
-    [SerializeField]
     Image tutKey;
+    [SerializeField]
+    Image tutExtraKey;
     [SerializeField]
     TextMeshProUGUI tutText;
     [SerializeField]
@@ -454,7 +454,8 @@ public class GameManager : MonoBehaviour
 
     public void LightUpInputText(bool lightUpText)
     {
-        if (lightUpText)
+        //if player is about to enter portal, prevent text from lighting up
+        if (lightUpText && !(player.transform.position.z < portalEnd.position.z + portalTriggerOffsetZ))
         {
             tutKey.color = tutInputColorON; //light up key
             tutKey.GetComponent<Animator>().SetBool("Input", true); //play input animation
@@ -467,6 +468,20 @@ public class GameManager : MonoBehaviour
         }
     }
     public bool GetInputTextLit() => tutKey.color == tutInputColorON;
+    public void LightUpExtraInputText(bool lightUpText)
+    {
+        if (lightUpText)
+        {
+            tutExtraKey.color = tutInputColorON; //light up key
+            tutExtraKey.GetComponent<Animator>().SetBool("Input", true); //play input animation
+        }
+        else
+        {
+            tutExtraKey.color = tutInputColorOFF; //unlight key
+            tutExtraKey.GetComponent<Animator>().SetBool("Input", false); //reset input animation to default
+        }
+    }
+    public bool GetExtraInputTextLit() => tutExtraKey.color == tutInputColorON;
 
     public void FreezeTutorial()
     {

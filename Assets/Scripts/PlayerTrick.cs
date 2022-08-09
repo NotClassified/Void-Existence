@@ -131,6 +131,18 @@ public class PlayerTrick : MonoBehaviour
     #region JUMPING METHODS
     public bool JumpDownCheck()
     {
+        if (gm.tutNumber == 3 && !doneFirstAction) //if in tutorial and frozen, unfreeze, otherwise prevent jump
+        {
+            if (Time.timeScale == 0) //if frozen, unfreeze
+            {
+                doneFirstAction = true;
+                Time.timeScale = gm.timeScale / 100;
+                gm.LightUpInputText(false); //unlight the input text for jump
+            }
+            else
+                return false;
+        }
+
         if (attemptedJump) //if player is spamming, prevent jump
         {
             if (!pUI.GetSpamUIActiveSelf())
@@ -183,7 +195,6 @@ public class PlayerTrick : MonoBehaviour
         attemptedJump = true;
         yield return new WaitForSeconds(1f);
         attemptedJump = false;
-        print("end");
     } 
     #endregion
 
@@ -352,9 +363,15 @@ public class PlayerTrick : MonoBehaviour
                 if (firstAction)
                 {
                     firstAction = false;
-                    this.CallDelay(gm.FreezeTutorial, .1f);
+                    this.CallDelay(gm.FreezeTutorial, .1f); //freeze tutorial for wall climbing
                 }
             }
+            //if in jumping tutorial, this is an extra input text
+            if (gm.tutNumber == 3 && Physics.Raycast(raypos[0], rayDir, out hits[0], distances[5], groundMask) && !gm.GetExtraInputTextLit())
+            {
+                gm.LightUpExtraInputText(true);//light up tutorial input text  for landing
+            }
+
             //landing input, prevent land if player jumped early
             if (Input.GetKeyDown(KeyCode.S) && !attemptedLand && !pUI.GetFeedbackText().Equals("Early Jump"))
             {
@@ -437,6 +454,10 @@ public class PlayerTrick : MonoBehaviour
             {
                 gm.LightUpInputText(false); //unlight the input text for landing
             }
+            if (gm.tutNumber == 3 && gm.GetExtraInputTextLit())
+            {
+                gm.LightUpExtraInputText(false); //unlight the input text for landing
+            }
         }
         anim.SetBool("IsGrounded", isGrounded); //correlate animation vars 
         #endregion
@@ -475,22 +496,40 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
         #region TUTORIAL FOR WALL CLIMB & JUMP
-        if (gm.tutNumber == 2)
+        if (gm.tutNumber == 2) //wall climb tutorial
         {
             if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //for wall climbing
             {
-                //print(Time.time); //figuring out the land input gap length (3 = 1/5 of a second)
+                //print(Time.time); //figuring out the wall climb input gap length
                 if (!gm.GetInputTextLit())
                     gm.LightUpInputText(true);//light up tutorial input text for wall climb
 
                 if (firstAction)
                 {
                     firstAction = false;
-                    this.CallDelay(gm.FreezeTutorial, .1f);
+                    this.CallDelay(gm.FreezeTutorial, .1f); //freeze tutorial for wall climbing
                 }
             }
             else if (gm.GetInputTextLit())
-                gm.LightUpInputText(false);//light up tutorial input text for wall climb
+                gm.LightUpInputText(false); //unlight input text for wall climbing
+        }
+
+        if (gm.tutNumber == 3) //jump tutorial
+        {
+            if (defaultMove && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask)) //for jumping
+            {
+                //print(Time.time); //figuring out the jump input gap length
+                if (!gm.GetInputTextLit())
+                    gm.LightUpInputText(true);//light up tutorial input text for jump
+
+                if (firstAction)
+                {
+                    firstAction = false;
+                    this.CallDelay(gm.FreezeTutorial, .1f); //freeze tutorial for jumping
+                }
+            }
+            else if (gm.GetInputTextLit())
+                gm.LightUpInputText(false); //unlight input text for jumping
         }
         #endregion
 
