@@ -975,6 +975,8 @@ MonoBehaviour:
   cc: {fileID: -7737031796344775587}
   gm: {fileID: 0}
   rootBone: {fileID: 861421760175287234}
+  landInput: 0
+  dodgeInput: 0
   velocityZ: 0
   walkAcceleration: 60
   runAcceleration: 30
@@ -984,11 +986,15 @@ MonoBehaviour:
   fowardDrag: 4
   fallvelocity: {x: 0, y: 0, z: 0}
   inAirWeightSpeed: 3.5
-  cam1: {fileID: 5315759149789387055}
-  cam2: {fileID: 6532621820132929410}
-  head: {fileID: 2071677794483381615}
-  mouseSens: 600
-  controllerSens: 60
+  camPrefab: {fileID: 2400971900892708210, guid: 90fdfd805031efd4f8e4fe8fe65ba499,
+    type: 3}
+  cinemachinePrefab: {fileID: 8169156589479330321, guid: 86e5d9da8d4797a48a242fd1f67ee0aa,
+    type: 3}
+  cinemachineNoise: {fileID: 0}
+  camShakeMax: 12
+  camShakeVelocity: 8
+  cam1: {fileID: 8219149526944708697}
+  camFollowSpeed: 1
   bsp: {fileID: 6720777337227344370}
   bspOrtho: {fileID: 5648443116222448298}
   activeInputSystem: 0
@@ -4248,7 +4254,7 @@ Camera:
     m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
+  m_TargetDisplay: 1
   m_TargetEye: 3
   m_HDR: 0
   m_AllowMSAA: 0

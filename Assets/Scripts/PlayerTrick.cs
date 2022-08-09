@@ -201,23 +201,22 @@ public class PlayerTrick : MonoBehaviour
     #region WALL CLIMBING METHODS
     public bool WallClimbCheck()
     {
+        if (gm.tutNumber == 2 && !doneFirstAction) //if in tutorial and frozen, unfreeze, otherwise prevent wallclimb
+        {
+            if (Time.timeScale == 0) //if frozen, unfreeze
+            {
+                doneFirstAction = true;
+                Time.timeScale = gm.timeScale / 100;
+                gm.LightUpInputText(false); //unlight the input text for wall climb
+            }
+            else
+                return false;
+        }
+
         //check if player hasn't tried to climb yet and is in front of a wall
         if (defaultMove && !attemptedClimb && !pUI.GetFeedbackText().Equals("Too Late To Climb") && 
             Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
-            if (gm.tutNumber == 2 && !doneFirstAction) //if in tutorial and frozen, unfreeze, otherwise prevent wallclimb
-            {
-                if (Time.timeScale == 0) //if frozen, unfreeze
-                {
-                    doneFirstAction = true;
-                    Time.timeScale = gm.timeScale / 100;
-                    gm.LightUpInputText(false); //unlight the input text for wall climb
-                }
-                else
-                    return false;
-            }
-
-
             float wallClimbSpeed = (pm.velocityZ - 6) / 10 + 1;
             if (wallClimbSpeed < 1)
                 wallClimbSpeed = 1;
@@ -373,7 +372,7 @@ public class PlayerTrick : MonoBehaviour
             }
 
             //landing input, prevent land if player jumped early
-            if (Input.GetKeyDown(KeyCode.S) && !attemptedLand && !pUI.GetFeedbackText().Equals("Early Jump"))
+            if (pm.landInput && !attemptedLand && !pUI.GetFeedbackText().Equals("Early Jump"))
             {
                 if (gm.tutNumber == 1 && !doneFirstAction)
                 {
@@ -411,17 +410,11 @@ public class PlayerTrick : MonoBehaviour
                     {
                         anim.SetBool(hashFall, !landAlways); //land fail unless set to always land
                         pUI.TextFeedback("Late Landing", 4);
-                        //gm.DecreaseCounter(); //if player is in tutorial for jumping, decrease counter
+                        StartCoroutine(pm.CameraShake());
                     }
                     anim.SetBool(hashLand, true);
                     this.CallDelay(ClearTextFeedback, lResetDelay);
                 }
-                //else //not close enough to platform
-                //{
-                //    cc.Move(new Vector3(0, 0, .1f)); //move player back to avoid platform
-                //    pm.velocityZ = 0; //stop player from going forward
-                //    pUI.TextFeedback("", -1); //empty feedback text
-                //}
             }
             //if player didn't reach platforms due to jumping too early or late
             else if (Physics.Raycast(raypos[2] + inAirClimbOffset, Vector3.back, out hits[2], distances[7], wallMask)) 
@@ -440,6 +433,7 @@ public class PlayerTrick : MonoBehaviour
 
                 if(!pUI.GetFeedbackText().Equals("Early Jump"))
                     pUI.TextFeedback("Too Late To Jump", 4);
+                StartCoroutine(pm.CameraShake());
             }
         }
         else //isgrounded
@@ -471,6 +465,7 @@ public class PlayerTrick : MonoBehaviour
 
             if (!attemptedClimb) //check if player didn't do anything or pressed key too late
                 pUI.TextFeedback("Too Late To Climb", 4);
+            StartCoroutine(pm.CameraShake());
             attemptedClimb = true;
 
             //StartCoroutine(WallClimbDebug());
@@ -584,7 +579,7 @@ public class PlayerTrick : MonoBehaviour
                 //dodgedEnemy = true; /*always dodge early*/ print("Dodged Early");
             }
 
-            if (Input.GetKeyDown(KeyCode.D) && dodgeNow && !alreadyDodged)
+            if (pm.dodgeInput && dodgeNow && !alreadyDodged)
             {
                 if (attemptDodge)
                     pUI.DontSpamUIToggle(); //tell player not to spam

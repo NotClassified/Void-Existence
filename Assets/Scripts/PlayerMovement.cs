@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Cinemachine;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
     #region MOVEMENT VARS
     bool wallCLimbInput;
     bool jumpInput;
+    public bool landInput;
+    public bool dodgeInput;
     public float velocityZ;
     [SerializeField]
     float walkAcceleration;
@@ -37,20 +40,23 @@ public class PlayerMovement : MonoBehaviour
     //bool trick;
     #endregion
     #region CAMERA CONTROLLERS
-    private float camX;
-    private float camY;
     [SerializeField]
-    GameObject cam1;
+    GameObject camPrefab;
     [SerializeField]
-    GameObject cam2;
+    GameObject cinemachinePrefab;
+    CinemachineVirtualCamera cinemachineVCam;
     [SerializeField]
-    Transform head;
-    private Vector3 camv3 = Vector3.zero;
-    Vector3 wcOffset; //wc-Wall Climb
+    CinemachineBasicMultiChannelPerlin cinemachineNoise;
     [SerializeField]
-    float mouseSens;
+    float camShakeMax;
     [SerializeField]
-    float controllerSens;
+    float camShakeVelocity;
+    [SerializeField]
+    Transform cam1;
+    Vector3 camOffset;
+    Vector3 camTarget;
+    [SerializeField]
+    float camFollowSpeed;
     #endregion
     #region HASHES
     //private int hashSideJump;
@@ -78,6 +84,12 @@ public class PlayerMovement : MonoBehaviour
         pt = GetComponent<PlayerTrick>();
         pUI = GetComponent<PlayerUI>();
         gm = FindObjectOfType<GameManager>();
+
+        Instantiate(camPrefab);
+        cinemachineVCam = Instantiate(cinemachinePrefab).GetComponent<CinemachineVirtualCamera>();
+        cinemachineVCam.Follow = rootBone;
+        cinemachineNoise = cinemachineVCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
         //hashSideJump = Animator.StringToHash("sideJump");
         hashVelocityZ = Animator.StringToHash("velocityZ");
         //hashGapJump = Animator.StringToHash("gapJump");
@@ -86,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
         hashAirToClimb = Animator.StringToHash("AirToClimb");
         hashIsGrounded = Animator.StringToHash("IsGrounded");
         hashInAir = Animator.StringToHash("InAir");
-        wcOffset = cam1.transform.localPosition;
+        camOffset = cam1.transform.localPosition;
         bspOffset = bsp.transform.localPosition;
 
         startMethodCalled = true;
@@ -120,11 +132,10 @@ public class PlayerMovement : MonoBehaviour
         }
         //Cursor.lockState = CursorLockMode.Locked;
         #region MOVEMENT INPUT CONTROLS
-        if (!activeInputSystem)
-        {
-            wallCLimbInput = Input.GetKeyDown(KeyCode.W);
-            jumpInput = Input.GetKeyDown(KeyCode.Space);
-        }
+        wallCLimbInput = Input.GetKeyDown(KeyCode.W);
+        jumpInput = Input.GetKeyDown(KeyCode.Space);
+        landInput = Input.GetKeyDown(KeyCode.S);
+        dodgeInput = Input.GetKeyDown(KeyCode.D);
         #endregion
         #region FORWARD MOVEMENT
         if (velocityZ < 0) //prevent forward velocity from being negative
@@ -209,34 +220,25 @@ public class PlayerMovement : MonoBehaviour
         #endregion
     }
 
-    public void ClipDuration() => print(animator.GetCurrentAnimatorStateInfo(0).length);
-    
-    private void LateUpdate()
+    public IEnumerator CameraShake()
     {
-        if (Input.GetKeyDown(KeyCode.E)) //activate side view
+        float delta;
+        float subtractValue = 0;
+        float value = camShakeMax;
+        while (value > .1f)
         {
-            cam1.SetActive(false);
-            cam2.SetActive(true);
+            delta = camShakeMax - subtractValue; //difference between target value and subtract value
+            delta *= Time.deltaTime * camShakeVelocity; //make subtract value gradually change
+            subtractValue += delta; //increase subtract value closer to target value
+
+            cinemachineNoise.m_AmplitudeGain = value; //correlate values
+            value = camShakeMax - subtractValue; //use subtract value so that actual value decreases
+            yield return null;
         }
-        if (Input.GetKeyUp(KeyCode.E)) //deactivate side view
-        {
-            cam1.SetActive(true);
-            cam2.SetActive(false);
-        }
-        //if (pt.isClimbing)
-        //{
-        cam1.transform.position = rootBone.position; //camera follows player
-        cam1.transform.localPosition += wcOffset;
-        bsp.transform.position = rootBone.position; //shadow follows player
-        bsp.transform.localPosition += bspOffset;
-        //bspOrtho.transform.localPosition = bsp.transform.localPosition; //shadow follows player
-        //}
-        //else if(cam1.transform.localPosition != wcOffset || bsp.transform.localPosition != bspOffset)
-        //{
-        //    cam1.transform.localPosition = wcOffset;
-        //    bsp.transform.localPosition = bspOffset;
-        //}
+        cinemachineNoise.m_AmplitudeGain = 0;
     }
+
+    public void ClipDuration() => print(animator.GetCurrentAnimatorStateInfo(0).length);
 
     public IEnumerator BoostPlayer(float boost, float duration, float boostDecay)
     {
@@ -254,26 +256,4 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    //public void ResetPlayer(bool callGameManagerSpawnMethod)
-    //{
-    //    //if (pt.isClimbing)
-    //    //{
-    //    //    transform.position = rootBone.transform.position; //sync player's position to character (root bone)
-    //    //    animator.SetBool(hashWallClimb, false); //end wall climb animation
-    //    //    pt.ToggleCC_ON(); //enable collider
-    //    //}
-    //    StopCoroutine(gm.LastCountWaitForLand()); //if player doesn't jump far enough don't let player finish tutorial
-    //    //pt.StopWallClimbFailRoutine();
-    //    animator.Play("Exit", 0);
-
-    //    animator.SetLayerWeight(3, 0); //reset punched layer
-
-    //    pt.attemptedClimb = false; //let player be able to climb again
-    //    pt.attemptedLand = false; //let player be able to land again
-    //    pUI.TextFeedback("", -1); //empty the climb feedback text
-    //    fallvelocity.y = 0f;
-
-    //    if (callGameManagerSpawnMethod)
-    //        StartCoroutine(gm.Spawn()); //reset player postition to starting point
-    //}
 }

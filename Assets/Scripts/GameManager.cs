@@ -258,16 +258,17 @@ public class GameManager : MonoBehaviour
             }
         }
         #endregion
-
-        if (Input.GetKeyDown(KeyCode.Q)) //restart or skip tutorial
+        #region RESTART/SKIP TUTORIAL
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             if (mode == 1)
                 ReloadLevel(false);
             else if (mode == 0 && tutSkipAbility)
                 LoadNextLevel();
 
-            if (mode == 0) ReloadLevel(true); print("developer restart enabled");
-        }
+            //if (mode == 0) ReloadLevel(true); print("developer restart enabled");
+        } 
+        #endregion
     }
 
     #region OLD TUTORIAL METHODS
@@ -675,6 +676,7 @@ public class GameManager : MonoBehaviour
         {
             if (tutCanvas == null) //if not in tutorial, show player "Game Over"
                 player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
+            StartCoroutine(player.GetComponent<PlayerMovement>().CameraShake());
             yield return new WaitForSeconds(1f);
             //if (tutCanvas != null) //if in tutorial, don't reload scene
             //    StartPlayerTutorial();
