@@ -101,8 +101,6 @@ public class GameManager : MonoBehaviour
     #region TUTORAIL //tut-Tutorial
     public int tutNumber;
     [SerializeField]
-    float tutTransDelay;
-    [SerializeField]
     GameObject tutCanvas;
     [SerializeField]
     Image tutKey;
@@ -271,158 +269,6 @@ public class GameManager : MonoBehaviour
         #endregion
     }
 
-    #region OLD TUTORIAL METHODS
-    //public void StartPlayerTutorial()
-    //{
-    //    gameover = false;
-    //    playerPunchedByEnemy = false;
-    //    if (player != null) //if players exist, destroy for new players
-    //        Destroy(player);
-    //    if (enemy1 != null) //if enemy exists, destroy
-    //        Destroy(enemy1);
-    //    gCam.SetActive(false); //toggle off goal camera
-
-    //    //TOGGLE UI VISIBILITY:
-    //    foreach (Transform gChild in gCanvas)
-    //        gChild.gameObject.SetActive(false);
-    //    foreach (Transform cChild in cCanvas)
-    //        cChild.gameObject.SetActive(true);
-    //    foreach (Transform tutChild in tutCanvas)
-    //        tutChild.gameObject.SetActive(true);
-    //    if (tutNumber != 2)
-    //        tutExtra.SetActive(false);
-
-    //    //SPAWNING PLAYERS AND MAKING LEVEL:
-    //    player = Instantiate(playerPref);
-    //    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-    //    //Vector3 spawnRot = new Vector3(playerSpawn.rotation.x, playerSpawn.rotation.y, playerSpawn.rotation.z);
-    //    //player.transform.rotation = Quaternion.Euler(spawnRot);
-    //    //player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-    //    if (environment.childCount > envChildCountStart)
-    //        Destroy(environment.GetChild(0).gameObject);
-    //    Instantiate(levels[tutNumber], environment).transform.SetAsFirstSibling();
-    //    //player.GetComponent<PlayerTrick>().lAlways = true;
-    //    //this.CallDelay(StartEnemy, delaySpawnEnemy);
-    //    if (tutNumber == 3)
-    //    {
-    //        enemy1 = Instantiate(enemyPref);
-    //        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
-    //        enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-    //    }
-    //}
-
-    //public void NextTutorial() //when player completes goal, go to next tutorial
-    //{
-    //    tutNumber++; //increase index of tutorial
-    //    int numTut = tutNumber; //get index of tutorial
-    //    if (numTut >= tutMessages.Length) //if there are no more tutorials and goals left, end tutorial
-    //    {
-    //        player.GetComponent<PlayerUI>().TextFeedback("Tutorial Finished!", 0);
-    //        this.CallDelay(ResetGame, 3f);
-    //        GameProgress.LevelComplete(0);
-    //        return;
-    //    }
-
-    //    if (numTut == 3)
-    //        countGoal = 1;
-
-    //    //SET UI FOR NEXT GOAL:
-    //    StartCoroutine(WaitForFirstTutorial(numTut)); //comment this line for faster testing*/ print("this line commented");
-    //    gText.text = gMessagesStart[numTut].Replace("/newline/", "\n") + countGoal.ToString() + gMessagesEnd[numTut]; //goal
-    //    //SET UI FOR NEXT COUNTER:
-    //    cTextHeader.text = cHeaders[numTut]; //action for counter
-    //    //SET UI FOR NEXT TUTORIAL:
-    //    tutKey.sprite = keys[numTut]; //key input
-    //    tutText.text = tutMessages[numTut]; //action for key
-
-    //    //TOGGLE UI VISIBILITY:
-    //    foreach (Transform gChild in gCanvas)
-    //        gChild.gameObject.SetActive(false);
-    //    foreach (Transform cChild in cCanvas)
-    //        cChild.gameObject.SetActive(false);
-    //    foreach (Transform tutChild in tutCanvas)
-    //        tutChild.gameObject.SetActive(false);
-    //    //RESET COUNTER:
-    //    csValue = 0f;
-    //    count = 0;
-
-    //    gCam.SetActive(true); //toggle on goal camera
-    //    //destroy players, level, and world space UI, if they exist:
-    //    if (player != null)
-    //        Destroy(player);
-    //    if (environment.childCount > envChildCountStart)
-    //        Destroy(environment.GetChild(0).gameObject);
-    //    if (environment.Find("Wall Markers").childCount != 0)
-    //    {
-    //        foreach (Transform wallMarkerChild in environment.Find("Wall Markers"))
-    //            Destroy(wallMarkerChild.gameObject);
-    //    }
-
-    //    //FOR FASTER TESTING: //Also comment out line 217 (this line -33)
-    //    //foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
-    //    //    gChild.gameObject.SetActive(true);
-    //    //gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
-    //    //gSkipPopUp.SetActive(false); //toggle skip text
-    //    //gLoopVideoPlayer.clip = gLoopClips[numTut]; //2nd part of video tutorial plays
-    //    //StartPlayerTutorial();
-    //    //print("Faster Testing Block is Uncommented");
-    //}
-    //IEnumerator WaitForFirstTutorial(int numTut)
-    //{
-    //    gInitialVideoPlayer.clip = gInitialClips[numTut]; //beginning video tutorial plays
-    //    gInitialVideoDisplay.SetActive(true); //toggle display of tutorial
-    //    gSkipPopUp.SetActive(false); //toggle skip text
-    //    yield return new WaitForSeconds((float)gInitialClips[numTut].length);
-
-    //    gInitialVideoPlayer.clip = gInitialClips[numTut]; //play again
-    //    gSkipPopUp.SetActive(true); //toggle skip text
-    //    float timeOut = 0;
-
-    //    while (!Input.GetKeyDown(KeyCode.Space) && timeOut < (float)gInitialClips[numTut].length * 2) //play video twice unless player skips
-    //    {
-    //        timeOut += Time.deltaTime;
-    //        yield return null;
-    //    }
-    //    foreach (Transform gChild in gCanvas) //toggle UI for goal canvas
-    //        gChild.gameObject.SetActive(true);
-    //    gInitialVideoDisplay.SetActive(false); //toggle display of tutorial
-    //    gSkipPopUp.SetActive(false); //toggle skip text
-    //    gLoopVideoPlayer.clip = gLoopClips[numTut]; //2nd part of video tutorial plays
-    //}
-
-    //public IEnumerator LastCountWaitForLand() //before tutorial finishes for jumping, make sure player lands
-    //{
-    //    PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
-    //    while (!pt_.isLanding)
-    //        yield return null;
-    //    yield return new WaitForFixedUpdate();
-    //    if (pt_.AnimCheck(0, "Land1"))
-    //        this.CallDelay(NextTutorial, tutTransDelay);
-    //}
-
-    //public void IncreaseCounter() //when player follows goal, increase count
-    //{
-    //    if (cCanvas != null)
-    //    {
-    //        count++;
-    //        if (count >= countGoal) //goal completed
-    //        {
-    //            if (numTutorial != 2)
-    //                this.CallDelay(NextTutorial, tutTransDelay);
-    //            else
-    //                StartCoroutine(LastCountWaitForLand());
-    //        }
-    //    }
-    //}
-    //public void DecreaseCounter() //when player doesn't land after jump
-    //{
-    //    if (cCanvas != null && numTutorial == 2 && count > 0)
-    //        count--;
-    //}
-
-    //public int GetCount() => count;
-    #endregion
-
     #region TUTORIAL METHODS
     void StartTutorial()
     {
@@ -575,9 +421,9 @@ public class GameManager : MonoBehaviour
         if (actionsEnemy.Length > actionIndex) //if there is an action left
         {
             //MAKE ENEMY ACTION MARKERS FOR LEVEL:
-            //GameObject marker_ = Instantiate(eaMarker, enemy1.transform.position, eaMarker.transform.rotation); //create using enemy1 postition
-            //marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex.ToString(); //change text to index of action
-            //marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
+            GameObject marker_ = Instantiate(eaMarker, enemy1.transform.position, eaMarker.transform.rotation); //create using enemy1 postition
+            marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex.ToString(); //change text to index of action
+            marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
 
             return actionsEnemy[actionIndex++]; //give actionIndex, then increase
         }

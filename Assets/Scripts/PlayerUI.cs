@@ -222,7 +222,7 @@ public class PlayerUI : MonoBehaviour
                 fParent.SetActive(true);
         }
 
-        if (color != -1)
+        if (color != -1) //no color
             fText.color = mColors[color].color;
     }
     public string GetFeedbackText() => fText.text;

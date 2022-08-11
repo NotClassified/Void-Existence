@@ -431,9 +431,14 @@ public class PlayerTrick : MonoBehaviour
                 anim.SetBool(hashClimbFail, false);
                 anim.SetBool(hashWallClimb, true);
 
-                if(!pUI.GetFeedbackText().Equals("Early Jump"))
-                    pUI.TextFeedback("Too Late To Jump", 4);
-                StartCoroutine(pm.CameraShake());
+                if (!pUI.GetFeedbackText().Equals("Perfect Jump!"))
+                {
+                    if (pUI.GetFeedbackText().Equals("Early Jump"))
+                        pUI.TextFeedback("Too Late To Jump", 4);
+                    StartCoroutine(pm.CameraShake());
+                }
+                else
+                    pUI.TextFeedback("", -1);
             }
         }
         else //isgrounded

@@ -16629,7 +16629,6 @@ MonoBehaviour:
   - Climbs
   - Jumps
   tutNumber: 1
-  tutTransDelay: 1.5
   tutCanvas: {fileID: 798880364}
   tutKey: {fileID: 1362609327}
   tutExtraKey: {fileID: 0}
@@ -16660,7 +16659,7 @@ MonoBehaviour:
   eaMarker: {fileID: 1056155761849556616, guid: ee5ad3f87c7fbaf46a035750f5d53907,
     type: 3}
   eaParent: {fileID: 0}
-  finishLevelDelay: 2.45
+  finishLevelDelay: 1
   mode: 0
 --- !u!4 &397030637
 Transform:
