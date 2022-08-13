@@ -2054,6 +2054,7 @@ MonoBehaviour:
   jDecayBoost: 1.05
   wcClipEnd: 0
   reposDuration: 0.2
+  inAirClimbOffset: {x: 0, y: 1, z: 0}
   punchEndPosition: {fileID: 8003601167849451256}
   punchOffset: {x: 0.48, y: 0, z: 0.27}
   punchDuration: 0.2

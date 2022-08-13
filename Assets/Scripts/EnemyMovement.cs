@@ -40,6 +40,7 @@ public class EnemyMovement : MonoBehaviour
     //private int hashGapJump;
     private int hashJumpDown;
     private int hashWallClimb;
+    private int hashAirToClimb;
     private int hashIsGrounded;
     private int hashInAir;
     //private string hashTrick = "trick"; 
@@ -63,6 +64,7 @@ public class EnemyMovement : MonoBehaviour
         //hashGapJump = Animator.StringToHash("gapJump");
         hashJumpDown = Animator.StringToHash("jumpDown");
         hashWallClimb = Animator.StringToHash("Climb");
+        hashAirToClimb = Animator.StringToHash("AirToClimb");
         hashIsGrounded = Animator.StringToHash("IsGrounded");
         hashInAir = Animator.StringToHash("InAir");
         bspOffset = bsp.transform.localPosition;
@@ -102,6 +104,7 @@ public class EnemyMovement : MonoBehaviour
         {
             transform.position = rootBone.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
+            animator.SetBool(hashAirToClimb, false); //toggle off air to climb parameter
             et.ToggleCC_ON(); //enable collider
         }
         #endregion

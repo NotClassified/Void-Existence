@@ -61,6 +61,8 @@ public class EnemyTrick : MonoBehaviour
     public float wcClipEnd;
     [SerializeField]
     float reposDuration;
+    [SerializeField]
+    Vector3 inAirClimbOffset;
     #endregion
     #region PUNCH
     private Coroutine enemyWaitForPlayerPunchRoutine;
@@ -81,6 +83,7 @@ public class EnemyTrick : MonoBehaviour
     private int hashFall;
     private int hashJumpDown;
     private int hashWallClimb;
+    private int hashAirToClimb;
     private int hashClimbFail;
     private int hashClimbSpeed;
     private int hashLand;
@@ -101,6 +104,7 @@ public class EnemyTrick : MonoBehaviour
         hashFall = Animator.StringToHash("Fall");
         hashJumpDown = Animator.StringToHash("jumpDown");
         hashWallClimb = Animator.StringToHash("Climb");
+        hashAirToClimb = Animator.StringToHash("AirToClimb");
         hashClimbFail = Animator.StringToHash("Climb Fail");
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
@@ -144,9 +148,9 @@ public class EnemyTrick : MonoBehaviour
         if (!em.startMethodCalled || gm.player == null)
             return;
 
-
+        #region ANIMATION VARS
         isJumping = !AnimCheck(1, "Empty"); //check jumping anims
-        isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail"); //check climbing anims
+        isClimbing = AnimCheck(0, "Wall Climb") || AnimCheck(0, "WC Fail") || AnimCheck(0, "Wall Climb In Air"); //check climbing anims
         isLanding = AnimCheck(0, "Land1") || AnimCheck(0, "Land2"); //check if landing
         isPunching = AnimCheck(2, "Punch"); //check if punching player
         defaultMove = !(isJumping || isClimbing || isLanding);
@@ -155,8 +159,9 @@ public class EnemyTrick : MonoBehaviour
             anim.SetBool("Exit", true);
         else if (anim.GetBool("Exit"))
             anim.SetBool("Exit", false);
+        #endregion
 
-
+        #region RAYCAST POSITIONS
         raypos[1] = transform.position + Vector3.up * distances[0] + -transform.right * distances[3]; //edge for jumping
         raypos[3] = transform.position + Vector3.up * distances[0] + -transform.right * distances[10]; //edge for punching
         raypos[2] = transform.position + Vector3.up * distances[6]; //walls
@@ -165,7 +170,8 @@ public class EnemyTrick : MonoBehaviour
         //Vector3 visualOffset = new Vector3(0, 0, -.1f);
         //Debug.DrawLine(raypos[0] + visualOffset, raypos[0] + Vector3.down * distances[5] + visualOffset, Color.cyan);
         //Debug.DrawLine(raypos[0], raypos[0] + Vector3.down * distances[4], Color.red);
-        //Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f);
+        //Debug.DrawRay(raypos[0], rayDir, Color.cyan, .1f); 
+        #endregion
 
         #region LANDING, FALLING, & GROUNDCHECK
         distances[4] = (-em.fallvelocity.y) / dDominator; //distance for landing
@@ -181,7 +187,8 @@ public class EnemyTrick : MonoBehaviour
             {
                 //Debug.Log(pm.fallvelocity.y);
                 //Debug.Log(distances[4]);
-                if (Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[5], groundMask)) //check if close enough to platform
+                //check if close enough to platform
+                if (Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[5], groundMask))
                 {
                     anim.SetBool(hashLand, true);
                     anim.SetBool(hashFall, !gm.GetEnemyAction(enemyNum));
@@ -191,6 +198,26 @@ public class EnemyTrick : MonoBehaviour
                     cc.Move(new Vector3(0, 0, .1f)); //move player back to avoid platform
                     em.velocityZ = 0; //stop player from going forward
                 }
+            }
+            //air to wall climb
+            else if (Physics.Raycast(raypos[2] + inAirClimbOffset, Vector3.back, out hits[2], distances[7], wallMask))
+            {
+                anim.SetFloat(hashClimbSpeed, 1); //set speed of wall climb based on forward velocity
+
+                if (enemyNum == 1)//reposition depending on which side the enemy is on
+                {
+                    transform.position = hits[2].transform.GetChild(0).position + new Vector3(-2, 0, 0);
+                }
+                else
+                    transform.position = hits[2].transform.GetChild(0).position + new Vector3(2, 0, 0);
+                wcClipEnd = Time.time + 2.07999f; //find when animation clip will end
+
+                ToggleCC_OFF(); //disable collider
+                em.velocityZ = 9; //set forward speed of player
+
+                anim.SetBool(hashAirToClimb, true);
+                anim.SetBool(hashClimbFail, false);
+                anim.SetBool(hashWallClimb, true);
             }
         }
         else //isgrounded
@@ -289,9 +316,9 @@ public class EnemyTrick : MonoBehaviour
     #region PUNCHING METHODS
     IEnumerator WaitForPlayerPunch(GameObject player_)
     {
-        //wait until enemy isn't by edge and isn't close to wall (with Raycasts respectively) and in default animation state
+        //wait until enemy isn't by edge and isn't close to wall (with Raycasts respectively) and in default animation state and not above player
         while (!defaultMove || !Physics.Raycast(raypos[3], Vector3.down, out hits[1], distances[1], groundMask) ||
-            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) || transform.position.y > player_.transform.position.y)
         {
             yield return null;
         }
@@ -301,7 +328,8 @@ public class EnemyTrick : MonoBehaviour
         {
             StartEnemyStopRunningRoutine(); //stop enemy to wait for player
 
-            while (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
+            //yield until player passes enemy while in a default animation
+            while (transform.position.z < player_.transform.position.z  || !player_.GetComponent<PlayerTrick>().defaultMove)
                 yield return null;
             enemyPunchRoutine = StartCoroutine(EnemyPunch());
             StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
