@@ -148,6 +148,9 @@ public class GameManager : MonoBehaviour
     public static bool showHUD = true;
     public static float brightness = 1f;
     bool gameover = false;
+    int enemyLevel;
+    int playerLevel;
+    [SerializeField] float distancePlayerToEnemyAllowed;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
     bool loadingScene = false;
@@ -165,7 +168,7 @@ public class GameManager : MonoBehaviour
         //    float sizeOfRock = Random.Range(.1f, 1.5f);
         //    rock.transform.localScale = new Vector3(sizeOfRock, sizeOfRock, sizeOfRock);
         //}
-
+        if (timeScale != 100) Debug.Log("timeScale not set to default (100)");
         Time.timeScale = timeScale / 100;
         envChildCountStart = environment.childCount;
 
@@ -421,9 +424,10 @@ public class GameManager : MonoBehaviour
         if (actionsEnemy.Length > actionIndex) //if there is an action left
         {
             //MAKE ENEMY ACTION MARKERS FOR LEVEL:
-            GameObject marker_ = Instantiate(eaMarker, enemy1.transform.position, eaMarker.transform.rotation); //create using enemy1 postition
-            marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex.ToString(); //change text to index of action
-            marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
+            //Debug.Log("creating enemy action markers");
+            //GameObject marker_ = Instantiate(eaMarker, enemy1.transform.position, eaMarker.transform.rotation); //create using enemy1 postition
+            //marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex.ToString(); //change text to index of action
+            //marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
 
             return actionsEnemy[actionIndex++]; //give actionIndex, then increase
         }
@@ -442,25 +446,6 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator Spawn()
     {
-        //if(tutCanvas != null)
-        //{
-        //    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation); //reset position
-        //    PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
-        //    yield return new WaitForEndOfFrame();
-        //    while (pt_.AnimCheck(0, "Exit")) //wait until player resets
-        //        yield return null;
-        //    player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer; //reset speed
-        //    if(enemy1 != null)
-        //    {
-        //        Destroy(enemy1);
-        //        enemy1 = Instantiate(enemyPref);
-        //        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
-        //        enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-        //    }
-        //}
-        //else
-        //{
-
         if (mode == 1)
         {
             while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
@@ -473,11 +458,7 @@ public class GameManager : MonoBehaviour
         {
             enemy1.GetComponent<EnemyMovement>().ResetPlayer();
             enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-            actionIndex = 0;
-
-            //enemy2.GetComponent<EnemyMovement>().ResetPlayer();
-            //enemy2.transform.SetPositionAndRotation(enemySpawn.GetChild(0).position, enemySpawn.rotation);
-            //actionIndex2 = 0;
+            if (actionIndex != 0) Debug.Log("enemy action index isn't set to default (0)");
 
             EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
             //EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
@@ -497,18 +478,30 @@ public class GameManager : MonoBehaviour
 
         gameover = false;
         Time.timeScale = timeScale / 100;
-            //UsefulShortcuts.ClearConsole();
-        //}
+        //UsefulShortcuts.ClearConsole();
     }
 
 
     public IEnumerator GameOver()
     {
         gameover = true;
-        while (!playerPunchedByEnemy)
+        float distancePlayerAndEnemy = 0;
+        while (!playerPunchedByEnemy && distancePlayerAndEnemy < distancePlayerToEnemyAllowed)
+        {
+            if(enemy2 != null)
+                distancePlayerAndEnemy = player.transform.position.z - enemy2.transform.position.z;
+            else
+                distancePlayerAndEnemy = player.transform.position.z - enemy1.transform.position.z;
             yield return null;
+        }
 
-        if(player.GetComponent<PlayerTrick>().dodgedEnemy)
+        if (distancePlayerAndEnemy >= distancePlayerToEnemyAllowed)
+        {
+            player.GetComponent<PlayerUI>().TextFeedback("Game Over: Too Far Behind", 5);
+            yield return new WaitForSeconds(2f);
+            ReloadLevel(false);
+        }
+        else if (player.GetComponent<PlayerTrick>().dodgedEnemy)
         {
             gameover = false;
             playerPunchedByEnemy = false;
@@ -520,18 +513,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (tutCanvas == null) //if not in tutorial, show player "Game Over"
+            if (tutNumber != 4) //if not in dodge tutorial, show player "Game Over"
                 player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
             StartCoroutine(player.GetComponent<PlayerMovement>().CameraShake());
             yield return new WaitForSeconds(1f);
-            //if (tutCanvas != null) //if in tutorial, don't reload scene
-            //    StartPlayerTutorial();
-            //else
-                ReloadLevel(false);
+            ReloadLevel(false);
         }
     }
     public bool IsGameOver() => gameover;
 
+    public bool IsPlayerAndEnemyOnSameLevel() => playerLevel == enemyLevel;
+    public void SetPlayerLevel(int level) => playerLevel = level;
+    public void SetEnemyLevel(int level) => enemyLevel = level;
 
     public void ReloadLevel(bool developerSkip)
     {

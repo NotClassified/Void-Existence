@@ -210,7 +210,8 @@ public class PlayerUI : MonoBehaviour
 
     public void TextFeedback (string message, int color) //text for giving feedback to the player
     {
-        if(fText.color == mColors[0].color || GetFeedbackText().Equals("Game Over")) //if text is important, don't change text
+        //if text is important, don't change text
+        if (fText.color == mColors[0].color || (GetFeedbackText().Length >= 9 && GetFeedbackText().Substring(0, 9).Equals("Game Over")))
             return;
 
         if (message != null)

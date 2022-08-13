@@ -171,7 +171,7 @@ public class EnemyMovement : MonoBehaviour
         Vector3 move = new Vector3(0, 0, -boost);
         while (!et.isJumping || !cc.enabled)
             yield return null;
-        while (duration > time && et.isJumping)
+        while (duration > time && et.isJumping && cc.enabled)
         {
             time++;
             cc.Move(move);

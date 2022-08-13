@@ -348,7 +348,7 @@ public class PlayerTrick : MonoBehaviour
         //raycast position for checking if player is grounded
         raypos[0] = transform.position + Vector3.up * distances[0] + -transform.right * distances[2]; 
         //check if player is in air (not grounded)
-        if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[0], groundMask)) 
+        if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[3], distances[0], groundMask)) 
         {
             isGrounded = false;
 
@@ -446,8 +446,14 @@ public class PlayerTrick : MonoBehaviour
             isGrounded = true; //is also true when landing
             anim.SetBool(hashLand, false); //prevent loop of landing
             attemptedLand = false;
-            //anim.SetBool(hashFall, true);
-            //pUI.tShowed[0] = false; //keep playing tutorial
+
+            if (hits[3].transform != null) 
+            {
+                if (hits[3].transform.CompareTag("Level2"))
+                    gm.SetPlayerLevel(2);
+                else
+                    gm.SetPlayerLevel(1);
+            }
 
             if (gm.tutNumber == 1 && gm.GetInputTextLit())
             {
@@ -491,7 +497,7 @@ public class PlayerTrick : MonoBehaviour
             autoJumped = true;
             anim.SetBool(hashJumpDown, JumpDownCheck());
         }
-        if (autoJumped && isLanding)
+        if (autoJumped && (isLanding || isClimbing))
             autoJumped = false;
         #endregion
 
@@ -555,9 +561,12 @@ public class PlayerTrick : MonoBehaviour
             dodgeEnemyRoutine = StartCoroutine(DodgeEnemy());
 
 
-        if (Input.GetKeyDown(KeyCode.D) && !dodgeNow)
+        if (pm.dodgeInput && !dodgeNow)
         {
-            attemptDodge = true;
+            if(attemptDodge)
+                pUI.DontSpamUIToggle(); //tell player not to spam
+
+            attemptDodge = true; //prevent player from dodging unless it's too early to dodge
             if (dodgeMashPreventRoutine != null)
                 StopCoroutine(dodgeMashPreventRoutine);
             dodgeMashPreventRoutine = StartCoroutine(ResetDodgeMashPrevent());
@@ -578,17 +587,14 @@ public class PlayerTrick : MonoBehaviour
         while (timeToDodge > 0)
         {
             timeToDodge -= Time.deltaTime;
-            if(timeToDodge < initialTimeToDodge - dodgeDelay)
+            if (timeToDodge < initialTimeToDodge - dodgeDelay)
             {
                 dodgeNow = true;
                 //dodgedEnemy = true; /*always dodge early*/ print("Dodged Early");
             }
-
             if (pm.dodgeInput && dodgeNow && !alreadyDodged)
             {
-                if (attemptDodge)
-                    pUI.DontSpamUIToggle(); //tell player not to spam
-                else
+                if (!attemptDodge)
                 {
                     dodgedEnemy = true;
                     pUI.TextFeedback("Dodged!", 3); //tell player that they dodged
@@ -598,7 +604,10 @@ public class PlayerTrick : MonoBehaviour
         }
         //dodgedEnemy = true; /*always dodge late*/ print("Dodged Late");
         if (dodgeAlways)
+        {
             dodgedEnemy = true;
+            pUI.TextFeedback("Dodged!", 3); //tell player that they dodged}
+        }
 
         if (alreadyDodged)
         {

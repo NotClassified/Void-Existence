@@ -179,7 +179,7 @@ public class EnemyTrick : MonoBehaviour
 
         raypos[0] = transform.position + Vector3.up * distances[0] + -transform.right * distances[2]; //raycast position for checking if player is grounded
         //check if player is in air (not grounded)
-        if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[0], groundMask)) 
+        if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[3], distances[0], groundMask)) 
         {
             isGrounded = false;
 
@@ -224,12 +224,21 @@ public class EnemyTrick : MonoBehaviour
         {
             isGrounded = true; //is also true when landing
             anim.SetBool(hashLand, false); //prevent loop of landing
+
+            if (hits[3].transform != null)
+            {
+                if (hits[3].transform.CompareTag("Level2"))
+                    gm.SetEnemyLevel(2);
+                else
+                    gm.SetEnemyLevel(1);
+            }
         }
         anim.SetBool("IsGrounded", isGrounded); //correlate animation vars 
         #endregion
 
         #region WALL CLIMBING & JUMPING
-        if (defaultMove && !isPunching && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) //check if enemy is in front of a wall
+        //check if enemy is in front of a wall
+        if (defaultMove && !isPunching && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
             if (!actionPrevent[1] && gm.GetEnemyAction(enemyNum)) //check if enemy should wall climb
             {
@@ -254,7 +263,8 @@ public class EnemyTrick : MonoBehaviour
         else
             actionPrevent[1] = false; //after wall climb or until enemy can't wall climb (default value)
 
-        if (defaultMove && !isPunching && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) //check if enemy is too close to wall
+        //check if enemy is too close to wall
+        if (defaultMove && !isPunching && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask)) 
         {
             anim.SetBool(hashClimbFail, true); //player failed wall climb
             float wallClimbSpeed = (em.velocityZ - 6) / 10 + 1;
@@ -318,7 +328,7 @@ public class EnemyTrick : MonoBehaviour
     {
         //wait until enemy isn't by edge and isn't close to wall (with Raycasts respectively) and in default animation state and not above player
         while (!defaultMove || !Physics.Raycast(raypos[3], Vector3.down, out hits[1], distances[1], groundMask) ||
-            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) || transform.position.y > player_.transform.position.y)
+            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) || !gm.IsPlayerAndEnemyOnSameLevel())
         {
             yield return null;
         }
