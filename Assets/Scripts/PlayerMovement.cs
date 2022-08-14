@@ -190,7 +190,7 @@ public class PlayerMovement : MonoBehaviour
         if (fallvelocity.y < -16) //check if player has fallen off map
         {
             Debug.LogError("player has fallen off map");
-            gm.ReloadLevel(false);
+            gm.ReloadLevel();
         }
 
         animator.SetBool(hashIsGrounded, pt.isGrounded);
@@ -247,7 +247,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 move = new Vector3(0, 0, -boost);
         while (!pt.isJumping)
             yield return null;
-        while (duration > time && pt.isJumping)
+        while (duration > time && pt.isJumping && cc.enabled)
         {
             time++;
             cc.Move(move);

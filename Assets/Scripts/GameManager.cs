@@ -150,11 +150,13 @@ public class GameManager : MonoBehaviour
     bool gameover = false;
     int enemyLevel;
     int playerLevel;
-    [SerializeField] float distancePlayerToEnemyAllowed;
+    [SerializeField] float distancePlayerToEnemyAllowed = 15f;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
     bool loadingScene = false;
     public int mode = 0; //0-Tutorial 1-Level 2-No Enemies
+    public static bool developerMode = true;
+
 
     void Start()
     {
@@ -192,8 +194,15 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
+        #region DEVELOPER MODE
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        {
+            developerMode = !developerMode;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        #endregion
         #region COUNTER SLIDER VALUE SMOOTHING
-        if (mode == 0)
+        if (mode == 0 && tutNumber != 4)
         {
             if (count < 0) //Player's foward speed = target value
                 csTarget = 0;
@@ -245,7 +254,7 @@ public class GameManager : MonoBehaviour
 
             if (player.transform.position.y < portalEnd.position.y + portalTriggerOffsetY)
             {
-                if (progressPerfectTutorial) //completed tutorial perfectly, load next level
+                if (progressPerfectTutorial || tutNumber == 4) //completed tutorial perfectly or completed dodge tutorial, load next level
                     LoadNextLevel();
 
                 else if (progressTutorialRespawn) //didn't complete tutorial, respawn player
@@ -263,7 +272,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (mode == 1)
-                ReloadLevel(false);
+                ReloadLevel();
             else if (mode == 0 && tutSkipAbility)
                 LoadNextLevel();
 
@@ -277,16 +286,24 @@ public class GameManager : MonoBehaviour
     {
         player = Instantiate(playerPref);
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+        if (tutNumber == 4)
+        {
+            enemy1 = Instantiate(enemyPref);
+            enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+            StartCoroutine(Spawn());
+        }
 
         if (showHUD)
         {
             tutCanvas.SetActive(true);
-            cCanvas.SetActive(true);
+            if (cCanvas != null)
+                cCanvas.SetActive(true);
         }
         else
         {
             tutCanvas.SetActive(false);
-            cCanvas.SetActive(false);
+            if (cCanvas != null)
+                cCanvas.SetActive(false);
         }
 
         if (GameProgress.tutorialLastCompleted >= tutNumber) //if player has completed tutorial before, let player skip tutorial
@@ -381,7 +398,8 @@ public class GameManager : MonoBehaviour
         if (mode == 0)
         {
             tutCanvas.SetActive(showHUD);
-            cCanvas.SetActive(showHUD);
+            if (cCanvas != null)
+                cCanvas.SetActive(showHUD);
         }
         else if (mode == 1)
         {
@@ -392,20 +410,10 @@ public class GameManager : MonoBehaviour
 
     void StartLevel()
     {
-        //GameObject level_ = Instantiate(levels[0], environment);
-        //level_.transform.SetAsFirstSibling();
-        //level_.AddComponent<LevelPrep>();
-
         player = Instantiate(playerPref);
-        if(mode == 1)
-        {
-            enemy1 = Instantiate(enemyPref);
-            enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
-            //enemy2 = Instantiate(enemyPref);
-            //enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
-        }
+        enemy1 = Instantiate(enemyPref);
+        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
         StartCoroutine(Spawn());
-
     }
     public void LevelFinished(int level_)
     {
@@ -446,35 +454,28 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator Spawn()
     {
-        if (mode == 1)
-        {
-            while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
-                yield return null;
-        }
+        while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
+            yield return null;
+
         //RESET POSITIONS AND INDEX OF ALL PLAYERS:
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
-        if(mode == 1)
-        {
-            enemy1.GetComponent<EnemyMovement>().ResetPlayer();
-            enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-            if (actionIndex != 0) Debug.Log("enemy action index isn't set to default (0)");
+        enemy1.GetComponent<EnemyMovement>().ResetPlayer();
+        enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+        if (actionIndex != 0) Debug.Log("enemy action index isn't set to default (0)");
 
-            EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
-            //EnemyTrick et2_ = enemy2.GetComponent<EnemyTrick>();
-            PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
-            yield return new WaitForEndOfFrame();
-            while (et1_.AnimCheck(0, "Exit") || /*et2_.AnimCheck(0, "Exit") ||*/ pt_.AnimCheck(0, "Exit")) //wait until all players reset
-                yield return null;
-            //RESET SPEED FOR ALL PLAYERS:
-            enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
-            //enemy2.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
-            player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
+        EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
+        PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
+        yield return new WaitForEndOfFrame();
+        while (et1_.AnimCheck(0, "Exit") || pt_.AnimCheck(0, "Exit")) //wait until all players reset
+            yield return null;
+        //RESET SPEED FOR ALL PLAYERS:
+        enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
+        player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
 
 
-            progressPlayerPosition = player.GetComponent<PlayerMovement>().rootBone;
-            progressEnemyPosition = enemy1.GetComponent<EnemyMovement>().rootBone;
-        }
+        progressPlayerPosition = player.GetComponent<PlayerMovement>().rootBone;
+        progressEnemyPosition = enemy1.GetComponent<EnemyMovement>().rootBone;
 
         gameover = false;
         Time.timeScale = timeScale / 100;
@@ -499,17 +500,14 @@ public class GameManager : MonoBehaviour
         {
             player.GetComponent<PlayerUI>().TextFeedback("Game Over: Too Far Behind", 5);
             yield return new WaitForSeconds(2f);
-            ReloadLevel(false);
+            ReloadLevel();
         }
         else if (player.GetComponent<PlayerTrick>().dodgedEnemy)
         {
             gameover = false;
             playerPunchedByEnemy = false;
-
-            if (tutCanvas != null)
-                IncreaseCounter();
-
-            this.CallDelay(SpawnEnemy2, spawnDelayForEnemy2);
+            if (mode == 1) //normal level mode
+                this.CallDelay(SpawnEnemy2, spawnDelayForEnemy2);
         }
         else
         {
@@ -517,7 +515,7 @@ public class GameManager : MonoBehaviour
                 player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
             StartCoroutine(player.GetComponent<PlayerMovement>().CameraShake());
             yield return new WaitForSeconds(1f);
-            ReloadLevel(false);
+            ReloadLevel();
         }
     }
     public bool IsGameOver() => gameover;
@@ -526,19 +524,9 @@ public class GameManager : MonoBehaviour
     public void SetPlayerLevel(int level) => playerLevel = level;
     public void SetEnemyLevel(int level) => enemyLevel = level;
 
-    public void ReloadLevel(bool developerSkip)
+    public void ReloadLevel()
     {
-        if (developerSkip)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            return;
-        }
-
-        if (mode == 0 && GameProgress.tutorialLastCompleted >= tutNumber) //if player has already completed tutorial
-        {
-            ResetGame();
-        }
-        else if (mode == 1 && !player.GetComponent<PlayerUI>().GetFeedbackText().Equals("Level Finished!")) //level
+        if (!player.GetComponent<PlayerUI>().GetFeedbackText().Equals("Level Finished!")) //prevent reload when finishing level
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }

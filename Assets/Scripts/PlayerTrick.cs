@@ -540,7 +540,6 @@ public class PlayerTrick : MonoBehaviour
         #endregion
 
         #region PUNCHING & DODGING
-
         if (isPunched)
         {
             punchedLayerWeight += Time.deltaTime * punchedWeightSpeed; //transition to layer 3 (punched by enemy animation)
@@ -563,7 +562,10 @@ public class PlayerTrick : MonoBehaviour
 
         if (pm.dodgeInput && !dodgeNow)
         {
-            if(attemptDodge)
+            if (gm.tutNumber == 4 && !attemptDodge)
+                pUI.TextFeedback("Too Early To Dodge", 4);
+
+            if (attemptDodge)
                 pUI.DontSpamUIToggle(); //tell player not to spam
 
             attemptDodge = true; //prevent player from dodging unless it's too early to dodge
@@ -571,6 +573,11 @@ public class PlayerTrick : MonoBehaviour
                 StopCoroutine(dodgeMashPreventRoutine);
             dodgeMashPreventRoutine = StartCoroutine(ResetDodgeMashPrevent());
         }
+
+        if (dodgeNow && !gm.playerPunchedByEnemy && gm.tutNumber == 4 && !gm.GetInputTextLit())
+            gm.LightUpInputText(true);
+        else if (gm.playerPunchedByEnemy && gm.tutNumber == 4 && gm.GetInputTextLit())
+            gm.LightUpInputText(false);
 
         #endregion
 
@@ -592,6 +599,7 @@ public class PlayerTrick : MonoBehaviour
                 dodgeNow = true;
                 //dodgedEnemy = true; /*always dodge early*/ print("Dodged Early");
             }
+
             if (pm.dodgeInput && dodgeNow && !alreadyDodged)
             {
                 if (!attemptDodge)
@@ -619,13 +627,8 @@ public class PlayerTrick : MonoBehaviour
             ToggleCC_ON();
         else
         {
-            if(gm.mode == 2)
-            {
-                if(attemptDodge)
-                    pUI.TextFeedback("Dodged Too Early", 4); //tell player that they dodged too early
-                else
-                    pUI.TextFeedback("Dodged Too Late", 4); //tell player that they dodged too late
-            }
+            if(gm.tutNumber == 4 && !attemptDodge) 
+                pUI.TextFeedback("Too Late To Dodge", 4); //tell player that they dodged too late
 
             anim.SetBool(hashPunched, true); //start punched anaimation
             yield return new WaitForEndOfFrame();
@@ -638,7 +641,11 @@ public class PlayerTrick : MonoBehaviour
     {
         yield return new WaitForSeconds(.5f);
         if (!dodgeNow)
-            attemptDodge = false;
+        {
+            attemptDodge = false; //allow player to dodge
+            if (pUI.GetFeedbackText().Equals("Too Early To Dodge"))
+                pUI.TextFeedback("", -1);
+        }
     }
 
     IEnumerator DodgeEnemy()

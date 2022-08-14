@@ -1100,6 +1100,7 @@ MonoBehaviour:
   pauseRestartButton: {fileID: 9176163087425150285}
   brightnessSlider: {fileID: 1423565070838215234}
   brightnessResetButton: {fileID: 6973695561684674998}
+  devUI: {fileID: 896744484070285163}
   landAlwaysImage: {fileID: 1884762569867225708}
   dodgeAlwaysImage: {fileID: 7240293558837699825}
   wallClimbAlwaysImage: {fileID: 1366408334339847744}

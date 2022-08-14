@@ -68,6 +68,7 @@ public class PlayerUI : MonoBehaviour
     private int hashLand;
     #endregion
     #region DEVELOPER UI
+    public GameObject devUI;
     public Image landAlwaysImage;
     public Image dodgeAlwaysImage;
     public Image wallClimbAlwaysImage;
@@ -81,6 +82,11 @@ public class PlayerUI : MonoBehaviour
         pt = gameObject.GetComponent<PlayerTrick>();
         anim = gameObject.GetComponent<Animator>();
         gm = FindObjectOfType<GameManager>();
+
+        if(GameManager.developerMode)
+            devUI.SetActive(true);
+        else
+            devUI.SetActive(false);
 
         hashFall = Animator.StringToHash("Fall");
         hashWallClimb = Animator.StringToHash("Climb");
@@ -269,7 +275,7 @@ public class PlayerUI : MonoBehaviour
         }
         else if (action.Equals("restart"))
         {
-            gm.ReloadLevel(false);
+            gm.ReloadLevel();
         }
         else if (action.Equals("hud"))
         {

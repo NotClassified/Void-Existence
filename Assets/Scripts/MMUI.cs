@@ -13,10 +13,19 @@ public class MMUI : MonoBehaviour
     GameObject[] levelButtons;
     #region DEVELOPER UI
     public TextMeshProUGUI gpcText; //game progress count text
+    [SerializeField] GameObject devProgressTool;
     #endregion
 
     private void Start()
     {
+        if (devProgressTool != null)
+        {
+            if (GameManager.developerMode)
+                devProgressTool.SetActive(true);
+            else
+                devProgressTool.SetActive(false);
+        }
+
         //INITAILIZE THE MMCHILDREN ARRAY TO THE CHILDREN OF THIS TRANSFORM:
         mmChildren = new GameObject[transform.childCount];
         for(int i = 0; i < transform.childCount; i++)
@@ -79,6 +88,16 @@ public class MMUI : MonoBehaviour
             GameProgress.levelLastCompleted += i;
             UpdateGameProgress();
         }
-    } 
+    }
+    private void Update()
+    {
+        #region DEVELOPER MODE
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        {
+            GameManager.developerMode = !GameManager.developerMode;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        #endregion
+    }
     #endregion
 }
