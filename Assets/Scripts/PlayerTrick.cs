@@ -488,6 +488,9 @@ public class PlayerTrick : MonoBehaviour
         {
             anim.SetBool(hashWallClimb, WallClimbCheck());
         }
+        //measure the input gap for the wall climb
+        //if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+        //    print(Time.time);
 
         //auto jump
         if (jAlways && !autoJumped && defaultMove && pm.velocityZ > 5.9f &&

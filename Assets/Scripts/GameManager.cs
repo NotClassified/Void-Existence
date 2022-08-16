@@ -143,6 +143,10 @@ public class GameManager : MonoBehaviour
     GameObject eaMarker;
     [SerializeField]
     Transform eaParent;
+    [SerializeField]
+    Material eaCorrectActionColor;
+    public bool eaStopPlayerForActionMarkers = false;
+    bool eaDestroyChildren = true;
     #endregion
 
     public static bool showHUD = true;
@@ -156,6 +160,7 @@ public class GameManager : MonoBehaviour
     bool loadingScene = false;
     public int mode = 0; //0-Tutorial 1-Level 2-No Enemies
     public static bool developerMode = true;
+    float timeMeasure;
 
 
     void Start()
@@ -191,15 +196,39 @@ public class GameManager : MonoBehaviour
             progressPerfectTutorial = false;
             StartLevel();
         }
+        else
+            StartLevel();
     }
     private void Update()
     {
         #region DEVELOPER MODE
+        //toggle developer mode
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
         {
             developerMode = !developerMode;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+        if (Input.GetKeyDown(KeyCode.E)) //stop timer
+        {
+            if(timeMeasure == 0)
+            {
+                timeMeasure = Time.time;
+            }
+            else
+            {
+                Debug.LogWarning(timeMeasure = Time.time - timeMeasure);
+                timeMeasure = 0;
+            }
+        }
+        //stop player
+        if (eaStopPlayerForActionMarkers && developerMode)
+        {
+            player.GetComponent<PlayerMovement>().velocityZ = 0;
+            player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+        }
+        //toggle stop player
+        if (Input.GetKeyDown(KeyCode.P))
+            eaStopPlayerForActionMarkers = !eaStopPlayerForActionMarkers;
         #endregion
         #region COUNTER SLIDER VALUE SMOOTHING
         if (mode == 0 && tutNumber != 4)
@@ -234,7 +263,7 @@ public class GameManager : MonoBehaviour
         }
         #endregion
         #region PROGRESS CHECK
-        if (player.transform.position.z < portalEnd.position.z + portalTriggerOffsetZ)
+        if (player != null && player.transform.position.z < portalEnd.position.z + portalTriggerOffsetZ)
         {
             if (!levelFinished)
             {
@@ -411,8 +440,11 @@ public class GameManager : MonoBehaviour
     void StartLevel()
     {
         player = Instantiate(playerPref);
-        enemy1 = Instantiate(enemyPref);
-        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+        if(mode == 1)
+        {
+            enemy1 = Instantiate(enemyPref);
+            enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+        }
         StartCoroutine(Spawn());
     }
     public void LevelFinished(int level_)
@@ -432,10 +464,22 @@ public class GameManager : MonoBehaviour
         if (actionsEnemy.Length > actionIndex) //if there is an action left
         {
             //MAKE ENEMY ACTION MARKERS FOR LEVEL:
-            //Debug.Log("creating enemy action markers");
-            //GameObject marker_ = Instantiate(eaMarker, enemy1.transform.position, eaMarker.transform.rotation); //create using enemy1 postition
-            //marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex.ToString(); //change text to index of action
-            //marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
+            if (eaStopPlayerForActionMarkers)
+            {
+                Debug.Log("creating enemy action markers");
+                if (eaDestroyChildren && eaParent.GetChild(0) != null)
+                {
+                    eaDestroyChildren = false;
+                    foreach (Transform eaChild in eaParent)
+                        Destroy(eaChild.gameObject);
+                }
+                //create marker using enemy postition
+                GameObject marker_ = Instantiate(eaMarker, enemy1.transform.position + new Vector3(-2, 0), eaMarker.transform.rotation);
+                marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = actionIndex.ToString(); //change text to index of action
+                if (actionsEnemy[actionIndex])
+                    marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().color = eaCorrectActionColor.color;
+                marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
+            }
 
             return actionsEnemy[actionIndex++]; //give actionIndex, then increase
         }
@@ -454,29 +498,41 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator Spawn()
     {
-        while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
-            yield return null;
+        if (enemy1 != null)
+        {
+            while (enemy1.GetComponent<EnemyMovement>().gm == null) //wait until this enemy's script can access this script
+                yield return null;
+        }
 
         //RESET POSITIONS AND INDEX OF ALL PLAYERS:
         player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
-        enemy1.GetComponent<EnemyMovement>().ResetPlayer();
-        enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
-        if (actionIndex != 0) Debug.Log("enemy action index isn't set to default (0)");
+        if (enemy1 != null)
+        {
+            enemy1.GetComponent<EnemyMovement>().ResetPlayer();
+            enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+            if (actionIndex != 0) Debug.Log("enemy action index isn't set to default (0)");
+        }
 
-        EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
-        PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
-        yield return new WaitForEndOfFrame();
-        while (et1_.AnimCheck(0, "Exit") || pt_.AnimCheck(0, "Exit")) //wait until all players reset
-            yield return null;
+        if(mode == 1)
+        {
+            EnemyTrick et1_ = enemy1.GetComponent<EnemyTrick>();
+            PlayerTrick pt_ = player.GetComponent<PlayerTrick>();
+            yield return new WaitForEndOfFrame();
+            while (et1_.AnimCheck(0, "Exit") || pt_.AnimCheck(0, "Exit")) //wait until all players reset
+                yield return null;
+        }
         //RESET SPEED FOR ALL PLAYERS:
-        enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
+        if (enemy1 != null)
+            enemy1.GetComponent<EnemyMovement>().velocityZ = initialSpeedEnemy;
         player.GetComponent<PlayerMovement>().velocityZ = initialSpeedPlayer;
 
 
-        progressPlayerPosition = player.GetComponent<PlayerMovement>().rootBone;
-        progressEnemyPosition = enemy1.GetComponent<EnemyMovement>().rootBone;
-
+        if (mode == 1)
+        {
+            progressPlayerPosition = player.GetComponent<PlayerMovement>().rootBone;
+            progressEnemyPosition = enemy1.GetComponent<EnemyMovement>().rootBone;
+        }
         gameover = false;
         Time.timeScale = timeScale / 100;
         //UsefulShortcuts.ClearConsole();
@@ -526,7 +582,13 @@ public class GameManager : MonoBehaviour
 
     public void ReloadLevel()
     {
-        if (!player.GetComponent<PlayerUI>().GetFeedbackText().Equals("Level Finished!")) //prevent reload when finishing level
+        if (eaStopPlayerForActionMarkers)
+        {
+            enemy1.transform.SetPositionAndRotation(enemySpawn.position, enemySpawn.rotation);
+            eaDestroyChildren = true;
+            actionIndex = 0;
+        }
+        else if (!player.GetComponent<PlayerUI>().GetFeedbackText().Equals("Level Finished!")) //prevent reload when finishing level
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
