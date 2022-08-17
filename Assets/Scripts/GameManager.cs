@@ -328,15 +328,15 @@ public class GameManager : MonoBehaviour
             enemyExtra = Instantiate(enemyPref);
             float posY = extraEnemySpawns[extraEnemyIndex].position.y;
             float posZ = extraEnemySpawns[extraEnemyIndex].position.z;
-            if (enemy2 != null)
+            if (enemy2 != null) //enemy2 exists
             {
-                enemyExtra.GetComponent<EnemyTrick>().enemyNum = 3;
-                enemyExtra.transform.position = new Vector3(-2, posY, posZ);
+                enemyExtra.GetComponent<EnemyTrick>().enemyNum = 3; 
+                enemyExtra.transform.position = new Vector3(-2, posY, posZ); //enemy on right side
             }
-            else
+            else //enemy2 does not exists
             {
-                enemyExtra.GetComponent<EnemyTrick>().enemyNum = 4;
-                enemyExtra.transform.position = new Vector3(2, posY, posZ);
+                enemyExtra.GetComponent<EnemyTrick>().enemyNum = 4; 
+                enemyExtra.transform.position = new Vector3(2, posY, posZ); //enemy on left side
             }
             enemyExtra.transform.eulerAngles = new Vector3(0, -90);
             extraEnemyIndex++;
@@ -598,7 +598,9 @@ public class GameManager : MonoBehaviour
         {
             gameover = false;
             playerPunchedByEnemy = false;
-            if (mode == 1) //normal level mode
+            if (player.GetComponent<PlayerTrick>().extraEnemyIsPunching) //extra enemy was dodged
+                this.CallDelay(player.GetComponent<PlayerTrick>().ExtraEnemyDodgeReset, .2f);
+            else
                 this.CallDelay(SpawnEnemy2, spawnDelayForEnemy2);
         }
         else

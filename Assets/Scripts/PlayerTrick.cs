@@ -97,6 +97,9 @@ public class PlayerTrick : MonoBehaviour
     float unDodgeWeightSpeed;
     Coroutine dodgeMashPreventRoutine;
     Coroutine dodgeEnemyRoutine;
+    Coroutine dodgeExtraEnemyRoutine;
+    public bool extraEnemyIsPunching;
+    public int extraEnemyNumber;
     #endregion
 
     public bool startMethodCalled = false;
@@ -559,8 +562,14 @@ public class PlayerTrick : MonoBehaviour
             anim.SetLayerWeight(3, punchedLayerWeight);
         }
 
-        if (dodgedEnemy && dodgeEnemyRoutine == null)
-            dodgeEnemyRoutine = StartCoroutine(DodgeEnemy());
+        if (dodgedEnemy)
+        {
+            if (extraEnemyIsPunching && dodgeExtraEnemyRoutine == null) //extra enemy is punching, prevent loop
+                dodgeExtraEnemyRoutine = StartCoroutine(DodgeEnemy());
+
+            else if (dodgeEnemyRoutine == null) //prevent loop
+                dodgeEnemyRoutine = StartCoroutine(DodgeEnemy());
+        }
 
 
         if (pm.dodgeInput && !dodgeNow)
@@ -577,6 +586,7 @@ public class PlayerTrick : MonoBehaviour
             dodgeMashPreventRoutine = StartCoroutine(ResetDodgeMashPrevent());
         }
 
+        //lighting on and off key text for dodge tutorial
         if (dodgeNow && !gm.playerPunchedByEnemy && gm.tutNumber == 4 && !gm.GetInputTextLit())
             gm.LightUpInputText(true);
         else if (gm.playerPunchedByEnemy && gm.tutNumber == 4 && gm.GetInputTextLit())
@@ -620,7 +630,7 @@ public class PlayerTrick : MonoBehaviour
             pUI.TextFeedback("Dodged!", 3); //tell player that they dodged}
         }
 
-        if (alreadyDodged)
+        if (alreadyDodged && !extraEnemyIsPunching)
         {
             dodgedEnemy = false; //prevent player from dodging again
             anim.SetFloat("FlipForPunch", 0); //flip punched animation
@@ -632,6 +642,14 @@ public class PlayerTrick : MonoBehaviour
         {
             if(gm.tutNumber == 4 && !attemptDodge) 
                 pUI.TextFeedback("Too Late To Dodge", 4); //tell player that they dodged too late
+
+            if (extraEnemyIsPunching)
+            {
+                if (extraEnemyNumber == 3)
+                    anim.SetFloat("FlipForPunch", 1); //unflip punched animation
+                else
+                    anim.SetFloat("FlipForPunch", 0); //flip punched animation
+            }
 
             anim.SetBool(hashPunched, true); //start punched anaimation
             yield return new WaitForEndOfFrame();
@@ -669,6 +687,18 @@ public class PlayerTrick : MonoBehaviour
             yield return null;
         }
         anim.SetLayerWeight(4, 0); //set layer weight to no influence
+    }
+
+    public void ExtraEnemyDodgeReset()
+    {
+        extraEnemyIsPunching = false;
+        dodgeExtraEnemyRoutine = null;
+
+        //prevent player form dodging enemy2 if enemy2 exists (enemy2 exists if extraEnemy's number is 4)
+        if(extraEnemyNumber == 3)
+            dodgedEnemy = false;
+        else
+            dodgedEnemy = true;
     }
     #endregion
 

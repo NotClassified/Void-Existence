@@ -364,6 +364,20 @@ public class EnemyTrick : MonoBehaviour
             anim.SetFloat("FlipForPunch", 0);
         }
 
+        //IF EXTRA ENEMY IS PUNHCING, TELL PLAYERTRICK SCRIPT TO FLIP ANIMATION ACCORDINGLY
+        PlayerTrick _pt = gm.player.GetComponent<PlayerTrick>();
+        if (enemyNum == 3)
+        {
+            _pt.extraEnemyIsPunching = true;
+            _pt.extraEnemyNumber = 3;
+        }
+        else if (enemyNum == 4)
+        {
+            _pt.dodgedEnemy = false;
+            _pt.extraEnemyIsPunching = true;
+            _pt.extraEnemyNumber = 4;
+        }
+
         rigPunch.enabled = true; //for the aim constraint
         anim.SetBool(hashPunch, true); //punch
         yield return new WaitForEndOfFrame();
