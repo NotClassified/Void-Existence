@@ -567,7 +567,7 @@ public class PlayerTrick : MonoBehaviour
             if (extraEnemyIsPunching && dodgeExtraEnemyRoutine == null) //extra enemy is punching, prevent loop
                 dodgeExtraEnemyRoutine = StartCoroutine(DodgeEnemy());
 
-            else if (dodgeEnemyRoutine == null) //prevent loop
+            else if (!extraEnemyIsPunching && dodgeEnemyRoutine == null) //extra enemy is NOT punching, prevent loop
                 dodgeEnemyRoutine = StartCoroutine(DodgeEnemy());
         }
 
@@ -630,10 +630,15 @@ public class PlayerTrick : MonoBehaviour
             pUI.TextFeedback("Dodged!", 3); //tell player that they dodged}
         }
 
-        if (alreadyDodged && !extraEnemyIsPunching)
+        if (!extraEnemyIsPunching) //player is NOT being punched by extraEnemy
         {
-            dodgedEnemy = false; //prevent player from dodging again
-            anim.SetFloat("FlipForPunch", 0); //flip punched animation
+            if (alreadyDodged) //prevent player from dodging enemy2
+            {
+                dodgedEnemy = false; //prevent player from dodging again
+                anim.SetFloat("FlipForPunch", 0); //flip punched animation
+            }
+            else
+                anim.SetFloat("FlipForPunch", 1); //unflip punched animation
         }
 
         if (dodgedEnemy)
@@ -645,9 +650,9 @@ public class PlayerTrick : MonoBehaviour
 
             if (extraEnemyIsPunching)
             {
-                if (extraEnemyNumber == 3)
+                if (extraEnemyNumber == 3) //extra enemy is on right side
                     anim.SetFloat("FlipForPunch", 1); //unflip punched animation
-                else
+                else //extra enemy is on right side
                     anim.SetFloat("FlipForPunch", 0); //flip punched animation
             }
 
@@ -694,11 +699,11 @@ public class PlayerTrick : MonoBehaviour
         extraEnemyIsPunching = false;
         dodgeExtraEnemyRoutine = null;
 
-        //prevent player form dodging enemy2 if enemy2 exists (enemy2 exists if extraEnemy's number is 4)
-        if(extraEnemyNumber == 3)
-            dodgedEnemy = false;
-        else
+        //prevent player from dodging enemy2 if enemy2 exists
+        if(gm.enemy2 != null)
             dodgedEnemy = true;
+        else
+            dodgedEnemy = false;
     }
     #endregion
 

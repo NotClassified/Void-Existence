@@ -300,7 +300,8 @@ public class EnemyTrick : MonoBehaviour
 
         #region PUNCHING
         //checking if enemy caught up to player
-        if (!isPunching && transform.position.z + 2 < gm.player.transform.position.z && !gm.IsGameOver() && !gm.eaStopPlayerForActionMarkers) 
+        if (!isPunching && transform.position.z + 2 < gm.player.transform.position.z && 
+            !gm.IsGameOver() && !gm.eaStopPlayerForActionMarkers) 
         {
             StartCoroutine(gm.GameOver());
             enemyWaitForPlayerPunchRoutine = StartCoroutine(WaitForPlayerPunch(gm.player));
@@ -326,17 +327,20 @@ public class EnemyTrick : MonoBehaviour
     #region PUNCHING METHODS
     IEnumerator WaitForPlayerPunch(GameObject player_)
     {
-        //wait until enemy isn't by edge and isn't close to wall (with Raycasts respectively) and in default animation state and not above player
-        while (!defaultMove || !Physics.Raycast(raypos[3], Vector3.down, out hits[1], distances[1], groundMask) ||
-            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) || !gm.IsPlayerAndEnemyOnSameLevel())
+        if (enemyNum == 1 || enemyNum == 2) //wait to stop if his enemy is NOT extra enemy
         {
-            yield return null;
+            //wait until enemy isn't by edge and isn't close to wall (with Raycasts respectively) and in default animation state and not above player
+            while (!defaultMove || !Physics.Raycast(raypos[3], Vector3.down, out hits[1], distances[1], groundMask) ||
+                Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) || !gm.IsPlayerAndEnemyOnSameLevel())
+            {
+                yield return null;
+            }
         }
         //print("ready to punch");
         //if enemy is too ahead of player or if player isn't in default animation state
         if (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
         {
-            StartEnemyStopRunningRoutine(); //stop enemy to wait for player
+            EnemyStopRunning(); //stop enemy to wait for player
 
             //yield until player passes enemy while in a default animation
             while (transform.position.z < player_.transform.position.z  || !player_.GetComponent<PlayerTrick>().defaultMove)
@@ -351,6 +355,7 @@ public class EnemyTrick : MonoBehaviour
         }
 
     }
+    public void EnemyStopRunning() => anim.SetBool("Stop", true);
 
     public IEnumerator EnemyPunch()
     {
@@ -447,11 +452,4 @@ public class EnemyTrick : MonoBehaviour
 
     #endregion
 
-    public void StartEnemyStopRunningRoutine() => StartCoroutine(EnemyStopRunning());
-    IEnumerator EnemyStopRunning()
-    {
-        anim.SetBool("Stop", true); //stop enemy to wait for player
-        yield return new WaitForEndOfFrame();
-        anim.SetBool("Stop", false); //prevent loop
-    }
 }

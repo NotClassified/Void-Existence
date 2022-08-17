@@ -322,7 +322,7 @@ public class GameManager : MonoBehaviour
         }
         #endregion
         #region EXTRA ENEMY SPAWN
-        if(extraEnemySpawns.Length != 0 && extraEnemySpawns.Length > extraEnemyIndex &&
+        if(mode == 1 && levelnum == 5 && extraEnemySpawns.Length > extraEnemyIndex &&
            player.transform.position.z < extraEnemySpawns[extraEnemyIndex].position.z + extraEnemySpawnTrigOffset)
         {
             enemyExtra = Instantiate(enemyPref);
@@ -485,9 +485,9 @@ public class GameManager : MonoBehaviour
     {
         player.GetComponent<PlayerUI>().TextFeedback("Level Finished!", 0);
         if (enemy2 != null)
-            enemy2.GetComponent<EnemyTrick>().StartEnemyStopRunningRoutine();
+            enemy2.GetComponent<EnemyTrick>().EnemyStopRunning();
         else if (enemy1 != null)
-            enemy1.GetComponent<EnemyTrick>().StartEnemyStopRunningRoutine();
+            enemy1.GetComponent<EnemyTrick>().EnemyStopRunning();
         levelFinished = true;
         GameProgress.LevelComplete(level_);
     }
@@ -600,7 +600,7 @@ public class GameManager : MonoBehaviour
             playerPunchedByEnemy = false;
             if (player.GetComponent<PlayerTrick>().extraEnemyIsPunching) //extra enemy was dodged
                 this.CallDelay(player.GetComponent<PlayerTrick>().ExtraEnemyDodgeReset, .2f);
-            else
+            else if (mode == 1)
                 this.CallDelay(SpawnEnemy2, spawnDelayForEnemy2);
         }
         else
