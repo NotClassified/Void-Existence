@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public static float time;
     public int levelnum;
     #region BACKGROUND ROCKS
+    public bool rocksInstantiate = false;
     public int rocksAmount;
     public GameObject rockParent;
     public GameObject rockPref;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     public GameObject player;
     public GameObject enemy1;
     public GameObject enemy2;
+    public GameObject enemyExtra;
     public float initialSpeedPlayer;
     public float initialSpeedEnemy;
     public bool playerPunchedByEnemy;
@@ -55,6 +57,11 @@ public class GameManager : MonoBehaviour
     Transform playerSpawn;
     [SerializeField]
     Transform enemySpawn;
+    [SerializeField]
+    Transform[] extraEnemySpawns;
+    [SerializeField]
+    float extraEnemySpawnTrigOffset;
+    int extraEnemyIndex;
     [SerializeField]
     GameObject endPointPortal;
     #endregion
@@ -165,16 +172,22 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        //SPAWN ROCKS FOR ENVIRONMENT
-        //for (int i = 0; i < rocksAmount; i++)
-        //{
-        //    GameObject rock = Instantiate(rockPref, rockParent.transform);
-        //    rock.transform.position = new Vector3(Random.Range(minRock.x, maxRock.x), Random.Range(minRock.y, maxRock.y),
-        //                                          Random.Range(minRock.z, maxRock.z));
-        //    rock.transform.eulerAngles = new Vector3(Random.Range(-360, 360), Random.Range(-360, 360), Random.Range(-360, 360));
-        //    float sizeOfRock = Random.Range(.1f, 1.5f);
-        //    rock.transform.localScale = new Vector3(sizeOfRock, sizeOfRock, sizeOfRock);
-        //}
+        #region SPAWN ROCKS FOR ENVIRONMENT
+        if (rocksInstantiate)
+        {
+            Debug.Log("creating Rocks");
+            for (int i = 0; i < rocksAmount; i++)
+            {
+                GameObject rock = Instantiate(rockPref, rockParent.transform);
+                rock.transform.position = new Vector3(Random.Range(minRock.x, maxRock.x), Random.Range(minRock.y, maxRock.y),
+                                                      Random.Range(minRock.z, maxRock.z));
+                rock.transform.eulerAngles = new Vector3(Random.Range(-360, 360), Random.Range(-360, 360), Random.Range(-360, 360));
+                float sizeOfRock = Random.Range(.1f, 1.5f);
+                rock.transform.localScale = new Vector3(sizeOfRock, sizeOfRock, sizeOfRock);
+            }
+        } 
+        #endregion
+
         if (timeScale != 100) Debug.Log("timeScale not set to default (100)");
         Time.timeScale = timeScale / 100;
         envChildCountStart = environment.childCount;
@@ -306,7 +319,28 @@ public class GameManager : MonoBehaviour
                 LoadNextLevel();
 
             //if (mode == 0) ReloadLevel(true); print("developer restart enabled");
-        } 
+        }
+        #endregion
+        #region EXTRA ENEMY SPAWN
+        if(extraEnemySpawns.Length != 0 && extraEnemySpawns.Length > extraEnemyIndex &&
+           player.transform.position.z < extraEnemySpawns[extraEnemyIndex].position.z + extraEnemySpawnTrigOffset)
+        {
+            enemyExtra = Instantiate(enemyPref);
+            float posY = extraEnemySpawns[extraEnemyIndex].position.y;
+            float posZ = extraEnemySpawns[extraEnemyIndex].position.z;
+            if (enemy2 != null)
+            {
+                enemyExtra.GetComponent<EnemyTrick>().enemyNum = 3;
+                enemyExtra.transform.position = new Vector3(-2, posY, posZ);
+            }
+            else
+            {
+                enemyExtra.GetComponent<EnemyTrick>().enemyNum = 4;
+                enemyExtra.transform.position = new Vector3(2, posY, posZ);
+            }
+            enemyExtra.transform.eulerAngles = new Vector3(0, -90);
+            extraEnemyIndex++;
+        }
         #endregion
     }
 
@@ -459,15 +493,15 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public bool GetEnemyAction(int enemyNum)
+    public bool GetEnemyAction()
     {
         if (actionsEnemy.Length > actionIndex) //if there is an action left
         {
-            //MAKE ENEMY ACTION MARKERS FOR LEVEL:
+            #region MAKE ENEMY ACTION MARKERS FOR LEVEL
             if (eaStopPlayerForActionMarkers)
             {
                 Debug.Log("creating enemy action markers");
-                if (eaDestroyChildren && eaParent.GetChild(0) != null)
+                if (eaDestroyChildren && eaParent.childCount != 0)
                 {
                     eaDestroyChildren = false;
                     foreach (Transform eaChild in eaParent)
@@ -479,7 +513,8 @@ public class GameManager : MonoBehaviour
                 if (actionsEnemy[actionIndex])
                     marker_.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().color = eaCorrectActionColor.color;
                 marker_.transform.SetParent(eaParent); //make the action marker a child of the parent
-            }
+            } 
+            #endregion
 
             return actionsEnemy[actionIndex++]; //give actionIndex, then increase
         }
@@ -491,6 +526,7 @@ public class GameManager : MonoBehaviour
         enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
         enemy2.transform.position = new Vector3(2, enemy1.transform.position.y, enemy1.transform.position.z);
         enemy2.transform.eulerAngles = new Vector3(0, -90);
+        
 
         progressEnemyPosition = enemy2.GetComponent<EnemyMovement>().rootBone; //progress bar checks enemy2 instead of enemy1
     }

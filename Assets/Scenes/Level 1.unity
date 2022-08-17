@@ -20545,6 +20545,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeScale: 100
   levelnum: 1
+  rocksInstantiate: 0
   rocksAmount: 0
   rockParent: {fileID: 1762831280}
   rockPref: {fileID: 3494898191918458356, guid: 2a6be0317a0aef449af75d93b1ec7a5d,
@@ -20635,7 +20636,8 @@ MonoBehaviour:
   eaMarker: {fileID: 1056155761849556616, guid: ee5ad3f87c7fbaf46a035750f5d53907,
     type: 3}
   eaParent: {fileID: 0}
-  eaCorrectActionColor: {fileID: 0}
+  eaCorrectActionColor: {fileID: 2100000, guid: 2e5e629d0096edd41837c44cedc455e6,
+    type: 2}
   eaStopPlayerForActionMarkers: 0
   distancePlayerToEnemyAllowed: 15
   finishLevelDelay: 2.45

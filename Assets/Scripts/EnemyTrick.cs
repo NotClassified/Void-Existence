@@ -5,6 +5,7 @@ using UnityEngine.Animations.Rigging;
 
 public class EnemyTrick : MonoBehaviour
 {
+    public int enemyNum;
     #region COMPONENTS
     private CharacterController cc;
     private Animator anim;
@@ -15,7 +16,6 @@ public class EnemyTrick : MonoBehaviour
     MultiAimConstraint aimContraint;
     [SerializeField]
     RigBuilder rigPunch;
-    public int enemyNum;
     #endregion
     #region ANIMATION BOOLEANS
     public bool defaultMove;
@@ -191,7 +191,7 @@ public class EnemyTrick : MonoBehaviour
                 if (Physics.Raycast(raypos[0], Vector3.down, out hits[0], distances[5], groundMask))
                 {
                     anim.SetBool(hashLand, true);
-                    anim.SetBool(hashFall, !gm.GetEnemyAction(enemyNum));
+                    anim.SetBool(hashFall, !gm.GetEnemyAction());
                 }
                 else //not close enough to platform
                 {
@@ -240,7 +240,7 @@ public class EnemyTrick : MonoBehaviour
         //check if enemy is in front of a wall
         if (defaultMove && !isPunching && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
-            if (!actionPrevent[1] && gm.GetEnemyAction(enemyNum)) //check if enemy should wall climb
+            if (!actionPrevent[1] && gm.GetEnemyAction()) //check if enemy should wall climb
             {
                 anim.SetBool(hashClimbFail, false); //player succeeded wall climb
 
@@ -286,7 +286,7 @@ public class EnemyTrick : MonoBehaviour
         if (defaultMove && !isPunching && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
             !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask)) 
         {
-            if (!actionPrevent[2] && gm.GetEnemyAction(enemyNum)) //check if enemy should jump
+            if (!actionPrevent[2] && gm.GetEnemyAction()) //check if enemy should jump
             {
                 em.velocityZ = 12; //boost player forward
                 em.StartCoroutine(em.BoostPlayer(jBoost, jDurationBoost, jDecayBoost)); //boost player forward more
@@ -356,7 +356,7 @@ public class EnemyTrick : MonoBehaviour
     {
         //CHANGE OFFSET IF ENEMY IS ON THE RIGHTSIDE & FLIP PUNCH ANIMATION IF ENEMY IS ON THE LEFTSIDE
         Vector3 punchOffset_;
-        if (enemyNum == 1)
+        if (enemyNum == 1 || enemyNum == 3)
             punchOffset_ = new Vector3(-punchOffset.x, 0, punchOffset.z);
         else
         {
