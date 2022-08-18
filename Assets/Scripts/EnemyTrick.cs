@@ -6,6 +6,7 @@ using UnityEngine.Animations.Rigging;
 public class EnemyTrick : MonoBehaviour
 {
     public int enemyNum;
+    bool waitingToPunchPlayer = false;
     #region COMPONENTS
     private CharacterController cc;
     private Animator anim;
@@ -300,9 +301,10 @@ public class EnemyTrick : MonoBehaviour
 
         #region PUNCHING
         //checking if enemy caught up to player
-        if (!isPunching && transform.position.z + 2 < gm.player.transform.position.z && 
-            !gm.IsGameOver() && !gm.eaStopPlayerForActionMarkers) 
+        if (!isPunching && transform.position.z + 2 < gm.player.transform.position.z && !waitingToPunchPlayer
+             && !gm.eaStopPlayerForActionMarkers) 
         {
+            waitingToPunchPlayer = true;
             StartCoroutine(gm.GameOver());
             enemyWaitForPlayerPunchRoutine = StartCoroutine(WaitForPlayerPunch(gm.player));
         }

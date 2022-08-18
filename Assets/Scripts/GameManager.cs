@@ -158,7 +158,6 @@ public class GameManager : MonoBehaviour
 
     public static bool showHUD = true;
     public static float brightness = 1f;
-    bool gameover = false;
     int enemyLevel;
     int playerLevel;
     [SerializeField] float distancePlayerToEnemyAllowed = 15f;
@@ -569,7 +568,6 @@ public class GameManager : MonoBehaviour
             progressPlayerPosition = player.GetComponent<PlayerMovement>().rootBone;
             progressEnemyPosition = enemy1.GetComponent<EnemyMovement>().rootBone;
         }
-        gameover = false;
         Time.timeScale = timeScale / 100;
         //UsefulShortcuts.ClearConsole();
     }
@@ -577,18 +575,17 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator GameOver()
     {
-        gameover = true;
         float distancePlayerAndEnemy = 0;
         while (!playerPunchedByEnemy && distancePlayerAndEnemy < distancePlayerToEnemyAllowed)
         {
-            if(enemy2 != null)
+            if(enemy2 != null) //if enemy2 exists, use enemy2 position
                 distancePlayerAndEnemy = player.transform.position.z - enemy2.transform.position.z;
             else
                 distancePlayerAndEnemy = player.transform.position.z - enemy1.transform.position.z;
             yield return null;
         }
 
-        if (distancePlayerAndEnemy >= distancePlayerToEnemyAllowed)
+        if (distancePlayerAndEnemy >= distancePlayerToEnemyAllowed) //player fell too far behind
         {
             player.GetComponent<PlayerUI>().TextFeedback("Game Over: Too Far Behind", 5);
             yield return new WaitForSeconds(2f);
@@ -596,7 +593,6 @@ public class GameManager : MonoBehaviour
         }
         else if (player.GetComponent<PlayerTrick>().dodgedEnemy)
         {
-            gameover = false;
             playerPunchedByEnemy = false;
             if (player.GetComponent<PlayerTrick>().extraEnemyIsPunching) //extra enemy was dodged
                 this.CallDelay(player.GetComponent<PlayerTrick>().ExtraEnemyDodgeReset, .2f);
@@ -611,8 +607,8 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             ReloadLevel();
         }
+        print("1");
     }
-    public bool IsGameOver() => gameover;
 
     public bool IsPlayerAndEnemyOnSameLevel() => playerLevel == enemyLevel;
     public void SetPlayerLevel(int level) => playerLevel = level;
