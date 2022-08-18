@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float finishLevelDelay;
     bool loadingScene = false;
     public int mode = 0; //0-Tutorial 1-Level 2-No Enemies
-    public static bool developerMode = true;
+    public static bool developerMode = false;
     float timeMeasure;
 
 
@@ -607,7 +607,6 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             ReloadLevel();
         }
-        print("1");
     }
 
     public bool IsPlayerAndEnemyOnSameLevel() => playerLevel == enemyLevel;

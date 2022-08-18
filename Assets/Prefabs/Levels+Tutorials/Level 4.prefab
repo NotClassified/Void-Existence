@@ -292,6 +292,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Platform 04 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 3252870145402441722, guid: 5fe8dfea1ae165c45bc99ea84947361b,
+        type: 3}
+      propertyPath: m_TagString
+      value: Level2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5fe8dfea1ae165c45bc99ea84947361b, type: 3}
 --- !u!4 &3478134847394982740 stripped
@@ -366,6 +371,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Platform 08 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5557951576297714370, guid: 57353f749db93744d8e8bfa85e5a591f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Level2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57353f749db93744d8e8bfa85e5a591f, type: 3}
@@ -666,6 +676,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Platform 08 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5557951576297714370, guid: 57353f749db93744d8e8bfa85e5a591f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Level2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57353f749db93744d8e8bfa85e5a591f, type: 3}
@@ -1791,6 +1806,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Wall02 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343399675144026956, guid: 649842114e29b7a46838e380be73068a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Level2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 649842114e29b7a46838e380be73068a, type: 3}
