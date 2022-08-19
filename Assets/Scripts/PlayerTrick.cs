@@ -416,6 +416,7 @@ public class PlayerTrick : MonoBehaviour
                         StartCoroutine(pm.CameraShake());
                     }
                     anim.SetBool(hashLand, true);
+                    gm.audioM.PlaySound("land");
                     this.CallDelay(ClearTextFeedback, lResetDelay);
                 }
             }

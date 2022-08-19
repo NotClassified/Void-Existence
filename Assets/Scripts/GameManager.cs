@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public float timeScale = 100;
     public static float time;
     public int levelnum;
+    [HideInInspector] public AudioManager audioM;
     #region BACKGROUND ROCKS
     public bool rocksInstantiate = false;
     public int rocksAmount;
@@ -189,7 +190,10 @@ public class GameManager : MonoBehaviour
 
         if (timeScale != 100) Debug.Log("timeScale not set to default (100)");
         Time.timeScale = timeScale / 100;
-        envChildCountStart = environment.childCount;
+
+        audioM = FindObjectOfType<AudioManager>();
+        if (audioM == null)
+            Debug.LogWarning("audio manager not found");
 
         ChangeBrightness();
         levelFinished = false;
