@@ -8,8 +8,18 @@ public class AudioManager : MonoBehaviour
 {
     public Sounds[] sounds;
 
+    public static AudioManager instance;
+
     private void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         DontDestroyOnLoad(gameObject);
 
         foreach (Sounds s in sounds)

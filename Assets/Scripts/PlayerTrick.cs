@@ -52,6 +52,8 @@ public class PlayerTrick : MonoBehaviour
     float jResetDelay;
     [SerializeField]
     float jSpeedResetDelay;
+    [HideInInspector]
+    public float jAudioDelay = 4f;
     [SerializeField]
     float jBoost;
     [SerializeField]
@@ -90,6 +92,7 @@ public class PlayerTrick : MonoBehaviour
     bool dodgeNow = false;
     [SerializeField]
     float dodgeDelay;
+    float dodgePunchAudioDelay = .1f;
     public bool dodgedEnemy = false;
     [SerializeField]
     float dodgeWeightSpeed;
@@ -416,7 +419,10 @@ public class PlayerTrick : MonoBehaviour
                         StartCoroutine(pm.CameraShake());
                     }
                     anim.SetBool(hashLand, true);
-                    gm.audioM.PlaySound("land");
+                    if (anim.GetBool(hashFall))
+                        AudioManager.instance.PlaySound("land fail");
+                    else
+                        AudioManager.instance.PlaySound("land");
                     this.CallDelay(ClearTextFeedback, lResetDelay);
                 }
             }
@@ -643,7 +649,11 @@ public class PlayerTrick : MonoBehaviour
         }
 
         if (dodgedEnemy)
+        {
             ToggleCC_ON();
+            yield return new WaitForSeconds(dodgePunchAudioDelay);
+            AudioManager.instance.PlaySound("dodge");
+        }
         else
         {
             if(gm.tutNumber == 4 && !attemptDodge) 
@@ -660,6 +670,9 @@ public class PlayerTrick : MonoBehaviour
             anim.SetBool(hashPunched, true); //start punched anaimation
             yield return new WaitForEndOfFrame();
             anim.SetBool(hashPunched, false); //prevent loop
+
+            yield return new WaitForSeconds(dodgePunchAudioDelay);
+            AudioManager.instance.PlaySound("punch");
         }
 
     }

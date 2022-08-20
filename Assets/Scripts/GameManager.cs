@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     public float timeScale = 100;
     public static float time;
     public int levelnum;
-    [HideInInspector] public AudioManager audioM;
     #region BACKGROUND ROCKS
     public bool rocksInstantiate = false;
     public int rocksAmount;
@@ -191,10 +190,6 @@ public class GameManager : MonoBehaviour
         if (timeScale != 100) Debug.Log("timeScale not set to default (100)");
         Time.timeScale = timeScale / 100;
 
-        audioM = FindObjectOfType<AudioManager>();
-        if (audioM == null)
-            Debug.LogWarning("audio manager not found");
-
         ChangeBrightness();
         levelFinished = false;
         if (mode == 0)
@@ -300,8 +295,10 @@ public class GameManager : MonoBehaviour
             if (player.transform.position.y < portalEnd.position.y + portalTriggerOffsetY)
             {
                 if (progressPerfectTutorial || tutNumber == 4) //completed tutorial perfectly or completed dodge tutorial, load next level
+                {
                     LoadNextLevel();
-
+                    return;
+                }
                 else if (progressTutorialRespawn) //didn't complete tutorial, respawn player
                     player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
@@ -310,6 +307,8 @@ public class GameManager : MonoBehaviour
 
                 else
                     Debug.LogError("didn't register whether player completed level or tutorial or did tutorial perfectly");
+
+                AudioManager.instance.PlaySound("portal");
             }
         }
         #endregion
@@ -476,6 +475,7 @@ public class GameManager : MonoBehaviour
 
     void StartLevel()
     {
+        AudioManager.instance.PlaySound("portal");
         player = Instantiate(playerPref);
         if(mode == 1)
         {

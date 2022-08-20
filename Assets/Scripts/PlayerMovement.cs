@@ -245,13 +245,20 @@ public class PlayerMovement : MonoBehaviour
         velocityZ = 12; //boost player forward
         float time = 1;
         Vector3 move = new Vector3(0, 0, -boost);
+        bool audioPlayed = false;
         while (!pt.isJumping)
             yield return null;
-        while (duration > time && pt.isJumping && cc.enabled)
+        while (time < duration && pt.isJumping && cc.enabled)
         {
             time++;
             cc.Move(move);
             move = new Vector3(0, 0, move.z / boostDecay);
+
+            if(!audioPlayed && time > pt.jAudioDelay)
+            {
+                audioPlayed = true;
+                AudioManager.instance.PlaySound("jump");
+            }
             yield return new WaitForFixedUpdate();
         }
     }
