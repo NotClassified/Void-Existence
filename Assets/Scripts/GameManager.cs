@@ -47,8 +47,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Light worldLight;
     [SerializeField]
-    float delaySpawnEnemy;
-    [SerializeField]
     Transform environment;
     int envChildCountStart; //initail children count off environment
     [SerializeField]
@@ -309,6 +307,8 @@ public class GameManager : MonoBehaviour
                     Debug.LogError("didn't register whether player completed level or tutorial or did tutorial perfectly");
 
                 AudioManager.instance.PlaySound("portal");
+                if (AudioManager.instance.airAudioIsPlaying)
+                    AudioManager.instance.StopSound("air");
             }
         }
         #endregion
@@ -320,7 +320,7 @@ public class GameManager : MonoBehaviour
             else if (mode == 0 && tutSkipAbility)
                 LoadNextLevel();
 
-            //if (mode == 0) ReloadLevel(true); print("developer restart enabled");
+            //if (mode == 0) ReloadLevel(); print("developer restart enabled");
         }
         #endregion
         #region EXTRA ENEMY SPAWN
@@ -419,6 +419,9 @@ public class GameManager : MonoBehaviour
     {
         tutGreyTint.SetActive(true); //toggle on grey tint ui
         Time.timeScale = 0; //freeze tutorial to wait for player to input correct action
+
+        if (AudioManager.instance.airAudioIsPlaying)
+            AudioManager.instance.StopSound("air");
     }
 
     public void IncreaseCounter() //when player follows goal, increase count
@@ -476,6 +479,8 @@ public class GameManager : MonoBehaviour
     void StartLevel()
     {
         AudioManager.instance.PlaySound("portal");
+        if (AudioManager.instance.airAudioIsPlaying)
+            AudioManager.instance.StopSound("air");
         player = Instantiate(playerPref);
         if(mode == 1)
         {

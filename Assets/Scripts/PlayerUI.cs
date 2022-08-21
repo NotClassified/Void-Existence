@@ -127,7 +127,11 @@ public class PlayerUI : MonoBehaviour
         {
             pauseParent.SetActive(!pauseParent.activeSelf); //toggle pause menu
             if (pauseParent.activeSelf)
+            {
                 Time.timeScale = 0; //pause
+                if (AudioManager.instance.airAudioIsPlaying)
+                    AudioManager.instance.StopSound("air");
+            }
             else
                 Time.timeScale = gm.timeScale / 100; //unpause
         }

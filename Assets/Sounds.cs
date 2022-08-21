@@ -10,7 +10,7 @@ public class Sounds
     public AudioSource source;
     public AudioClip clip;
 
-    [Range(.1f, 1f)]
+    [Range(0f, 1f)]
     public float volume;
     [Range(.5f, 1.5f)]
     public float pitch;

@@ -72,6 +72,12 @@ public class PlayerTrick : MonoBehaviour
     float reposDuration;
     [SerializeField]
     Vector3 inAirClimbOffset;
+    [SerializeField]
+    float[] wcAudioDelays;
+    [SerializeField]
+    float[] wcFailAudioDelays;
+    [SerializeField]
+    float[] inAirClimbAudioDelays;
     #endregion
     #region HASHES
     private int hashFall;
@@ -241,6 +247,7 @@ public class PlayerTrick : MonoBehaviour
             pUI.TextFeedback("Perfect Climb!", 3);
             anim.SetBool(hashClimbFail, false);
             anim.SetBool(hashWallClimb, true);
+            StartCoroutine(WallJumpAudio(false));
             return true;
         }
         //check if player is too far from wall
@@ -263,6 +270,51 @@ public class PlayerTrick : MonoBehaviour
             yield return null;
         }
         transform.position = pos.position; //ensure reposition complete
+    }
+
+    IEnumerator WallJumpAudio(bool fail)
+    {
+        if (fail)
+        {
+            for (int index = 0; index < wcFailAudioDelays.Length; index++)
+            {
+                float time = 0;
+                while (time < wcFailAudioDelays[index])
+                {
+                    time += Time.deltaTime;
+                    yield return null;
+                }
+                if(index == 0) //only one audio clip to play
+                    AudioManager.instance.PlaySound("walljumpfail");
+            }
+        }
+
+        for (int index = 0; index < wcAudioDelays.Length; index++)
+        {
+            float time = 0;
+            while (time < wcAudioDelays[index])
+            {
+                time += Time.deltaTime;
+                yield return null;
+            }
+            AudioManager.instance.PlaySound("walljump" + index);
+        }
+    }
+    IEnumerator InAirClimbAudio(bool fail)
+    {
+        for (int index = 0; index < inAirClimbAudioDelays.Length; index++)
+        {
+            float time = 0;
+            while (time < inAirClimbAudioDelays[index])
+            {
+                time += Time.deltaTime;
+                yield return null;
+            }
+            if (fail)
+                AudioManager.instance.PlaySound("inAirClimb" + (index + 2));
+            else
+                AudioManager.instance.PlaySound("inAirClimb" + index);
+        }
     }
     #endregion
 
@@ -357,6 +409,8 @@ public class PlayerTrick : MonoBehaviour
         if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[3], distances[0], groundMask)) 
         {
             isGrounded = false;
+            if (!AudioManager.instance.airAudioIsPlaying && Time.timeScale != 0)
+                AudioManager.instance.PlaySound("air");
 
             //if in landing tutorial, check if ground is within distance to land to light up tutorial input text
             if (gm.tutNumber == 1 && Physics.Raycast(raypos[0], rayDir, out hits[0], distances[5], groundMask))
@@ -419,10 +473,15 @@ public class PlayerTrick : MonoBehaviour
                         StartCoroutine(pm.CameraShake());
                     }
                     anim.SetBool(hashLand, true);
+
                     if (anim.GetBool(hashFall))
                         AudioManager.instance.PlaySound("land fail");
                     else
                         AudioManager.instance.PlaySound("land");
+
+                    if (AudioManager.instance.airAudioIsPlaying)
+                        AudioManager.instance.StopSound("air");
+
                     this.CallDelay(ClearTextFeedback, lResetDelay);
                 }
             }
@@ -446,9 +505,13 @@ public class PlayerTrick : MonoBehaviour
                     if (pUI.GetFeedbackText().Equals("Early Jump"))
                         pUI.TextFeedback("Too Late To Jump", 4);
                     StartCoroutine(pm.CameraShake());
+                    StartCoroutine(InAirClimbAudio(true));
                 }
                 else
+                {
                     pUI.TextFeedback("", -1);
+                    StartCoroutine(InAirClimbAudio(false));
+                }
             }
         }
         else //isgrounded
@@ -456,6 +519,9 @@ public class PlayerTrick : MonoBehaviour
             isGrounded = true; //is also true when landing
             anim.SetBool(hashLand, false); //prevent loop of landing
             attemptedLand = false;
+
+            if (AudioManager.instance.airAudioIsPlaying)
+                AudioManager.instance.StopSound("air");
 
             if (hits[3].transform != null) 
             {
@@ -486,6 +552,7 @@ public class PlayerTrick : MonoBehaviour
 
             if (!attemptedClimb) //check if player didn't do anything or pressed key too late
                 pUI.TextFeedback("Too Late To Climb", 4);
+            StartCoroutine(WallJumpAudio(true));
             StartCoroutine(pm.CameraShake());
             attemptedClimb = true;
 

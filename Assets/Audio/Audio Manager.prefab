@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5683603932690335484}
+  - component: {fileID: 3852236045310240074}
   - component: {fileID: 5683603932690335485}
   m_Layer: 0
   m_Name: Audio Manager
@@ -31,6 +32,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &3852236045310240074
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5683603932690335486}
+  m_Enabled: 1
 --- !u!114 &5683603932690335485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44,10 +53,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
+  - name: themeIntro
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: c5845aba2718f194fa3782ef7cb60249, type: 3}
+    volume: 0.6
+    pitch: 1
+    loop: 0
   - name: theme
     source: {fileID: 0}
-    clip: {fileID: 8300000, guid: c5f813318b16ec8438920ece79aa8407, type: 3}
-    volume: 0.3
+    clip: {fileID: 8300000, guid: cb55959851ec8584889c17ed50ee7b25, type: 3}
+    volume: 0.6
     pitch: 1
     loop: 1
   - name: portal
@@ -68,6 +83,12 @@ MonoBehaviour:
     volume: 0.4
     pitch: 1
     loop: 0
+  - name: air
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: ebbf3939ed3f9af4995dd5cbefed1174, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
   - name: land
     source: {fileID: 0}
     clip: {fileID: 8300000, guid: 45d75975976bbae4b8bedbe331a20097, type: 3}
@@ -83,6 +104,54 @@ MonoBehaviour:
   - name: jump
     source: {fileID: 0}
     clip: {fileID: 8300000, guid: 252013de57a662d41a842f6f5b2d12b5, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: walljump0
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 4720d73fee8e3ff48b9016f187c3fd63, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: walljump1
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 0fa5e26f10f7bca419ebdce83a0cf7a1, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: walljump2
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 2914df25e0c57c64f8be35d3b79a8ef6, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: walljumpfail
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 3cb64f518acc1894b9357877f694d88b, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: inAirClimb0
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 0fa5e26f10f7bca419ebdce83a0cf7a1, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: inAirClimb1
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 2914df25e0c57c64f8be35d3b79a8ef6, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: inAirClimb2
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 3cb64f518acc1894b9357877f694d88b, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: inAirClimb3
+    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 2914df25e0c57c64f8be35d3b79a8ef6, type: 3}
     volume: 0.4
     pitch: 1
     loop: 0

@@ -51,12 +51,12 @@ public class PlayerMovement : MonoBehaviour
     float camShakeMax;
     [SerializeField]
     float camShakeVelocity;
-    [SerializeField]
-    Transform cam1;
-    Vector3 camOffset;
-    Vector3 camTarget;
-    [SerializeField]
-    float camFollowSpeed;
+    //[SerializeField]
+    //Transform cam1;
+    //Vector3 camOffset;
+    //Vector3 camTarget;
+    //[SerializeField]
+    //float camFollowSpeed;
     #endregion
     #region HASHES
     //private int hashSideJump;
@@ -98,8 +98,8 @@ public class PlayerMovement : MonoBehaviour
         hashAirToClimb = Animator.StringToHash("AirToClimb");
         hashIsGrounded = Animator.StringToHash("IsGrounded");
         hashInAir = Animator.StringToHash("InAir");
-        camOffset = cam1.transform.localPosition;
-        bspOffset = bsp.transform.localPosition;
+        //camOffset = cam1.transform.localPosition;
+        //bspOffset = bsp.transform.localPosition;
 
         startMethodCalled = true;
     }
@@ -115,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
             velocityZ = 0;
         if (Input.GetKeyDown(KeyCode.T))
         {
-            float slowTimeSet = 30 / 100f; //enter the desired slower timescale
+            float slowTimeSet = 50 / 100f; //enter the desired slower timescale
             float fastTimeSet = 500 / 100f; //enter the desired faster timescale
             if (Input.GetKey(KeyCode.LeftShift)) {
                 if (Time.timeScale == fastTimeSet)
