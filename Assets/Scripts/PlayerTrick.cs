@@ -409,7 +409,7 @@ public class PlayerTrick : MonoBehaviour
         if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[3], distances[0], groundMask)) 
         {
             isGrounded = false;
-            if (!AudioManager.instance.airAudioIsPlaying && Time.timeScale != 0)
+            if (!AudioManager.instance.airAudioIsPlaying && Time.timeScale != 0 && !pUI.GetFeedbackText().Equals("Level Finished!"))
                 AudioManager.instance.PlaySound("air");
 
             //if in landing tutorial, check if ground is within distance to land to light up tutorial input text

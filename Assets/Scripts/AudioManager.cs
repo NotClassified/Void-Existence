@@ -6,10 +6,14 @@ using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
+    [SerializeField] int musicTracks;
     public Sounds[] sounds;
 
     public static AudioManager instance;
-    public bool airAudioIsPlaying = false;
+    static float volumeSFX = .4f;
+    static float volumeMusic = .6f;
+
+    [HideInInspector] public bool airAudioIsPlaying = false;
 
     private void Awake()
     {
@@ -20,7 +24,6 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         DontDestroyOnLoad(gameObject);
 
         foreach (Sounds s in sounds)
@@ -59,4 +62,20 @@ public class AudioManager : MonoBehaviour
         if (name.Equals("air"))
             airAudioIsPlaying = false;
     }
+
+    public void SetSFXVolume(float value)
+    {
+        volumeSFX = value;
+        for (int i = musicTracks; i < sounds.Length; i++)
+            sounds[i].source.volume = value;
+    }
+    public void SetMusicVolume(float value)
+    {
+        volumeMusic = value;
+        for (int i = 0; i < musicTracks; i++)
+            sounds[i].source.volume = value;
+    }
+
+    public static float GetSFXVolume() => volumeSFX;
+    public static float GetMusicVolume() => volumeMusic;
 }

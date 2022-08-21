@@ -59,6 +59,8 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] Button pauseRestartButton;
     [SerializeField] Slider brightnessSlider;
     [SerializeField] Button brightnessResetButton;
+    [SerializeField] Slider volumeSFXSlider;
+    [SerializeField] Slider volumeMusicSlider;
     #endregion
     #region HASHES
     private int hashFall;
@@ -108,11 +110,15 @@ public class PlayerUI : MonoBehaviour
         pauseParent.SetActive(false);
         fParent.SetActive(false);
         fSpamParent.SetActive(false);
+
         brightnessSlider.value = GameManager.brightness;
         if (GameManager.brightness == 1)
             brightnessResetButton.interactable = false;
         else
             brightnessResetButton.interactable = true;
+
+        volumeSFXSlider.value = AudioManager.GetSFXVolume();
+        volumeMusicSlider.value = AudioManager.GetMusicVolume();
 
         startMethodCalled = true;
     }
@@ -311,5 +317,7 @@ public class PlayerUI : MonoBehaviour
         else
             brightnessResetButton.interactable = true;
     }
+    public void SFXSlider(float value) => AudioManager.instance.SetSFXVolume(value);
+    public void MusicSlider(float value) => AudioManager.instance.SetMusicVolume(value);
     #endregion
 }

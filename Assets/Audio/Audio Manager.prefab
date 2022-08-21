@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ebe7444732ec3540b15ba45e0091a20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicTracks: 2
   sounds:
   - name: themeIntro
     source: {fileID: 0}
@@ -155,3 +156,4 @@ MonoBehaviour:
     volume: 0.4
     pitch: 1
     loop: 0
+  airAudioIsPlaying: 0
