@@ -158,6 +158,7 @@ public class GameManager : MonoBehaviour
     public static float brightness = 1f;
     int enemyLevel;
     int playerLevel;
+    [SerializeField] GameObject audioManagerPrefab;
     [SerializeField] float distancePlayerToEnemyAllowed = 15f;
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
@@ -212,12 +213,13 @@ public class GameManager : MonoBehaviour
     {
         #region DEVELOPER MODE
         //toggle developer mode
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        /*if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
         {
+            //*/Debug.Log("Developer Mode Disabled");/*
             developerMode = !developerMode;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-        if (Input.GetKeyDown(KeyCode.E)) //stop timer
+        }*/
+        if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
         {
             if(timeMeasure == 0)
             {
@@ -236,7 +238,7 @@ public class GameManager : MonoBehaviour
             player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
         }
         //toggle stop player
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) && developerMode)
             eaStopPlayerForActionMarkers = !eaStopPlayerForActionMarkers;
         #endregion
         #region COUNTER SLIDER VALUE SMOOTHING
@@ -478,6 +480,8 @@ public class GameManager : MonoBehaviour
 
     void StartLevel()
     {
+        if (AudioManager.instance == null)
+            Instantiate(audioManagerPrefab);
         AudioManager.instance.PlaySound("portal");
         if (AudioManager.instance.airAudioIsPlaying)
             AudioManager.instance.StopSound("air");
@@ -584,6 +588,8 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator GameOver()
     {
+        player.GetComponent<PlayerUI>().LightUpRestartPrompt(); //let player know that they can restart level
+
         float distancePlayerAndEnemy = 0;
         while (!playerPunchedByEnemy && distancePlayerAndEnemy < distancePlayerToEnemyAllowed)
         {

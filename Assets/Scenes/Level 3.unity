@@ -7819,7 +7819,6 @@ MonoBehaviour:
   spawnDelayForEnemy2: 1.5
   prefWallMarker: {fileID: 0}
   worldLight: {fileID: 1770602261}
-  delaySpawnEnemy: 0.8
   environment: {fileID: 2074599043}
   levels: []
   playerSpawn: {fileID: 437617321}
@@ -7893,6 +7892,8 @@ MonoBehaviour:
   eaCorrectActionColor: {fileID: 2100000, guid: 2e5e629d0096edd41837c44cedc455e6,
     type: 2}
   eaStopPlayerForActionMarkers: 0
+  audioManagerPrefab: {fileID: 5683603932690335486, guid: f2bbc0f27e2a427459ea35eacec41888,
+    type: 3}
   distancePlayerToEnemyAllowed: 15
   finishLevelDelay: 2.45
   mode: 1
@@ -20275,7 +20276,7 @@ PrefabInstance:
     - target: {fileID: 3197567962545995573, guid: 11e672fa58dfb374da8cc9e133ddccd8,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -175
+      value: -182
       objectReference: {fileID: 0}
     - target: {fileID: 3197567962545995573, guid: 11e672fa58dfb374da8cc9e133ddccd8,
         type: 3}
@@ -25373,7 +25374,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1230630634}
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -2, y: 0, z: 17}
+  m_LocalPosition: {x: -2, y: 0, z: 31}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2074599043}

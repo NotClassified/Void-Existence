@@ -53,8 +53,12 @@ public class PlayerUI : MonoBehaviour
     [SerializeField]
     GameObject fSpamParent;
     #endregion
-    #region PAUSE MENU
+    #region RESTARTPROMPT
     [SerializeField] GameObject restartPrompt;
+    [SerializeField] TextMeshProUGUI restartText;
+    [SerializeField] Image restartKey;
+    #endregion
+    #region PAUSE MENU
     [SerializeField] GameObject pauseParent;
     [SerializeField] Button pauseRestartButton;
     [SerializeField] Slider brightnessSlider;
@@ -274,6 +278,16 @@ public class PlayerUI : MonoBehaviour
         sChangingColor = false;
     }
 
+    public void LightUpRestartPrompt()
+    {
+        if (gm.mode == 1)
+        {
+            var tempColor = restartKey.color;
+            tempColor.a = 1;
+            restartKey.color = tempColor;
+            restartText.color = tempColor;
+        }
+    }
 
     #region PAUSE MENU
     public void PauseMenuButtons(string action)

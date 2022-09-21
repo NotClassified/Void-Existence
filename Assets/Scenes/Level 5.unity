@@ -8184,6 +8184,8 @@ MonoBehaviour:
   eaCorrectActionColor: {fileID: 2100000, guid: 2e5e629d0096edd41837c44cedc455e6,
     type: 2}
   eaStopPlayerForActionMarkers: 0
+  audioManagerPrefab: {fileID: 5683603932690335486, guid: f2bbc0f27e2a427459ea35eacec41888,
+    type: 3}
   distancePlayerToEnemyAllowed: 15
   finishLevelDelay: 2.45
   mode: 1

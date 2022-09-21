@@ -1180,6 +1180,8 @@ MonoBehaviour:
   fTime: 0
   fSpamParent: {fileID: 1066204986661196886}
   restartPrompt: {fileID: 215483575577479867}
+  restartText: {fileID: 4263849103563427146}
+  restartKey: {fileID: 392700956280952159}
   pauseParent: {fileID: 4970703317386847374}
   pauseRestartButton: {fileID: 9176163087425150285}
   brightnessSlider: {fileID: 1423565070838215234}

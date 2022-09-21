@@ -108,29 +108,32 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        #region DEVELOPER TOOLS
         if (!pUI.startMethodCalled || !pt.startMethodCalled)
             return;
 
-        if (Input.GetKey(KeyCode.F))
+        if (Input.GetKey(KeyCode.F) && GameManager.developerMode)
             velocityZ = 0;
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T) && GameManager.developerMode)
         {
             float slowTimeSet = 50 / 100f; //enter the desired slower timescale
             float fastTimeSet = 500 / 100f; //enter the desired faster timescale
-            if (Input.GetKey(KeyCode.LeftShift)) {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
                 if (Time.timeScale == fastTimeSet)
                     Time.timeScale = gm.timeScale / 100; //reset time
                 else
                     Time.timeScale = fastTimeSet; //change time
             }
-            else {
+            else
+            {
                 if (Time.timeScale == slowTimeSet)
                     Time.timeScale = gm.timeScale / 100; //reset time
                 else
                     Time.timeScale = slowTimeSet; //change time
             }
-        }
-        //Cursor.lockState = CursorLockMode.Locked;
+        } 
+        #endregion
         #region MOVEMENT INPUT CONTROLS
         wallCLimbInput = Input.GetKeyDown(KeyCode.W);
         jumpInput = Input.GetKeyDown(KeyCode.Space);
