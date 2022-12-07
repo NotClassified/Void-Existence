@@ -32,34 +32,36 @@ public class MMUI : MonoBehaviour
         {
             mmChildren[i] = transform.GetChild(i).gameObject;
         }
-        mmChildren[0].SetActive(false); //back
-        mmChildren[1].SetActive(true);  //MM1
-        mmChildren[2].SetActive(false);  //MM2
+        if (GameProgress.tutorialLastCompleted > 0)
+            MainMenuButtons("play");
+        else
+            MainMenuButtons("back");
 
         UpdateGameProgress();
     }
+
     //call when button is pressed, find which button was pressed through parameter _button
-    public void Button(string _button)
+    public void MainMenuButtons(string _button)
     {
-        if(_button == "back")
+        switch (_button)
         {
-            mmChildren[0].SetActive(false);
-            mmChildren[1].SetActive(true);
-            mmChildren[2].SetActive(false);
-        }
-        else if (_button == "play")
-        {
-            mmChildren[0].SetActive(true);
-            mmChildren[1].SetActive(false);
-            mmChildren[2].SetActive(true);
-        }
-        else if (_button == "quit")
-        {
-            Application.Quit();
-        }
-        else //load tutorial
-        {
-            SceneManager.LoadScene(scenes[int.Parse(_button)]);
+            case "back":
+                mmChildren[0].SetActive(false); //back
+                mmChildren[1].SetActive(true); //main menu screen
+                mmChildren[2].SetActive(false); //play menu screen
+                break;
+            case "play":
+                mmChildren[0].SetActive(true);
+                mmChildren[1].SetActive(false);
+                mmChildren[2].SetActive(true);
+                break;
+            case "quit":
+                Application.Quit();
+                break;
+            default: //load tutorial or level
+                SceneManager.LoadScene(scenes[int.Parse(_button)]);
+                break;
+
         }
     }
 

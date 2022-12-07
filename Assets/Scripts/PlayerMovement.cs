@@ -76,7 +76,10 @@ public class PlayerMovement : MonoBehaviour
     GameObject bspOrtho;
     Vector3 bspOffset;
     #endregion
-    public bool activeInputSystem = false;
+    #region ANDROID
+    private bool androidBuild = true;
+    private Touch touch;
+    #endregion
 
     public bool startMethodCalled = false;
     void Start()
@@ -100,6 +103,9 @@ public class PlayerMovement : MonoBehaviour
         hashInAir = Animator.StringToHash("InAir");
         //camOffset = cam1.transform.localPosition;
         //bspOffset = bsp.transform.localPosition;
+
+        if (androidBuild)
+            Debug.Log("Android Build");
 
         startMethodCalled = true;
     }
@@ -135,10 +141,32 @@ public class PlayerMovement : MonoBehaviour
         } 
         #endregion
         #region MOVEMENT INPUT CONTROLS
-        wallCLimbInput = Input.GetKeyDown(KeyCode.W);
-        jumpInput = Input.GetKeyDown(KeyCode.Space);
-        landInput = Input.GetKeyDown(KeyCode.S);
-        dodgeInput = Input.GetKeyDown(KeyCode.D);
+        if (androidBuild)
+        {
+            if (Input.touchCount > 0)
+            {
+                wallCLimbInput = false;
+                jumpInput = false;
+                landInput = false;
+                dodgeInput = false;
+
+                touch = Input.GetTouch(0);
+                if (touch.phase == TouchPhase.Began)
+                {
+                    wallCLimbInput = true;
+                    jumpInput = true;
+                    landInput = true;
+                    dodgeInput = true;
+                }
+            }
+        }
+        else //PC
+        {
+            wallCLimbInput = Input.GetKeyDown(KeyCode.W);
+            jumpInput = Input.GetKeyDown(KeyCode.Space);
+            landInput = Input.GetKeyDown(KeyCode.S);
+            dodgeInput = Input.GetKeyDown(KeyCode.D);
+        }
         #endregion
         #region FORWARD MOVEMENT
         if (velocityZ < 0) //prevent forward velocity from being negative
@@ -176,7 +204,8 @@ public class PlayerMovement : MonoBehaviour
             pUI.TextFeedback("", -1); //empty the climb feedback text
             pt.ToggleCC_ON(); //enable collider
         }
-        if (wallCLimbInput && !pt.isClimbing && velocityZ > 5.9f && (gm.levelnum >= 2 || gm.tutNumber == 2)) //checking input for wall climb
+        //checking input for wall climb
+        if (wallCLimbInput && !pt.isClimbing && velocityZ > 5.9f && (gm.levelnum >= 2 || gm.tutNumber == 2)) 
             pt.WallClimbCheck();
         #endregion
         #region FALLING
