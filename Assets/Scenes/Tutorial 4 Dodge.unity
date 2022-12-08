@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1208113, g: 0.2647708, b: 0.22446214, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0.99999905, b: 0.99999905, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6181,6 +6181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeScale: 100
   levelnum: 0
+  rocksInstantiate: 0
   rocksAmount: 0
   rockParent: {fileID: 1762831280}
   rockPref: {fileID: 3494898191918458356, guid: 2a6be0317a0aef449af75d93b1ec7a5d,
@@ -6190,6 +6191,7 @@ MonoBehaviour:
   player: {fileID: 0}
   enemy1: {fileID: 0}
   enemy2: {fileID: 0}
+  enemyExtra: {fileID: 0}
   initialSpeedPlayer: 0
   initialSpeedEnemy: 0
   playerPunchedByEnemy: 0
@@ -6202,11 +6204,12 @@ MonoBehaviour:
   spawnDelayForEnemy2: 0
   prefWallMarker: {fileID: 0}
   worldLight: {fileID: 863131628}
-  delaySpawnEnemy: 0.8
   environment: {fileID: 2074599043}
   levels: []
   playerSpawn: {fileID: 437617321}
   enemySpawn: {fileID: 1625135839}
+  extraEnemySpawns: []
+  extraEnemySpawnTrigOffset: 0
   endPointPortal: {fileID: 1882497212}
   gCam: {fileID: 0}
   countGoal: 5
@@ -6261,16 +6264,15 @@ MonoBehaviour:
   - Land
   - Climb
   - Jump
-  progressCanvas: {fileID: 0}
-  progressBar: {fileID: 0}
-  progressPlayer: {fileID: 0}
-  progressEnemy: {fileID: 0}
   portalStart: {fileID: 1044445801}
   portalEnd: {fileID: 1654169789}
   portalTriggerOffsetZ: 10
   eaMarker: {fileID: 1056155761849556616, guid: ee5ad3f87c7fbaf46a035750f5d53907,
     type: 3}
   eaParent: {fileID: 0}
+  eaCorrectActionColor: {fileID: 0}
+  eaStopPlayerForActionMarkers: 0
+  audioManagerPrefab: {fileID: 0}
   distancePlayerToEnemyAllowed: 15
   finishLevelDelay: 2.45
   mode: 0
@@ -12689,8 +12691,8 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 0.35
-  m_ReferenceResolution: {x: 2000, y: 600}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 1080, y: 1080}
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96

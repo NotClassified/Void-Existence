@@ -4,9 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - TutorialC
   - GoalC
   - Level2
+  - ProgressBar
+  - TutorialCanvas
   layers:
   - Default
   - TransparentFX

@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 bspOffset;
     #endregion
     #region ANDROID
-    private bool androidBuild = true;
+    private bool androidBuild = false;
     private Touch touch;
     #endregion
 

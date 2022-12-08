@@ -1068,7 +1068,6 @@ MonoBehaviour:
   camShakeVelocity: 8
   bsp: {fileID: 6720777337227344370}
   bspOrtho: {fileID: 5648443116222448298}
-  activeInputSystem: 0
   startMethodCalled: 0
 --- !u!114 &6882050090756491216
 MonoBehaviour:
@@ -2866,8 +2865,8 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 2000, y: 600}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 1080, y: 1080}
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96

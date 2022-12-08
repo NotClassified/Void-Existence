@@ -51,9 +51,9 @@ public class MMUI : MonoBehaviour
                 mmChildren[2].SetActive(false); //play menu screen
                 break;
             case "play":
-                mmChildren[0].SetActive(true);
-                mmChildren[1].SetActive(false);
-                mmChildren[2].SetActive(true);
+                mmChildren[0].SetActive(true); //back
+                mmChildren[1].SetActive(false); //main menu screen
+                mmChildren[2].SetActive(true); //play menu screen
                 break;
             case "quit":
                 Application.Quit();

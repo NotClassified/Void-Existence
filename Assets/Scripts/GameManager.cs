@@ -128,10 +128,9 @@ public class GameManager : MonoBehaviour
     string[] tutMessages;
     #endregion
     #region PROGRESS
-    [SerializeField] GameObject progressCanvas;
-    [SerializeField] GameObject progressBar;
-    [SerializeField] Slider progressPlayer;
-    [SerializeField] Slider progressEnemy;
+    private GameObject progressCanvas;
+    private Slider progressPlayer;
+    private Slider progressEnemy;
     [SerializeField] Transform portalStart;
     [SerializeField] Transform portalEnd;
     [SerializeField] float portalTriggerOffsetZ;
@@ -183,7 +182,16 @@ public class GameManager : MonoBehaviour
                 float sizeOfRock = Random.Range(.1f, 1.5f);
                 rock.transform.localScale = new Vector3(sizeOfRock, sizeOfRock, sizeOfRock);
             }
-        } 
+        }
+        #endregion
+
+        #region GET PROGRESS BAR REFERENCES
+        progressCanvas = GameObject.FindGameObjectWithTag("ProgressBar");
+        if (progressCanvas != null)
+        {
+            progressPlayer = progressCanvas.transform.GetChild(0).GetChild(0).GetComponent<Slider>();
+            progressEnemy = progressCanvas.transform.GetChild(0).GetChild(1).GetComponent<Slider>();
+        }
         #endregion
 
         if (timeScale != 100) Debug.Log("timeScale not set to default (100)");
@@ -213,12 +221,12 @@ public class GameManager : MonoBehaviour
     {
         #region DEVELOPER MODE
         //toggle developer mode
-        /*if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
         {
             //*/Debug.Log("Developer Mode Disabled");/*
             developerMode = !developerMode;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }*/
+        }
         if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
         {
             if(timeMeasure == 0)
