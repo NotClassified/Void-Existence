@@ -98,6 +98,17 @@ public class PlayerUI : MonoBehaviour
         else
             devUI.SetActive(false);
 
+        if (pm.androidBuild)
+        {
+            restartButton.gameObject.SetActive(true);
+            restartKey.gameObject.SetActive(false);
+        }
+        else
+        {
+            restartButton.gameObject.SetActive(false);
+            restartKey.gameObject.SetActive(true);
+        }
+
         hashFall = Animator.StringToHash("Fall");
         hashWallClimb = Animator.StringToHash("Climb");
         hashClimbFail = Animator.StringToHash("Climb Fail");
@@ -291,10 +302,20 @@ public class PlayerUI : MonoBehaviour
     {
         if (gm.mode == 1)
         {
-            var tempColor = restartKey.color;
-            tempColor.a = 1;
-            restartKey.color = tempColor;
-            restartText.color = tempColor;
+            if (pm.androidBuild)
+            {
+                var tempColor = restartText.color;
+                tempColor.a = 1;
+                restartButton.color = tempColor;
+                restartText.color = tempColor;
+            }
+            else
+            {
+                var tempColor = restartKey.color;
+                tempColor.a = 1;
+                restartKey.color = tempColor;
+                restartText.color = tempColor;
+            }
         }
     }
 

@@ -1189,7 +1189,7 @@ MonoBehaviour:
   brightnessResetButton: {fileID: 6973695561684674998}
   volumeSFXSlider: {fileID: 5200758071410542621}
   volumeMusicSlider: {fileID: 179845850765016705}
-  restartButton: {fileID: 0}
+  restartButton: {fileID: 5488771276667793669}
   pauseButton: {fileID: 0}
   devUI: {fileID: 896744484070285163}
   landAlwaysImage: {fileID: 1884762569867225708}
@@ -1564,7 +1564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1254902, g: 0.41568628, b: 0.27450982, a: 1}
+  m_Color: {r: 0.1254902, g: 0.41568628, b: 0.27450982, a: 0.39607844}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2877,7 +2877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.06803132, g: 0.24528301, b: 0.07386199, a: 1}
+  m_Color: {r: 0.06803132, g: 0.24528301, b: 0.07386199, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
