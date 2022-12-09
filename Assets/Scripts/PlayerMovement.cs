@@ -77,8 +77,11 @@ public class PlayerMovement : MonoBehaviour
     Vector3 bspOffset;
     #endregion
     #region ANDROID
-    public bool androidBuild = true;
+    public bool androidBuild;
     private Touch touch;
+    private Vector2 touchStartPos, touchEndPos;
+    private bool touchMoving;
+    [SerializeField] float minSwipeDistance;
     #endregion
 
     public bool startMethodCalled = false;
@@ -143,20 +146,42 @@ public class PlayerMovement : MonoBehaviour
         #region MOVEMENT INPUT CONTROLS
         if (androidBuild)
         {
+            //prevent these booleans from being true for more than one frame at a time
+            wallCLimbInput = false;
+            jumpInput = false;
+            landInput = false;
+            dodgeInput = false;
+
             if (Input.touchCount > 0)
             {
-                wallCLimbInput = false;
-                jumpInput = false;
-                landInput = false;
-                dodgeInput = false;
-
                 touch = Input.GetTouch(0);
                 if (touch.phase == TouchPhase.Began)
                 {
-                    wallCLimbInput = true;
-                    jumpInput = true;
-                    landInput = true;
-                    dodgeInput = true;
+                    touchStartPos = touch.position;
+                }
+                else if (touch.phase == TouchPhase.Moved && !touchMoving 
+                    && Mathf.Abs(touch.position.y - touchStartPos.y) > minSwipeDistance) //swipe has started
+                {
+                    touchMoving = true; //prevent thecode below from being executed more than once at a time
+
+                    touchEndPos = touch.position;
+                    float y = touchEndPos.y - touchStartPos.y; //distances of swipe on the y axis
+                    
+                    //get direction of swipe
+                    if (y > 0) //user has swiped up
+                    {
+                        wallCLimbInput = true;
+                        jumpInput = true;
+                    }
+                    else //user has swiped down
+                        dodgeInput = true;
+                }
+                else if (touch.phase == TouchPhase.Ended)
+                {
+                    if (touchMoving) //user has swiped
+                        touchMoving = false;
+                    else //user has tapped
+                        landInput = true;
                 }
             }
         }

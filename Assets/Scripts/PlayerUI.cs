@@ -53,10 +53,11 @@ public class PlayerUI : MonoBehaviour
     [SerializeField]
     GameObject fSpamParent;
     #endregion
-    #region RESTARTPROMPT
+    #region RESTART PROMPT
     [SerializeField] GameObject restartPrompt;
     [SerializeField] TextMeshProUGUI restartText;
     [SerializeField] Image restartKey;
+    [SerializeField] Image restartButtonAndroid;
     #endregion
     #region PAUSE MENU
     [SerializeField] GameObject pauseParent;
@@ -65,6 +66,7 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] Button brightnessResetButton;
     [SerializeField] Slider volumeSFXSlider;
     [SerializeField] Slider volumeMusicSlider;
+    [SerializeField] GameObject pauseButtonAndroid;
     #endregion
     #region HASHES
     private int hashFall;
@@ -72,10 +74,6 @@ public class PlayerUI : MonoBehaviour
     private int hashClimbFail;
     private int hashClimbSpeed;
     private int hashLand;
-    #endregion
-    #region ANDROID UI
-    [SerializeField] Image restartButton;
-    [SerializeField] Image pauseButton;
     #endregion
     #region DEVELOPER UI
     public GameObject devUI;
@@ -100,13 +98,15 @@ public class PlayerUI : MonoBehaviour
 
         if (pm.androidBuild)
         {
-            restartButton.gameObject.SetActive(true);
+            restartButtonAndroid.gameObject.SetActive(true);
             restartKey.gameObject.SetActive(false);
+            pauseButtonAndroid.SetActive(true);
         }
         else
         {
-            restartButton.gameObject.SetActive(false);
+            restartButtonAndroid.gameObject.SetActive(false);
             restartKey.gameObject.SetActive(true);
+            pauseButtonAndroid.SetActive(false);
         }
 
         hashFall = Animator.StringToHash("Fall");
@@ -203,21 +203,7 @@ public class PlayerUI : MonoBehaviour
         }
         #endregion
     }
-
-    public void PauseMenu()
-    {
-        pauseParent.SetActive(!pauseParent.activeSelf); //toggle pause menu
-        if (pauseParent.activeSelf)
-        {
-            Time.timeScale = 0; //pause
-            if (AudioManager.instance.airAudioIsPlaying)
-                AudioManager.instance.StopSound("air");
-        }
-        else
-            Time.timeScale = gm.timeScale / 100; //unpause
-    }
     public void RestartButton() => gm.ReloadLevel();
-    public void SkipButton() => gm.LoadNextLevel();
 
     public void ToggleLandAlways()
     {
@@ -306,7 +292,7 @@ public class PlayerUI : MonoBehaviour
             {
                 var tempColor = restartText.color;
                 tempColor.a = 1;
-                restartButton.color = tempColor;
+                restartButtonAndroid.color = tempColor;
                 restartText.color = tempColor;
             }
             else
@@ -320,32 +306,46 @@ public class PlayerUI : MonoBehaviour
     }
 
     #region PAUSE MENU
+    public void PauseMenu()
+    {
+        pauseParent.SetActive(!pauseParent.activeSelf); //toggle pause menu
+
+        //ANDROID - show pause button if pause menu isn't showing 
+        if (pm.androidBuild)
+            pauseButtonAndroid.SetActive(!pauseParent.activeSelf);
+
+        if (pauseParent.activeSelf)
+        {
+            Time.timeScale = 0; //pause
+            if (AudioManager.instance.airAudioIsPlaying)
+                AudioManager.instance.StopSound("air");
+        }
+        else
+            Time.timeScale = gm.timeScale / 100; //unpause
+    }
     public void PauseMenuButtons(string action)
     {
-        if (action.Equals("continue"))
+        switch (action)
         {
-            pauseParent.SetActive(!pauseParent.activeSelf); //toggle off pause menu
-            Time.timeScale = gm.timeScale / 100; //unpause
-        }
-        else if (action.Equals("restart"))
-        {
-            gm.ReloadLevel();
-        }
-        else if (action.Equals("hud"))
-        {
-            gm.ShowHUD(); //toggle HUD
+            case "continue":
+                PauseMenu(); //unpause
+                break;
 
-            if (gm.mode == 1) //if in level, toggle restart prompt
-                restartPrompt.SetActive(GameManager.showHUD);
-        }
-        else if (action.Equals("quit"))
-        {
-            gm.ResetGame();
-        }
-        //else if (action.Equals(""))
-        //{
+            case "restart":
+                gm.ReloadLevel();
+                break;
 
-        //}
+            case "hud":
+                gm.ShowHUD(); //toggle HUD
+
+                if (gm.mode == 1) //if in level, toggle restart prompt
+                    restartPrompt.SetActive(GameManager.showHUD);
+                break;
+
+            case "quit":
+                gm.ResetGame();
+                break;
+        }
     } 
 
     public void BrightnessSlider(float value)

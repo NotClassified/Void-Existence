@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
     string[] cHeaders;
     #endregion
     #region TUTORAIL //tut-Tutorial
-    public int tutNumber;
+    public int tutNumber; //1 = land, 2 = walljump, 3 = jump, 4 = dodge
     [SerializeField]
     GameObject tutCanvas;
     [SerializeField]
@@ -121,6 +121,8 @@ public class GameManager : MonoBehaviour
     GameObject tutGreyTint;
     [SerializeField]
     GameObject tutSkip;
+    [SerializeField] 
+    GameObject tutskipButtonAndroid;
     bool tutSkipAbility;
     [SerializeField]
     Sprite[] keys;
@@ -185,14 +187,13 @@ public class GameManager : MonoBehaviour
         }
         #endregion
 
-        #region GET PROGRESS BAR REFERENCES
+        //get progress bar references
         progressCanvas = GameObject.FindGameObjectWithTag("ProgressBar");
         if (progressCanvas != null)
         {
             progressPlayer = progressCanvas.transform.GetChild(0).GetChild(0).GetComponent<Slider>();
             progressEnemy = progressCanvas.transform.GetChild(0).GetChild(1).GetComponent<Slider>();
         }
-        #endregion
 
         if (timeScale != 100) Debug.Log("timeScale not set to default (100)");
         Time.timeScale = timeScale / 100;
@@ -220,9 +221,31 @@ public class GameManager : MonoBehaviour
         //replace the prompts for android build
         if(player.GetComponent<PlayerMovement>().androidBuild && tutKey != null)
         {
-            tutKey.sprite = Resources.Load<Sprite>("finger tap");
-            if(tutExtraKey != null)
-                tutExtraKey.sprite = Resources.Load<Sprite>("finger tap");
+            switch (tutNumber)
+            {
+                case 1: //landing tutorial
+                    tutKey.sprite = Resources.Load<Sprite>("finger tap");
+                    break;
+                case 2: //wall jumping tutorial
+                    tutKey.sprite = Resources.Load<Sprite>("finger swipe up");
+                    break;
+                case 3: //jumping tutorial
+                    //resize image to square ratio and move closer to text
+                    tutKey.transform.localPosition = new Vector2(-50f, tutKey.transform.localPosition.y);
+                    tutKey.transform.localScale = new Vector2(tutKey.transform.localScale.x / 2, tutKey.transform.localScale.y);
+                    tutKey.sprite = Resources.Load<Sprite>("finger swipe up");
+                    tutExtraKey.sprite = Resources.Load<Sprite>("finger tap");
+                    break;
+                case 4: //dodge tutorial
+                    tutKey.sprite = Resources.Load<Sprite>("finger swipe down");
+                    break;
+            }
+            //switch out pc prompt with button for skipping tutorial
+            if (tutSkip.activeSelf)
+            {
+                tutskipButtonAndroid.SetActive(true);
+                tutSkip.transform.GetChild(0).gameObject.SetActive(false);
+            }
         }
     }
     private void Update()

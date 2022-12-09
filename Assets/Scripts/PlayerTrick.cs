@@ -506,7 +506,7 @@ public class PlayerTrick : MonoBehaviour
 
                 if (!pUI.GetFeedbackText().Equals("Perfect Jump!"))
                 {
-                    if (pUI.GetFeedbackText().Equals("Early Jump"))
+                    if (!pUI.GetFeedbackText().Equals("Early Jump"))
                         pUI.TextFeedback("Too Late To Jump", 4);
                     StartCoroutine(pm.CameraShake());
                     StartCoroutine(InAirClimbAudio(true));
