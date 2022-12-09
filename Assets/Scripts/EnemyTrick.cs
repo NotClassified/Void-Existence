@@ -343,6 +343,7 @@ public class EnemyTrick : MonoBehaviour
         if (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
         {
             EnemyStopRunning(); //stop enemy to wait for player
+            rigPunch.enabled = true; //for the aim constraint
 
             //yield until player passes enemy while in a default animation
             while (transform.position.z < player_.transform.position.z  || !player_.GetComponent<PlayerTrick>().defaultMove)
@@ -385,7 +386,6 @@ public class EnemyTrick : MonoBehaviour
             _pt.extraEnemyNumber = 4;
         }
 
-        rigPunch.enabled = true; //for the aim constraint
         anim.SetBool(hashPunch, true); //punch
         yield return new WaitForEndOfFrame();
         anim.SetBool(hashPunch, false); //prevent loop of punch animation

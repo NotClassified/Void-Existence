@@ -368,7 +368,9 @@ public class PlayerTrick : MonoBehaviour
         {
             jAlways = !jAlways;
             pUI.ToggleJumpAlways();
-        } 
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+            anim.Play("Exit", 0);
         #endregion
 
         #region ANIMATION VARS
@@ -470,12 +472,14 @@ public class PlayerTrick : MonoBehaviour
                     {
                         anim.SetBool(hashFall, !landAlways); //land fail unless set to always land
                         pUI.TextFeedback("Late Landing", 4);
-                        StartCoroutine(pm.CameraShake());
                     }
                     anim.SetBool(hashLand, true);
 
                     if (anim.GetBool(hashFall))
+                    {
                         AudioManager.instance.PlaySound("land fail");
+                        StartCoroutine(pm.CameraShake());
+                    }
                     else
                         AudioManager.instance.PlaySound("land");
 
@@ -545,11 +549,9 @@ public class PlayerTrick : MonoBehaviour
 
         #region WALL CLIMB FAIL & AUTO WALL CLIMB & AUTO JUMP
         //check if player is too close to wall
-        if (defaultMove && !isClimbingFail && !anim.GetBool(hashAirToClimb) &&
+        if (defaultMove && !anim.GetBool(hashAirToClimb) &&
             Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[8], wallMask))
         {
-            isClimbingFail = true;
-
             if (!attemptedClimb) //check if player didn't do anything or pressed key too late
                 pUI.TextFeedback("Too Late To Climb", 4);
             StartCoroutine(WallJumpAudio(true));
@@ -563,7 +565,7 @@ public class PlayerTrick : MonoBehaviour
         if (defaultMove && wcAlways && 
             Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
-            anim.SetBool(hashWallClimb, WallClimbCheck());
+            WallClimbCheck();
         }
         //measure the input gap for the wall climb
         //if (defaultMove && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
@@ -807,33 +809,32 @@ public class PlayerTrick : MonoBehaviour
         //yield return new WaitForSeconds(.1f);
         //print(transform.position.z);
         //print("WCF TIME:" + (Time.time - GameManager.time));
-        yield return null;
 
-        if (!pUI.GetFeedbackText().Equals("Perfect Climb!"))
+        float wallClimbSpeed = 1.3f;
+        anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
+
+        string num = hits[2].transform.name.Substring(4); //get the correct wall number
+        transform.position = hits[2].transform.GetChild(0).position; //reposition player for wall climb animation
+        wcClipEnd = Time.time + 4f / wallClimbSpeed; //find when animation clip will end
+
+        this.CallDelay(ToggleCC_OFF, 1f); //disable collider
+
+        anim.SetBool(hashClimbFail, true); //player failed wall climb
+        anim.SetBool(hashWallClimb, true);
+        if (pm.velocityZ < 6f) //check if player is below speed limit for climbing
+            pUI.TextFeedback("Not Enough Speed To Climb", 4);
+
+        yield return new WaitForSeconds(1f);
+        if (!AnimCheck(0, "WC Fail"))
         {
-            float wallClimbSpeed = 1.3f;
-            anim.SetFloat(hashClimbSpeed, wallClimbSpeed); //set speed of wall climb based on forward velocity
-
-            string num = hits[2].transform.name.Substring(4); //get the correct wall number
-            transform.position = hits[2].transform.GetChild(0).position; //reposition player for wall climb animation
-            wcClipEnd = Time.time + 4f / wallClimbSpeed; //find when animation clip will end
-
-            this.CallDelay(ToggleCC_OFF, 1f); //disable collider
-
-            anim.SetBool(hashClimbFail, true); //player failed wall climb
-            anim.SetBool(hashWallClimb, true);
-            if (pm.velocityZ < 6f) //check if player is below speed limit for climbing
-                pUI.TextFeedback("Not Enough Speed To Climb", 4);
+            print("BUUUUUG");
+            wcClipEnd = Time.time + 1.5f / wallClimbSpeed;
         }
-        else
-            print("BUG FIXED");
-
-        isClimbingFail = false;
     }
 
     public void StopWallClimbFailRoutine()
     {
-        if(wallClimbFailRoutine != null)
+        if (wallClimbFailRoutine != null)
             StopCoroutine(wallClimbFailRoutine);
     }
     #endregion

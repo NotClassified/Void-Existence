@@ -216,6 +216,14 @@ public class GameManager : MonoBehaviour
         }
         else
             StartLevel();
+
+        //replace the prompts for android build
+        if(player.GetComponent<PlayerMovement>().androidBuild && tutKey != null)
+        {
+            tutKey.sprite = Resources.Load<Sprite>("finger tap");
+            if(tutExtraKey != null)
+                tutExtraKey.sprite = Resources.Load<Sprite>("finger tap");
+        }
     }
     private void Update()
     {
@@ -458,7 +466,7 @@ public class GameManager : MonoBehaviour
 
     public int GetCount() => count;
 
-    void LoadNextLevel()
+    public void LoadNextLevel()
     {
         if (!loadingScene)
         {

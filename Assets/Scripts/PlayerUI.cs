@@ -73,6 +73,10 @@ public class PlayerUI : MonoBehaviour
     private int hashClimbSpeed;
     private int hashLand;
     #endregion
+    #region ANDROID UI
+    [SerializeField] Image restartButton;
+    [SerializeField] Image pauseButton;
+    #endregion
     #region DEVELOPER UI
     public GameObject devUI;
     public Image landAlwaysImage;
@@ -134,17 +138,7 @@ public class PlayerUI : MonoBehaviour
 
         #region PAUSE MENU
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            pauseParent.SetActive(!pauseParent.activeSelf); //toggle pause menu
-            if (pauseParent.activeSelf)
-            {
-                Time.timeScale = 0; //pause
-                if (AudioManager.instance.airAudioIsPlaying)
-                    AudioManager.instance.StopSound("air");
-            }
-            else
-                Time.timeScale = gm.timeScale / 100; //unpause
-        }
+            PauseMenu();
         #endregion
         #region FORWARD SPEED SLIDER VALUE
         if (pm.velocityZ < 0) //Player's foward speed = target value
@@ -198,6 +192,21 @@ public class PlayerUI : MonoBehaviour
         }
         #endregion
     }
+
+    public void PauseMenu()
+    {
+        pauseParent.SetActive(!pauseParent.activeSelf); //toggle pause menu
+        if (pauseParent.activeSelf)
+        {
+            Time.timeScale = 0; //pause
+            if (AudioManager.instance.airAudioIsPlaying)
+                AudioManager.instance.StopSound("air");
+        }
+        else
+            Time.timeScale = gm.timeScale / 100; //unpause
+    }
+    public void RestartButton() => gm.ReloadLevel();
+    public void SkipButton() => gm.LoadNextLevel();
 
     public void ToggleLandAlways()
     {
