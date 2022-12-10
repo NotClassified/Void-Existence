@@ -95,6 +95,9 @@ public class MMUI : MonoBehaviour
         if (!(GameProgress.levelLastCompleted == 0 && i < 0))
         {
             GameProgress.levelLastCompleted += i;
+            GameProgress.tutorialLastCompleted += i;
+            if (GameProgress.tutorialLastCompleted < 0)
+                GameProgress.tutorialLastCompleted = 0;
             UpdateGameProgress();
         }
     }

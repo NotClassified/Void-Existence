@@ -16,10 +16,10 @@ public class GameProgress
         tutorialLastCompleted = tutorialLastCompleted == tutorial - 1 ? tutorial : tutorialLastCompleted;
     }
 
-    //only set and return true if the time record is higher than best
+    //only set and return true if the time record is faster than best record
     public static bool SetTimeRecord(int level, float time)
     {
-        if (levelTimeRecords[level] < time)
+        if (levelTimeRecords[level] > time || levelTimeRecords[level] == 0)
         {
             levelTimeRecords[level] = time;
             return true;

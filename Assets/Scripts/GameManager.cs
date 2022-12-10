@@ -541,7 +541,10 @@ public class GameManager : MonoBehaviour
             timerMilisecondText.text = TimeObject.Miliseconds2Digit(time);
             yield return null;
         }
-        GameProgress.SetTimeRecord(levelnum, time);
+        if (GameProgress.SetTimeRecord(levelnum, time))
+        {
+            timerCanvas.GetChild(2).gameObject.SetActive(true);
+        }
     }
     void StartLevel()
     {
