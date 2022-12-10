@@ -67,19 +67,26 @@ public class MMUI : MonoBehaviour
 
     void UpdateGameProgress()
     {
-        for (int i = 0; i < levelButtons.Length; i++) //lock all levels
+        for (int i = 0; i < levelButtons.Length; i++) 
         {
+            //lock all levels
             levelButtons[i].GetComponent<Button>().interactable = false;
             levelButtons[i].transform.Find("#").gameObject.SetActive(false);
             levelButtons[i].transform.Find("Lock").gameObject.SetActive(true);
         }
-        for (int i = 0; i < levelButtons.Length && i < GameProgress.levelLastCompleted + 1; i++) //unlock levels completed plus 1 extra level
+        for (int i = 0; i < levelButtons.Length && i < GameProgress.levelLastCompleted + 1; i++)
         {
+            //unlock levels completed plus 1 extra level
             levelButtons[i].GetComponent<Button>().interactable = true;
             levelButtons[i].transform.Find("#").gameObject.SetActive(true);
             levelButtons[i].transform.Find("Lock").gameObject.SetActive(false);
+
+            //show best times for each level
+            string timeFormatted = TimeObject.ConvertTimeMINSECMILI(GameProgress.levelTimeRecords[i + 1]);
+            levelButtons[i].transform.Find("Time").GetComponent<TextMeshProUGUI>().text = timeFormatted;
         }
         gpcText.text = GameProgress.levelLastCompleted.ToString(); //set progression number
+
     }
 
     #region DEVELOPER UI

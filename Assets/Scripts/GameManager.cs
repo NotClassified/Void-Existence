@@ -144,6 +144,12 @@ public class GameManager : MonoBehaviour
     float progressDistance;
     Vector3 progressStartPosition;
     #endregion
+    #region TIMER
+    GameObject timerCanvasPrefab;
+    Transform timerCanvas;
+    TextMeshProUGUI timerText;
+    TextMeshProUGUI timerMilisecondText;
+    #endregion
     #region ENEMY ACTION MARKERS //ea-enemy action
     [SerializeField]
     GameObject eaMarker;
@@ -213,6 +219,10 @@ public class GameManager : MonoBehaviour
             progressStartPosition = portalStart.position;
 
             progressPerfectTutorial = false;
+
+            //make and start timer
+            StartCoroutine(StartTimer());
+
             StartLevel();
         }
         else
@@ -516,7 +526,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    IEnumerator StartTimer()
+    {
+        timerCanvasPrefab = Resources.Load<GameObject>("Canvas_Timer");
+        timerCanvas = Instantiate(timerCanvasPrefab).transform;
+        timerText = timerCanvas.GetChild(0).GetComponent<TextMeshProUGUI>();
+        timerMilisecondText = timerCanvas.GetChild(1).GetComponent<TextMeshProUGUI>();
 
+        float time = 0;
+        while (!levelFinished) //stop timer when player finishes level
+        {
+            time += Time.deltaTime;
+            timerText.text = TimeObject.ConvertTimeMINSEC(time) + ":";
+            timerMilisecondText.text = TimeObject.Miliseconds2Digit(time);
+            yield return null;
+        }
+        GameProgress.SetTimeRecord(levelnum, time);
+    }
     void StartLevel()
     {
         if (AudioManager.instance == null)
