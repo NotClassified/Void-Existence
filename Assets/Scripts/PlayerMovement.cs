@@ -174,14 +174,14 @@ public class PlayerMovement : MonoBehaviour
                         jumpInput = true;
                     }
                     else //user has swiped down
+                    {
                         dodgeInput = true;
-                }
-                else if (touch.phase == TouchPhase.Ended)
-                {
-                    if (touchMoving) //user has swiped
-                        touchMoving = false;
-                    else //user has tapped
                         landInput = true;
+                    }
+                }
+                else if (touch.phase == TouchPhase.Ended && touchMoving)
+                {
+                    touchMoving = false; //user has swiped
                 }
             }
         }

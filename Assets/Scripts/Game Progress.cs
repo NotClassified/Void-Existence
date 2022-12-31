@@ -1,9 +1,34 @@
+using UnityEngine;
 
 public class GameProgress
 {
     public static int levelLastCompleted = 0; //default is 0
     public static int tutorialLastCompleted = 0; //default is 0
     public static float[] levelTimeRecords = new float[10]; //index 1 = level 1
+
+
+    public static void SaveGameProgress()
+    {
+        SaveManager.SaveData();
+    }
+    public static void LoadGameProgress()
+    {
+        SavedData progressData = SaveManager.LoadData();
+        if (progressData != null)
+        {
+            levelLastCompleted = progressData.levelCompleted;
+            tutorialLastCompleted = progressData.tutorialCompleted;
+            levelTimeRecords = progressData.levelTimeRecords;
+        }
+    }
+    public static void ResetGameProgress()
+    {
+        levelLastCompleted = 0; 
+        tutorialLastCompleted = 0;
+        levelTimeRecords = new float[10];
+        SaveGameProgress();
+        Debug.Log("File Reset");
+    }
 
     //if the completed level was the lastest level, increase levelCompleted index
     public static void LevelComplete(int level)

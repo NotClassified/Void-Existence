@@ -170,6 +170,7 @@ public class GameManager : MonoBehaviour
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
     bool loadingScene = false;
+    public static bool playAllLevels;
     public int mode = 0; //0-Tutorial 1-Level 2-No Enemies
     public static bool developerMode = false;
     float timeMeasure;
@@ -234,7 +235,7 @@ public class GameManager : MonoBehaviour
             switch (tutNumber)
             {
                 case 1: //landing tutorial
-                    tutKey.sprite = Resources.Load<Sprite>("finger tap");
+                    tutKey.sprite = Resources.Load<Sprite>("finger swipe down");
                     break;
                 case 2: //wall jumping tutorial
                     tutKey.sprite = Resources.Load<Sprite>("finger swipe up");
@@ -244,7 +245,7 @@ public class GameManager : MonoBehaviour
                     tutKey.transform.localPosition = new Vector2(-50f, tutKey.transform.localPosition.y);
                     tutKey.transform.localScale = new Vector2(tutKey.transform.localScale.x / 2, tutKey.transform.localScale.y);
                     tutKey.sprite = Resources.Load<Sprite>("finger swipe up");
-                    tutExtraKey.sprite = Resources.Load<Sprite>("finger tap");
+                    tutExtraKey.sprite = Resources.Load<Sprite>("finger swipe down");
                     break;
                 case 4: //dodge tutorial
                     tutKey.sprite = Resources.Load<Sprite>("finger swipe down");
@@ -262,12 +263,11 @@ public class GameManager : MonoBehaviour
     {
         #region DEVELOPER MODE
         //toggle developer mode
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
-        {
-            //*/Debug.Log("Developer Mode Disabled");/*
-            developerMode = !developerMode;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+        //if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        //{
+        //    developerMode = !developerMode;
+        //    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        //}
         if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
         {
             if(timeMeasure == 0)
@@ -330,11 +330,15 @@ public class GameManager : MonoBehaviour
                 if (mode == 0)
                 {
                     if (progressPerfectTutorial && count >= countGoal) //if player completed tutorial perfectly
+                    {
                         levelFinished = true;
+                        GameProgress.SaveGameProgress();
+                    }
                     else
                     {
                         progressPerfectTutorial = false;
                         progressTutorialRespawn = true;
+                        GameProgress.SaveGameProgress();
                     }
                 }
                 else if (mode == 1)
@@ -544,6 +548,7 @@ public class GameManager : MonoBehaviour
         if (GameProgress.SetTimeRecord(levelnum, time))
         {
             timerCanvas.GetChild(2).gameObject.SetActive(true);
+            GameProgress.SaveGameProgress();
         }
     }
     void StartLevel()
@@ -564,14 +569,17 @@ public class GameManager : MonoBehaviour
     public void LevelFinished(int level_)
     {
         player.GetComponent<PlayerUI>().TextFeedback("Level Finished!", 0);
+
         if (enemy2 != null)
             enemy2.GetComponent<EnemyTrick>().EnemyStopRunning();
         else if (enemy1 != null)
             enemy1.GetComponent<EnemyTrick>().EnemyStopRunning();
-        levelFinished = true;
-        GameProgress.LevelComplete(level_);
-    }
 
+        levelFinished = true;
+
+        GameProgress.LevelComplete(level_);
+        GameProgress.SaveGameProgress();
+    }
 
     public bool GetEnemyAction()
     {

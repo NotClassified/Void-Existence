@@ -1069,7 +1069,7 @@ MonoBehaviour:
   camShakeVelocity: 8
   bsp: {fileID: 6720777337227344370}
   bspOrtho: {fileID: 5648443116222448298}
-  androidBuild: 0
+  androidBuild: 1
   minSwipeDistance: 5
   startMethodCalled: 0
 --- !u!114 &6882050090756491216

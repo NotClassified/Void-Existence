@@ -11,10 +11,13 @@ public class MMUI : MonoBehaviour
 
     [SerializeField]
     GameObject[] levelButtons;
-    #region DEVELOPER UI
-    public TextMeshProUGUI gpcText; //game progress count text
-    [SerializeField] GameObject devProgressTool;
-    #endregion
+
+    [SerializeField] bool allowDevMode;
+
+    private void Awake()
+    {
+        GameProgress.LoadGameProgress();
+    }
 
     private void Start()
     {
@@ -28,16 +31,16 @@ public class MMUI : MonoBehaviour
 
         //INITAILIZE THE MMCHILDREN ARRAY TO THE CHILDREN OF THIS TRANSFORM:
         mmChildren = new GameObject[transform.childCount];
-        for(int i = 0; i < transform.childCount; i++)
+        for(int i = 1; i < transform.childCount; i++)
         {
-            mmChildren[i] = transform.GetChild(i).gameObject;
+            mmChildren[i-1] = transform.GetChild(i).gameObject;
         }
         if (GameProgress.tutorialLastCompleted > 0)
             MainMenuButtons("play");
         else
             MainMenuButtons("back");
 
-        UpdateGameProgress();
+        UpdateMenu();
     }
 
     //call when button is pressed, find which button was pressed through parameter _button
@@ -65,7 +68,7 @@ public class MMUI : MonoBehaviour
         }
     }
 
-    void UpdateGameProgress()
+    void UpdateMenu()
     {
         for (int i = 0; i < levelButtons.Length; i++) 
         {
@@ -73,6 +76,10 @@ public class MMUI : MonoBehaviour
             levelButtons[i].GetComponent<Button>().interactable = false;
             levelButtons[i].transform.Find("#").gameObject.SetActive(false);
             levelButtons[i].transform.Find("Lock").gameObject.SetActive(true);
+
+            //show best times for each level
+            string timeFormatted = TimeObject.ConvertTimeMINSECMILI(GameProgress.levelTimeRecords[i + 1]);
+            levelButtons[i].transform.Find("Time").GetComponent<TextMeshProUGUI>().text = timeFormatted;
         }
         for (int i = 0; i < levelButtons.Length && i < GameProgress.levelLastCompleted + 1; i++)
         {
@@ -80,16 +87,15 @@ public class MMUI : MonoBehaviour
             levelButtons[i].GetComponent<Button>().interactable = true;
             levelButtons[i].transform.Find("#").gameObject.SetActive(true);
             levelButtons[i].transform.Find("Lock").gameObject.SetActive(false);
-
-            //show best times for each level
-            string timeFormatted = TimeObject.ConvertTimeMINSECMILI(GameProgress.levelTimeRecords[i + 1]);
-            levelButtons[i].transform.Find("Time").GetComponent<TextMeshProUGUI>().text = timeFormatted;
         }
         gpcText.text = GameProgress.levelLastCompleted.ToString(); //set progression number
 
     }
 
     #region DEVELOPER UI
+    public TextMeshProUGUI gpcText; //game progress count text
+    [SerializeField] GameObject devProgressTool;
+
     public void GameProgressCountChange(int i)
     {
         if (!(GameProgress.levelLastCompleted == 0 && i < 0))
@@ -98,13 +104,19 @@ public class MMUI : MonoBehaviour
             GameProgress.tutorialLastCompleted += i;
             if (GameProgress.tutorialLastCompleted < 0)
                 GameProgress.tutorialLastCompleted = 0;
-            UpdateGameProgress();
+            UpdateMenu();
         }
+    }
+    public void GameProgressReset()
+    {
+        GameProgress.ResetGameProgress();
+        UpdateMenu();
     }
     private void Update()
     {
         #region DEVELOPER MODE
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        if (allowDevMode
+            && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
         {
             GameManager.developerMode = !GameManager.developerMode;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
