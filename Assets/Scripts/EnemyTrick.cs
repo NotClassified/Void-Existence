@@ -305,7 +305,7 @@ public class EnemyTrick : MonoBehaviour
              && !gm.eaStopPlayerForActionMarkers) 
         {
             waitingToPunchPlayer = true;
-            StartCoroutine(gm.GameOver());
+            gm.StartGameOverRoutine();
             enemyWaitForPlayerPunchRoutine = StartCoroutine(WaitForPlayerPunch(gm.player));
         }
         if (isPunching)
@@ -329,19 +329,26 @@ public class EnemyTrick : MonoBehaviour
     #region PUNCHING METHODS
     IEnumerator WaitForPlayerPunch(GameObject player_)
     {
-        if (enemyNum == 1 || enemyNum == 2) //wait to stop if his enemy is NOT extra enemy
+        if (enemyNum == 1 || enemyNum == 2) //wait to stop if this enemy is NOT extra enemy
         {
             //wait until enemy isn't by edge and isn't close to wall (with Raycasts respectively) and in default animation state and not above player
             while (!defaultMove || !Physics.Raycast(raypos[3], Vector3.down, out hits[1], distances[1], groundMask) ||
                 Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask) || !gm.IsPlayerAndEnemyOnSameLevel())
             {
+                //if enemy falls behind player before stopping
+                if (transform.position.z > player_.transform.position.z)
+                {
+                    gm.StopGameOverRoutine();
+                    StopCoroutine(enemyWaitForPlayerPunchRoutine);
+                    waitingToPunchPlayer = false;
+                }
                 yield return null;
             }
         }
         //print("ready to punch");
-        //if enemy is too ahead of player or if player isn't in default animation state
-        if (transform.position.z < player_.transform.position.z || !player_.GetComponent<PlayerTrick>().defaultMove)
-        {
+        //if enemy is ahead of player or if player isn't in default animation state
+        //if (transform.position.z + 2 < player_.transform.position.z)
+        //{
             EnemyStopRunning(); //stop enemy to wait for player
             rigPunch.enabled = true; //for the aim constraint
 
@@ -350,12 +357,12 @@ public class EnemyTrick : MonoBehaviour
                 yield return null;
             enemyPunchRoutine = StartCoroutine(EnemyPunch());
             StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
-        }
-        else //punch player
-        {
-            enemyPunchRoutine = StartCoroutine(EnemyPunch());
-            StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
-        }
+        //}
+        //else //punch player
+        //{
+        //    enemyPunchRoutine = StartCoroutine(EnemyPunch());
+        //    StartCoroutine(player_.GetComponent<PlayerTrick>().PunchedByEnemy());
+        //}
 
     }
     public void EnemyStopRunning() => anim.SetBool("Stop", true);

@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public float initialSpeedPlayer;
     public float initialSpeedEnemy;
     public bool playerPunchedByEnemy;
+    Coroutine gameOverRoutine;
     [SerializeField]
     GameObject playerPref;
     [SerializeField]
@@ -263,11 +264,11 @@ public class GameManager : MonoBehaviour
     {
         #region DEVELOPER MODE
         //toggle developer mode
-        //if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
-        //{
-        //    developerMode = !developerMode;
-        //    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        //}
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        {
+            developerMode = !developerMode;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
         if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
         {
             if(timeMeasure == 0)
@@ -608,15 +609,25 @@ public class GameManager : MonoBehaviour
         }
         return true;
     }
-    void SpawnEnemy2()
+    void SpawnAnotherEnemy()
     {
-        enemy2 = Instantiate(enemyPref);
-        enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
-        enemy2.transform.position = new Vector3(2, enemy1.transform.position.y, enemy1.transform.position.z);
-        enemy2.transform.eulerAngles = new Vector3(0, -90);
-        
+        Vector3 enemyPos = enemy1.transform.position;
+        Destroy(enemy1);
 
-        progressEnemyPosition = enemy2.GetComponent<EnemyMovement>().rootBone; //progress bar checks enemy2 instead of enemy1
+        enemy1 = Instantiate(enemyPref);
+        enemy1.GetComponent<EnemyTrick>().enemyNum = 1;
+        enemy1.transform.position = new Vector3(-2, enemyPos.y, enemyPos.z);
+        enemy1.transform.eulerAngles = new Vector3(0, -90);
+
+        progressEnemyPosition = enemy1.GetComponent<EnemyMovement>().rootBone; //progress bar checks enemy2 instead of enemy1
+
+
+        //enemy2 = Instantiate(enemyPref);
+        //enemy2.GetComponent<EnemyTrick>().enemyNum = 2;
+        //enemy2.transform.position = new Vector3(2, enemy1.transform.position.y, enemy1.transform.position.z);
+        //enemy2.transform.eulerAngles = new Vector3(0, -90);
+
+        //progressEnemyPosition = enemy2.GetComponent<EnemyMovement>().rootBone; //progress bar checks enemy2 instead of enemy1
     }
 
 
@@ -661,6 +672,12 @@ public class GameManager : MonoBehaviour
         //UsefulShortcuts.ClearConsole();
     }
 
+    public void StartGameOverRoutine() => gameOverRoutine = StartCoroutine(GameOver());
+    public void StopGameOverRoutine()
+    {
+        StopCoroutine(gameOverRoutine);
+        player.GetComponent<PlayerUI>().UnLightRestartPrompt();
+    }
 
     public IEnumerator GameOver()
     {
@@ -688,7 +705,7 @@ public class GameManager : MonoBehaviour
             if (player.GetComponent<PlayerTrick>().extraEnemyIsPunching) //extra enemy was dodged
                 this.CallDelay(player.GetComponent<PlayerTrick>().ExtraEnemyDodgeReset, .2f);
             else if (mode == 1)
-                this.CallDelay(SpawnEnemy2, spawnDelayForEnemy2);
+                this.CallDelay(SpawnAnotherEnemy, spawnDelayForEnemy2);
         }
         else
         {

@@ -305,6 +305,27 @@ public class PlayerUI : MonoBehaviour
         }
     }
 
+    public void UnLightRestartPrompt()
+    {
+        if (gm.mode == 1)
+        {
+            if (pm.androidBuild)
+            {
+                var tempColor = restartText.color;
+                tempColor.a = .2f;
+                restartButtonAndroid.color = tempColor;
+                restartText.color = tempColor;
+            }
+            else
+            {
+                var tempColor = restartKey.color;
+                tempColor.a = .2f;
+                restartKey.color = tempColor;
+                restartText.color = tempColor;
+            }
+        }
+    }
+
     #region PAUSE MENU
     public void PauseMenu()
     {

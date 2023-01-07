@@ -166,9 +166,9 @@ public class PlayerTrick : MonoBehaviour
         }
 
         //check if player is by an edge to jump off of and not in front of a wall (by raycasts respectively) and hasn't finished level
-        if ((defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f &&
-            !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) &&
-            !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+        if ((defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) && pm.velocityZ > 5.9f 
+            && !Physics.Raycast(raypos[1], Vector3.down, out hits[1], distances[1], groundMask) 
+            && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
             pUI.TextFeedback("Perfect Jump!", 3);
 
@@ -180,7 +180,7 @@ public class PlayerTrick : MonoBehaviour
         else if (defaultMove && !Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask))
         {
             if (jumpMashPreventRoutine != null)
-                StopCoroutine(jumpMashPreventRoutine); //stop routine to keep player from jumping
+                StopCoroutine(jumpMashPreventRoutine); //stop routine to prevent player from jumping
             jumpMashPreventRoutine = StartCoroutine(JumpMashPrevent()); //prevent repressing key
 
             if (pm.velocityZ < 6f) //check if player is below speed limit for jumping
@@ -204,9 +204,12 @@ public class PlayerTrick : MonoBehaviour
 
     IEnumerator JumpMashPrevent()
     {
+        if (attemptedJump)
+            print(0);
         attemptedJump = true;
         yield return new WaitForSeconds(1f);
         attemptedJump = false;
+        print(1);
     } 
     #endregion
 
@@ -226,8 +229,9 @@ public class PlayerTrick : MonoBehaviour
         }
 
         //check if player hasn't tried to climb yet and is in front of a wall
-        if (defaultMove && !attemptedClimb && !pUI.GetFeedbackText().Equals("Too Late To Climb") && 
-            Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
+        if ((defaultMove || (isLanding && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > .8f)) 
+            && !attemptedClimb && !pUI.GetFeedbackText().Equals("Too Late To Climb") 
+            && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[7], wallMask))
         {
             float wallClimbSpeed = (pm.velocityZ - 6) / 10 + 1;
             if (wallClimbSpeed < 1)
@@ -251,7 +255,8 @@ public class PlayerTrick : MonoBehaviour
             return true;
         }
         //check if player is too far from wall
-        else if (defaultMove && !attemptedClimb && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) 
+        else if ((defaultMove || isLanding) && !attemptedClimb 
+            && Physics.Raycast(raypos[2], Vector3.back, out hits[2], distances[9], wallMask)) 
         {
             pUI.TextFeedback("Too Early To Climb", 4);
             attemptedClimb = true; //prevent repressing key
@@ -506,7 +511,7 @@ public class PlayerTrick : MonoBehaviour
 
                 if (!pUI.GetFeedbackText().Equals("Perfect Jump!"))
                 {
-                    if (!pUI.GetFeedbackText().Equals("Early Jump"))
+                    if (!pUI.GetFeedbackText().Equals("Early Jump") && gm.levelnum >= 3)
                         pUI.TextFeedback("Too Late To Jump", 4);
                     StartCoroutine(pm.CameraShake());
                     StartCoroutine(InAirClimbAudio(true));
@@ -675,7 +680,6 @@ public class PlayerTrick : MonoBehaviour
     #region PUNCHING & DODGING METHODS
     public IEnumerator PunchedByEnemy()
     {
-        bool alreadyDodged = dodgedEnemy; //var for preventing player to dodge again
         ToggleCC_OFF(); //prevent enemy collision
 
         float timeToDodge = .266f; //start punched animation frame 10.5 (timeToDodge * 30 + 2.5)
@@ -689,7 +693,7 @@ public class PlayerTrick : MonoBehaviour
                 //dodgedEnemy = true; /*always dodge early*/ print("Dodged Early");
             }
 
-            if (pm.dodgeInput && dodgeNow && !alreadyDodged)
+            if (pm.dodgeInput && dodgeNow)
             {
                 if (!attemptDodge)
                 {
@@ -706,16 +710,16 @@ public class PlayerTrick : MonoBehaviour
             pUI.TextFeedback("Dodged!", 3); //tell player that they dodged}
         }
 
-        if (!extraEnemyIsPunching) //player is NOT being punched by extraEnemy
-        {
-            if (alreadyDodged) //prevent player from dodging enemy2
-            {
-                dodgedEnemy = false; //prevent player from dodging again
-                anim.SetFloat("FlipForPunch", 0); //flip punched animation
-            }
-            else
-                anim.SetFloat("FlipForPunch", 1); //unflip punched animation
-        }
+        //if (!extraEnemyIsPunching) //player is NOT being punched by extraEnemy
+        //{
+        //    if (alreadyDodged) //prevent player from dodging enemy2
+        //    {
+        //        dodgedEnemy = false; //prevent player from dodging again
+        //        anim.SetFloat("FlipForPunch", 0); //flip punched animation
+        //    }
+        //    else
+        anim.SetFloat("FlipForPunch", 1); //unflip punched animation
+        //}
 
         if (dodgedEnemy)
         {
@@ -775,6 +779,8 @@ public class PlayerTrick : MonoBehaviour
             yield return null;
         }
         anim.SetLayerWeight(4, 0); //set layer weight to no influence
+        dodgeEnemyRoutine = null;
+        dodgedEnemy = false;
     }
 
     public void ExtraEnemyDodgeReset()
