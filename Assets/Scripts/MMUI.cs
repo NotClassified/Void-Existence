@@ -11,6 +11,8 @@ public class MMUI : MonoBehaviour
 
     [SerializeField]
     GameObject[] levelButtons;
+    [SerializeField]
+    GameObject allLevelsButton;
 
     [SerializeField] bool allowDevMode;
 
@@ -61,6 +63,9 @@ public class MMUI : MonoBehaviour
             case "quit":
                 Application.Quit();
                 break;
+            case "all levels":
+                SceneManager.LoadScene("All Levels");
+                break;
             default: //load tutorial or level
                 SceneManager.LoadScene(scenes[int.Parse(_button)]);
                 break;
@@ -73,9 +78,7 @@ public class MMUI : MonoBehaviour
         for (int i = 0; i < levelButtons.Length; i++) 
         {
             //lock all levels
-            levelButtons[i].GetComponent<Button>().interactable = false;
-            levelButtons[i].transform.Find("#").gameObject.SetActive(false);
-            levelButtons[i].transform.Find("Lock").gameObject.SetActive(true);
+            LockLevel(levelButtons[i], true);
 
             //show best times for each level
             string timeFormatted = TimeObject.ConvertTimeMINSECMILI(GameProgress.levelTimeRecords[i + 1]);
@@ -84,12 +87,22 @@ public class MMUI : MonoBehaviour
         for (int i = 0; i < levelButtons.Length && i < GameProgress.levelLastCompleted + 1; i++)
         {
             //unlock levels completed plus 1 extra level
-            levelButtons[i].GetComponent<Button>().interactable = true;
-            levelButtons[i].transform.Find("#").gameObject.SetActive(true);
-            levelButtons[i].transform.Find("Lock").gameObject.SetActive(false);
+            LockLevel(levelButtons[i], false);
         }
         gpcText.text = GameProgress.levelLastCompleted.ToString(); //set progression number
 
+        //unlock All Levels Button if player has completed all the levels seperatly
+        LockLevel(allLevelsButton, GameProgress.levelLastCompleted != levelButtons.Length);
+        //show best time for All Levels Record
+        string allLevelsTimeFormatted = TimeObject.ConvertTimeMINSECMILI(GameProgress.levelTimeRecords[0]);
+        allLevelsButton.transform.Find("Time").GetComponent<TextMeshProUGUI>().text = allLevelsTimeFormatted;
+    }
+
+    void LockLevel(GameObject level, bool lockLevel)
+    {
+        level.GetComponent<Button>().interactable = !lockLevel;
+        level.transform.Find("#").gameObject.SetActive(!lockLevel);
+        level.transform.Find("Lock").gameObject.SetActive(lockLevel);
     }
 
     #region DEVELOPER UI

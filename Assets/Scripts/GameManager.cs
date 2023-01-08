@@ -161,6 +161,13 @@ public class GameManager : MonoBehaviour
     public bool eaStopPlayerForActionMarkers = false;
     bool eaDestroyChildren = true;
     #endregion
+    #region ALL LEVELS MODE
+    [SerializeField] TextMeshProUGUI allLevelText;
+    [SerializeField] string[] allLevelTitles;
+    [SerializeField] string[] allLevelScenes;
+    static bool playAllLevels;
+    static int allLevelsIndex = -1;
+    #endregion
 
     public static bool showHUD = true;
     public static float brightness = 1f;
@@ -171,14 +178,32 @@ public class GameManager : MonoBehaviour
     public static bool levelFinished;
     [SerializeField] float finishLevelDelay;
     bool loadingScene = false;
-    public static bool playAllLevels;
-    public int mode = 0; //0-Tutorial 1-Level 2-No Enemies
+    ///<summary> 0-Tutorial 1-Level 2-No Enemies 3-All Levels </summary>
+    public int mode = 0; 
     public static bool developerMode = false;
     float timeMeasure;
 
 
     void Start()
     {
+        if (mode == 3)
+        {
+            playAllLevels = true;
+            allLevelsIndex++;
+
+            if (allLevelsIndex < allLevelScenes.Length)
+            {
+                allLevelText.text = allLevelTitles[allLevelsIndex];
+                this.CallDelay(LoadNextLevelMode3, 2f);
+            }
+            else
+            {
+                allLevelText.text = "All Levels Completed!";
+                this.CallDelay(ResetGame, 3f);
+            }
+            return;
+        }
+
         #region SPAWN ROCKS FOR ENVIRONMENT
         if (rocksInstantiate)
         {
@@ -323,16 +348,16 @@ public class GameManager : MonoBehaviour
                 progressEnemy.value = 0; //enemy hasn't reached the starting point of the level
         }
         #endregion
-        #region PROGRESS CHECK
+        #region PROGRESS CHECK & FINISHING LEVEL
         if (player != null && player.transform.position.z < portalEnd.position.z + portalTriggerOffsetZ)
         {
             if (!levelFinished)
             {
+                levelFinished = true; //prevent loop
                 if (mode == 0)
                 {
                     if (progressPerfectTutorial && count >= countGoal) //if player completed tutorial perfectly
                     {
-                        levelFinished = true;
                         GameProgress.SaveGameProgress();
                     }
                     else
@@ -356,8 +381,13 @@ public class GameManager : MonoBehaviour
                 else if (progressTutorialRespawn) //didn't complete tutorial, respawn player
                     player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
 
-                else if (levelFinished) //completed level, go back to main menu
-                    ResetGame();
+                else if (levelFinished) 
+                {
+                    if (playAllLevels)
+                        LoadAllLevelsScene(); //continuing to next level
+                    else
+                        ResetGame(); //go back to main menu
+                }
 
                 else
                     Debug.LogError("didn't register whether player completed level or tutorial or did tutorial perfectly");
@@ -515,6 +545,9 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    void LoadAllLevelsScene() => SceneManager.LoadScene("All Levels");
+    void LoadNextLevelMode3() => SceneManager.LoadScene(allLevelScenes[allLevelsIndex]);
+
     public void ChangeBrightness() => worldLight.intensity = brightness;
     public void ShowHUD()
     {
@@ -546,7 +579,13 @@ public class GameManager : MonoBehaviour
             timerMilisecondText.text = TimeObject.Miliseconds2Digit(time);
             yield return null;
         }
-        if (GameProgress.SetTimeRecord(levelnum, time))
+        if (!playAllLevels && GameProgress.SetTimeRecord(levelnum, time))
+        {
+            timerCanvas.GetChild(2).gameObject.SetActive(true);
+            GameProgress.SaveGameProgress();
+        }
+        //set temporary time if not last level, and reset time if first level
+        else if (playAllLevels && GameProgress.SetAllLevelTimeRecord(levelnum != GameProgress.levelLastCompleted, time, levelnum == 1))
         {
             timerCanvas.GetChild(2).gameObject.SetActive(true);
             GameProgress.SaveGameProgress();
@@ -576,9 +615,8 @@ public class GameManager : MonoBehaviour
         else if (enemy1 != null)
             enemy1.GetComponent<EnemyTrick>().EnemyStopRunning();
 
-        levelFinished = true;
-
-        GameProgress.LevelComplete(level_);
+        if (playAllLevels)
+            GameProgress.LevelComplete(level_);
         GameProgress.SaveGameProgress();
     }
 
@@ -713,7 +751,10 @@ public class GameManager : MonoBehaviour
                 player.GetComponent<PlayerUI>().TextFeedback("Game Over", 5);
             StartCoroutine(player.GetComponent<PlayerMovement>().CameraShake());
             yield return new WaitForSeconds(1f);
-            ReloadLevel();
+            if (playAllLevels)
+                ResetGame();
+            else
+                ReloadLevel();
         }
     }
 
