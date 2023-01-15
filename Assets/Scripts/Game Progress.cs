@@ -54,18 +54,15 @@ public class GameProgress
         return false;
     }
     ///<summary> add to temporary time unless it's the last level which will only set and return true if faster than best record </summary>
-    public static bool SetAllLevelTimeRecord(bool setTemporaryTime, float time, bool resetTempTime)
+    public static bool SetAllLevelTimeRecord(bool setTemporaryTime, float time)
     {
-        if (resetTempTime)
-            tempAllLevelTimeRecord = 0;
         if (setTemporaryTime)
         {
-            tempAllLevelTimeRecord += time;
+            tempAllLevelTimeRecord = time;
         }
         else if(levelTimeRecords[0] > time || levelTimeRecords[0] == 0)
         {
-            tempAllLevelTimeRecord += time;
-            levelTimeRecords[0] = tempAllLevelTimeRecord;
+            levelTimeRecords[0] = time;
             return true;
         }
         return false;

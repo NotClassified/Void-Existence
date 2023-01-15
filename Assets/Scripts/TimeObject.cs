@@ -54,7 +54,7 @@ public class TimeObject
         string secondsText = timeO.seconds < 10 ? "0" + timeO.seconds.ToString() : timeO.seconds.ToString();
         return timeO.minutes + ":" + secondsText;
     }
-    public static string Miliseconds2Digit(float time)
+    public static string Miliseconds2Digits(float time)
     {
         int miliseconds = (int)(time * 100) % 100;
         return miliseconds < 10 ? "0" + miliseconds.ToString() : miliseconds.ToString();

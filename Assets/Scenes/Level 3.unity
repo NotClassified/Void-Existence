@@ -7625,6 +7625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeScale: 100
   levelnum: 3
+  levelNameParent: {fileID: 1783335851}
   rocksInstantiate: 0
   rocksAmount: 1000
   rockParent: {fileID: 0}
@@ -7712,12 +7713,18 @@ MonoBehaviour:
   portalStart: {fileID: 1044445801}
   portalEnd: {fileID: 1654169789}
   portalTriggerOffsetZ: 6
+  allLevelTimerTextColor:
+    serializedVersion: 2
+    rgba: 4284086527
   eaMarker: {fileID: 1056155761849556616, guid: ee5ad3f87c7fbaf46a035750f5d53907,
     type: 3}
   eaParent: {fileID: 1231299728}
   eaCorrectActionColor: {fileID: 2100000, guid: 2e5e629d0096edd41837c44cedc455e6,
     type: 2}
   eaStopPlayerForActionMarkers: 0
+  allLevelText: {fileID: 0}
+  allLevelTitles: []
+  allLevelScenes: []
   audioManagerPrefab: {fileID: 5683603932690335486, guid: f2bbc0f27e2a427459ea35eacec41888,
     type: 3}
   distancePlayerToEnemyAllowed: 15
@@ -35466,6 +35473,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1779553036}
   m_Mesh: {fileID: -8971355165230693711, guid: 6c5325a19b615bb4ca29efac5e16a46b, type: 3}
+--- !u!1 &1783335851 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1613242339226983406, guid: a59dba7a02e06a7429411c452fb84632,
+    type: 3}
+  m_PrefabInstance: {fileID: 2026758947}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1784625643
 GameObject:
   m_ObjectHideFlags: 0
@@ -40629,7 +40642,7 @@ PrefabInstance:
     - target: {fileID: 1613242339587988777, guid: a59dba7a02e06a7429411c452fb84632,
         type: 3}
       propertyPath: m_text
-      value: Level 4
+      value: Level 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a59dba7a02e06a7429411c452fb84632, type: 3}

@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public float timeScale = 100;
     public static float time;
     public int levelnum;
+    [SerializeField] GameObject levelNameParent;
     #region BACKGROUND ROCKS
     public bool rocksInstantiate = false;
     public int rocksAmount;
@@ -150,6 +151,7 @@ public class GameManager : MonoBehaviour
     Transform timerCanvas;
     TextMeshProUGUI timerText;
     TextMeshProUGUI timerMilisecondText;
+    [SerializeField] Color32 allLevelTimerTextColor;
     #endregion
     #region ENEMY ACTION MARKERS //ea-enemy action
     [SerializeField]
@@ -165,7 +167,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI allLevelText;
     [SerializeField] string[] allLevelTitles;
     [SerializeField] string[] allLevelScenes;
-    static bool playAllLevels;
+    public static bool playAllLevels;
     static int allLevelsIndex = -1;
     #endregion
 
@@ -194,12 +196,12 @@ public class GameManager : MonoBehaviour
             if (allLevelsIndex < allLevelScenes.Length)
             {
                 allLevelText.text = allLevelTitles[allLevelsIndex];
-                this.CallDelay(LoadNextLevelMode3, 2f);
+                Invoke("LoadNextLevelMode3", 2f);
             }
             else
             {
                 allLevelText.text = "All Levels Completed!";
-                this.CallDelay(ResetGame, 3f);
+                Invoke("ResetGame", 3f);
             }
             return;
         }
@@ -237,10 +239,8 @@ public class GameManager : MonoBehaviour
             StartTutorial();
         else if (mode == 1)
         {
-            if (showHUD)
-                progressCanvas.SetActive(true);
-            else
-                progressCanvas.SetActive(false);
+            progressCanvas.SetActive(showHUD);
+            levelNameParent.SetActive(showHUD);
 
             progressDistance = Vector3.Distance(portalStart.position, portalEnd.position);
             progressStartPosition = portalStart.position;
@@ -288,33 +288,33 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         #region DEVELOPER MODE
-        //toggle developer mode
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
-        {
-            developerMode = !developerMode;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-        if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
-        {
-            if(timeMeasure == 0)
-            {
-                timeMeasure = Time.time;
-            }
-            else
-            {
-                Debug.LogWarning(timeMeasure = Time.time - timeMeasure);
-                timeMeasure = 0;
-            }
-        }
-        //stop player
-        if (eaStopPlayerForActionMarkers && developerMode)
-        {
-            player.GetComponent<PlayerMovement>().velocityZ = 0;
-            player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-        }
-        //toggle stop player
-        if (Input.GetKeyDown(KeyCode.P) && developerMode)
-            eaStopPlayerForActionMarkers = !eaStopPlayerForActionMarkers;
+        ////toggle developer mode
+        //if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        //{
+        //    developerMode = !developerMode;
+        //    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        //}
+        //if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
+        //{
+        //    if(timeMeasure == 0)
+        //    {
+        //        timeMeasure = Time.time;
+        //    }
+        //    else
+        //    {
+        //        Debug.LogWarning(timeMeasure = Time.time - timeMeasure);
+        //        timeMeasure = 0;
+        //    }
+        //}
+        ////stop player
+        //if (eaStopPlayerForActionMarkers && developerMode)
+        //{
+        //    player.GetComponent<PlayerMovement>().velocityZ = 0;
+        //    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+        //}
+        ////toggle stop player
+        //if (Input.GetKeyDown(KeyCode.P) && developerMode)
+        //    eaStopPlayerForActionMarkers = !eaStopPlayerForActionMarkers;
         #endregion
         #region COUNTER SLIDER VALUE SMOOTHING
         if (mode == 0 && tutNumber != 4)
@@ -356,15 +356,10 @@ public class GameManager : MonoBehaviour
                 levelFinished = true; //prevent loop
                 if (mode == 0)
                 {
-                    if (progressPerfectTutorial && count >= countGoal) //if player completed tutorial perfectly
-                    {
-                        GameProgress.SaveGameProgress();
-                    }
-                    else
+                    if (progressPerfectTutorial && count < countGoal) //if player did NOT complete tutorial perfectly
                     {
                         progressPerfectTutorial = false;
                         progressTutorialRespawn = true;
-                        GameProgress.SaveGameProgress();
                     }
                 }
                 else if (mode == 1)
@@ -399,14 +394,15 @@ public class GameManager : MonoBehaviour
         }
         #endregion
         #region RESTART/SKIP TUTORIAL
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && !playAllLevels)
         {
-            if (mode == 1)
+            if (mode == 1) //level
                 ReloadLevel();
-            else if (mode == 0 && tutSkipAbility)
+            else if (mode == 0 && tutSkipAbility) //tutorial
                 LoadNextLevel();
 
-            //if (mode == 0) ReloadLevel(); print("developer restart enabled");
+            if (mode == 0 && Input.GetKey(KeyCode.LeftShift) && developerMode) 
+                ReloadLevel(); //reload tutorial (dev mode)
         }
         #endregion
         #region EXTRA ENEMY SPAWN
@@ -444,18 +440,9 @@ public class GameManager : MonoBehaviour
             StartCoroutine(Spawn());
         }
 
-        if (showHUD)
-        {
-            tutCanvas.SetActive(true);
-            if (cCanvas != null)
-                cCanvas.SetActive(true);
-        }
-        else
-        {
-            tutCanvas.SetActive(false);
-            if (cCanvas != null)
-                cCanvas.SetActive(false);
-        }
+        tutCanvas.SetActive(showHUD);
+        if (cCanvas != null)
+            cCanvas.SetActive(showHUD);
 
         if (GameProgress.tutorialLastCompleted >= tutNumber) //if player has completed tutorial before, let player skip tutorial
         {
@@ -518,6 +505,7 @@ public class GameManager : MonoBehaviour
             if (count >= countGoal) //if goal completed, end tutorial
             {
                 GameProgress.TutorialComplete(tutNumber); //tutorial progress
+                GameProgress.SaveGameProgress();
 
                 if (progressPerfectTutorial) //player finished tutorial perfectly
                 {
@@ -546,7 +534,10 @@ public class GameManager : MonoBehaviour
     #endregion
 
     void LoadAllLevelsScene() => SceneManager.LoadScene("All Levels");
-    void LoadNextLevelMode3() => SceneManager.LoadScene(allLevelScenes[allLevelsIndex]);
+    void LoadNextLevelMode3()
+    {
+        SceneManager.LoadScene(allLevelScenes[allLevelsIndex]);
+    }
 
     public void ChangeBrightness() => worldLight.intensity = brightness;
     public void ShowHUD()
@@ -561,6 +552,8 @@ public class GameManager : MonoBehaviour
         else if (mode == 1)
         {
             progressCanvas.gameObject.SetActive(showHUD);
+            levelNameParent.SetActive(showHUD);
+            timerCanvas.gameObject.SetActive(showHUD);
         }
     }
 
@@ -571,12 +564,28 @@ public class GameManager : MonoBehaviour
         timerText = timerCanvas.GetChild(0).GetComponent<TextMeshProUGUI>();
         timerMilisecondText = timerCanvas.GetChild(1).GetComponent<TextMeshProUGUI>();
 
+        if (!showHUD)
+            timerCanvas.gameObject.SetActive(false);
+        if (playAllLevels)
+        {
+            timerText.color = allLevelTimerTextColor;
+            timerMilisecondText.color = allLevelTimerTextColor;
+        }
+
         float time = 0;
+        if (playAllLevels)
+        {
+            if (levelnum == 1)
+                GameProgress.tempAllLevelTimeRecord = 0;
+            else
+                time = GameProgress.tempAllLevelTimeRecord;
+        }
+
         while (!levelFinished) //stop timer when player finishes level
         {
             time += Time.deltaTime;
             timerText.text = TimeObject.ConvertTimeMINSEC(time) + ":";
-            timerMilisecondText.text = TimeObject.Miliseconds2Digit(time);
+            timerMilisecondText.text = TimeObject.Miliseconds2Digits(time);
             yield return null;
         }
         if (!playAllLevels && GameProgress.SetTimeRecord(levelnum, time))
@@ -584,8 +593,8 @@ public class GameManager : MonoBehaviour
             timerCanvas.GetChild(2).gameObject.SetActive(true);
             GameProgress.SaveGameProgress();
         }
-        //set temporary time if not last level, and reset time if first level
-        else if (playAllLevels && GameProgress.SetAllLevelTimeRecord(levelnum != GameProgress.levelLastCompleted, time, levelnum == 1))
+        //set temporary time if not last level
+        else if (playAllLevels && GameProgress.SetAllLevelTimeRecord(levelnum != GameProgress.levelLastCompleted, time))
         {
             timerCanvas.GetChild(2).gameObject.SetActive(true);
             GameProgress.SaveGameProgress();
@@ -615,7 +624,7 @@ public class GameManager : MonoBehaviour
         else if (enemy1 != null)
             enemy1.GetComponent<EnemyTrick>().EnemyStopRunning();
 
-        if (playAllLevels)
+        if (!playAllLevels)
             GameProgress.LevelComplete(level_);
         GameProgress.SaveGameProgress();
     }
@@ -777,7 +786,12 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void ResetGame() => SceneManager.LoadScene(0);
+    public void ResetGame()
+    {
+        playAllLevels = false;
+        allLevelsIndex = -1;
+        SceneManager.LoadScene(0);
+    }
 }
 
 public static class MonoBehavoirExtension

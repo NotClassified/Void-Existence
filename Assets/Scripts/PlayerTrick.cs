@@ -204,12 +204,9 @@ public class PlayerTrick : MonoBehaviour
 
     IEnumerator JumpMashPrevent()
     {
-        if (attemptedJump)
-            print(0);
         attemptedJump = true;
         yield return new WaitForSeconds(1f);
         attemptedJump = false;
-        print(1);
     } 
     #endregion
 
@@ -726,6 +723,11 @@ public class PlayerTrick : MonoBehaviour
             ToggleCC_ON();
             yield return new WaitForSeconds(dodgePunchAudioDelay);
             AudioManager.instance.PlaySound("dodge");
+            if (gm.tutNumber == 4)
+            {
+                GameProgress.TutorialComplete(4); //dodge tutorial complete
+                GameProgress.SaveGameProgress();
+            }
         }
         else
         {

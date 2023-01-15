@@ -115,13 +115,13 @@ public class PlayerUI : MonoBehaviour
         hashClimbSpeed = Animator.StringToHash("Climb Speed");
         hashLand = Animator.StringToHash("Land");
 
-        if (gm.mode == 1)
+        if (gm.mode == 1 && !GameManager.playAllLevels) //player is able to restart level
         {
             if(GameManager.showHUD)
                 restartPrompt.SetActive(true);
             pauseRestartButton.interactable = true;
         }
-        else
+        else //player is NOT alolwed to restart level
         {
             restartPrompt.SetActive(false);
             pauseRestartButton.interactable = false;
@@ -359,7 +359,7 @@ public class PlayerUI : MonoBehaviour
             case "hud":
                 gm.ShowHUD(); //toggle HUD
 
-                if (gm.mode == 1) //if in level, toggle restart prompt
+                if (gm.mode == 1 && !GameManager.playAllLevels) //if in level, toggle restart prompt
                     restartPrompt.SetActive(GameManager.showHUD);
                 break;
 

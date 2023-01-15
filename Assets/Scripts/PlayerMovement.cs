@@ -213,14 +213,15 @@ public class PlayerMovement : MonoBehaviour
         #region JUMP DOWN
         if (animator.GetBool(hashJumpDown)) //prevent loop of the jump down animation
             animator.SetBool(hashJumpDown, false);
-        if (jumpInput && (gm.levelnum >= 3 || gm.tutNumber == 3) && !GameManager.levelFinished) //checking input for jump down
+        //checking input for jump down
+        if (jumpInput && ((gm.levelnum >= 3 && !GameManager.levelFinished) || gm.tutNumber == 3))
         {
             pt.JumpDownCheck();
         }
         #endregion
         #region WALL CLIMB
         //checking if climbing animation has ended
-        if (pt.isClimbing && Time.time > pt.wcClipEnd && animator.GetBool(hashWallClimb) && !GameManager.levelFinished)
+        if (pt.isClimbing && Time.time > pt.wcClipEnd && animator.GetBool(hashWallClimb))
         {
             transform.position = rootBone.position; //sync player's position to character (root bone)
             animator.SetBool(hashWallClimb, false); //end wall climb animation
