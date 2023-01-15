@@ -190,6 +190,7 @@ public class GameManager : MonoBehaviour
     {
         if (mode == 3)
         {
+            Time.timeScale = 1;
             playAllLevels = true;
             allLevelsIndex++;
 
