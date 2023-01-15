@@ -190,7 +190,7 @@ public class PlayerTrick : MonoBehaviour
             }
             else if (!Physics.Raycast(raypos[4], Vector3.down, out hits[1], distances[1], groundMask))  //player is too far from edge
             {
-                pUI.TextFeedback("Early Jump", 4);
+                pUI.TextFeedback("Too Early To Jump", 4);
                 anim.SetBool(hashJumpDown, true); //jump without boost
             }
         }
@@ -436,7 +436,7 @@ public class PlayerTrick : MonoBehaviour
             }
 
             //landing input, prevent land if player jumped early
-            if (pm.landInput && !attemptedLand && !pUI.GetFeedbackText().Equals("Early Jump"))
+            if (pm.landInput && !attemptedLand/* && !pUI.GetFeedbackText().Equals("Too Early To Jump")*/)
             {
                 if (gm.tutNumber == 1 && !doneFirstAction)
                 {
@@ -508,7 +508,8 @@ public class PlayerTrick : MonoBehaviour
 
                 if (!pUI.GetFeedbackText().Equals("Perfect Jump!"))
                 {
-                    if (!pUI.GetFeedbackText().Equals("Early Jump") && gm.levelnum >= 3)
+                    if (!pUI.GetFeedbackText().Equals("Too Early To Jump") && !pUI.GetFeedbackText().Equals("Early Landing") 
+                        && gm.tutNumber == 3)
                         pUI.TextFeedback("Too Late To Jump", 4);
                     StartCoroutine(pm.CameraShake());
                     StartCoroutine(InAirClimbAudio(true));
