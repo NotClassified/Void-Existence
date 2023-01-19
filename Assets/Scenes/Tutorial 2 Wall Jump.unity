@@ -793,7 +793,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6dce1e20de9021d4aa77ca07d3a5a4f1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6cd4ea8e6556aef4ba0a21f3be968fa5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4879,6 +4879,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeScale: 100
   levelnum: 1
+  levelNameParent: {fileID: 0}
   rocksInstantiate: 0
   rocksAmount: 0
   rockParent: {fileID: 1762831280}
@@ -4966,11 +4967,17 @@ MonoBehaviour:
   portalStart: {fileID: 1044445801}
   portalEnd: {fileID: 1654169789}
   portalTriggerOffsetZ: 0
+  allLevelTimerTextColor:
+    serializedVersion: 2
+    rgba: 0
   eaMarker: {fileID: 1056155761849556616, guid: ee5ad3f87c7fbaf46a035750f5d53907,
     type: 3}
   eaParent: {fileID: 0}
   eaCorrectActionColor: {fileID: 0}
   eaStopPlayerForActionMarkers: 0
+  allLevelText: {fileID: 0}
+  allLevelTitles: []
+  allLevelScenes: []
   audioManagerPrefab: {fileID: 0}
   distancePlayerToEnemyAllowed: 15
   finishLevelDelay: 2.45

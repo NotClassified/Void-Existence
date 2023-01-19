@@ -1069,7 +1069,7 @@ MonoBehaviour:
   camShakeVelocity: 8
   bsp: {fileID: 6720777337227344370}
   bspOrtho: {fileID: 5648443116222448298}
-  androidBuild: 1
+  androidBuild: 0
   minSwipeDistance: 5
   startMethodCalled: 0
 --- !u!114 &6882050090756491216
@@ -2251,7 +2251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6dce1e20de9021d4aa77ca07d3a5a4f1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6cd4ea8e6556aef4ba0a21f3be968fa5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

@@ -395,7 +395,7 @@ public class GameManager : MonoBehaviour
         }
         #endregion
         #region RESTART/SKIP TUTORIAL
-        if (Input.GetKeyDown(KeyCode.Q) && !playAllLevels)
+        if (Input.GetKeyDown(KeyCode.R) && !playAllLevels)
         {
             if (mode == 1) //level
                 ReloadLevel();
