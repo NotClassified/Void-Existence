@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Image tutExtraKey;
     [SerializeField]
-    TextMeshProUGUI tutText;
+    Slider tutBar;
     [SerializeField]
     Color32 tutInputColorON;
     [SerializeField]
@@ -289,33 +289,33 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         #region DEVELOPER MODE
-        ////toggle developer mode
-        //if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
-        //{
-        //    developerMode = !developerMode;
-        //    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        //}
-        //if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
-        //{
-        //    if(timeMeasure == 0)
-        //    {
-        //        timeMeasure = Time.time;
-        //    }
-        //    else
-        //    {
-        //        Debug.LogWarning(timeMeasure = Time.time - timeMeasure);
-        //        timeMeasure = 0;
-        //    }
-        //}
-        ////stop player
-        //if (eaStopPlayerForActionMarkers && developerMode)
-        //{
-        //    player.GetComponent<PlayerMovement>().velocityZ = 0;
-        //    player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
-        //}
-        ////toggle stop player
-        //if (Input.GetKeyDown(KeyCode.P) && developerMode)
-        //    eaStopPlayerForActionMarkers = !eaStopPlayerForActionMarkers;
+        //toggle developer mode
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+        {
+            developerMode = !developerMode;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        if (Input.GetKeyDown(KeyCode.E)) //stop timer tool
+        {
+            if (timeMeasure == 0)
+            {
+                timeMeasure = Time.time;
+            }
+            else
+            {
+                Debug.LogWarning(timeMeasure = Time.time - timeMeasure);
+                timeMeasure = 0;
+            }
+        }
+        //stop player
+        if (eaStopPlayerForActionMarkers && developerMode)
+        {
+            player.GetComponent<PlayerMovement>().velocityZ = 0;
+            player.transform.SetPositionAndRotation(playerSpawn.position, playerSpawn.rotation);
+        }
+        //toggle stop player
+        if (Input.GetKeyDown(KeyCode.P) && developerMode)
+            eaStopPlayerForActionMarkers = !eaStopPlayerForActionMarkers;
         #endregion
         #region COUNTER SLIDER VALUE SMOOTHING
         if (mode == 0 && tutNumber != 4)
@@ -488,6 +488,11 @@ public class GameManager : MonoBehaviour
         }
     }
     public bool GetExtraInputTextLit() => tutExtraKey.color == tutInputColorON;
+
+    public void SetTutorialBar(float value)
+    {
+        tutBar.value = -value;
+    }
 
     public void FreezeTutorial()
     {
