@@ -412,7 +412,6 @@ public class PlayerTrick : MonoBehaviour
         //check if player is in air (not grounded)
         if (!isLanding && !isClimbing && cc.enabled && !Physics.Raycast(raypos[0], Vector3.down, out hits[3], distances[0], groundMask)) 
         {
-            print(pm.fallvelocity.y);
             isGrounded = false;
             if (!AudioManager.instance.airAudioIsPlaying && Time.timeScale != 0 && !pUI.GetFeedbackText().Equals("Level Finished!"))
                 AudioManager.instance.PlaySound("air");
@@ -421,8 +420,6 @@ public class PlayerTrick : MonoBehaviour
             if (gm.tutNumber == 1 && Physics.Raycast(raypos[0], rayDir, out hits[0], distances[5], groundMask))
             {
                 //print(Time.time); //figuring out the land input gap length (3 = 1/5 of a second)
-
-                gm.SetTutorialBar(pm.fallvelocity.y); //helping player to land on time
 
                 if (!gm.GetInputTextLit())
                     gm.LightUpInputText(true);//light up tutorial input text  for landing
@@ -530,7 +527,6 @@ public class PlayerTrick : MonoBehaviour
             isGrounded = true; //is also true when landing
             anim.SetBool(hashLand, false); //prevent loop of landing
             attemptedLand = false;
-            gm.SetTutorialBar(-2); //reset bar
 
             if (AudioManager.instance.airAudioIsPlaying)
                 AudioManager.instance.StopSound("air");
@@ -841,7 +837,7 @@ public class PlayerTrick : MonoBehaviour
         yield return new WaitForSeconds(1f);
         if (!AnimCheck(0, "WC Fail"))
         {
-            print("BUUUUUG");
+            Debug.LogError("did not play wall climb fail animation");
             wcClipEnd = Time.time + 1.5f / wallClimbSpeed;
         }
     }

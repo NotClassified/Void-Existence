@@ -114,8 +114,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Image tutExtraKey;
     [SerializeField]
-    Slider tutBar;
-    [SerializeField]
     Color32 tutInputColorON;
     [SerializeField]
     Color32 tutInputColorOFF;
@@ -488,11 +486,6 @@ public class GameManager : MonoBehaviour
         }
     }
     public bool GetExtraInputTextLit() => tutExtraKey.color == tutInputColorON;
-
-    public void SetTutorialBar(float value)
-    {
-        tutBar.value = -value;
-    }
 
     public void FreezeTutorial()
     {
